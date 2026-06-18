@@ -4,7 +4,9 @@
   "project_root": "/home/yash/opencode-workspace/navdhan-redesign-2026",
   "status": "stage-5-implementation",
   "lock": {
-    "locked": false
+    "locked": true,
+    "since": "2026-06-19T03:40:00+05:30",
+    "reason": "Stage 5 implementation re-dispatch after config patch"
   },
   "units": [
     {
@@ -295,7 +297,8 @@
     "2026-06-18: Patched agent manifests, switched subagent dispatch from Task tool to software-factory/bin/run-factory-subagent.sh (CLI process) to avoid deadlocks, and completed apply-002 test-engineer (tests/apply/*.test.ts + vitest.config.ts).",
     "2026-06-19: Resumability patch applied: committed apply-002 tests, created factory/navdhan-redesign/stage-2-outputs with merged Stage 2 artifacts, created Stage 3 implementation branches, removed missing Design.md input from marketing-003.",
         "2026-06-19: Contracts updated to v1.1.0 (Idempotency-Key, DECIMAL(19,4) money, idempotency_keys table, pii_key_id). All CDDs revised, reviewed, and approved. Stage 5 implementation starting.",
-        "2026-06-19: Stage 5 first attempt hit file-permission restrictions. Snapshot saved to factory/navdhan-redesign/stage-5-wip. Created clean baseline factory/navdhan-redesign/stage-5-baseline with inline PostCSS/prettier config in package.json. Agents are instructed to use src/ for components/lib/types/db and app/ for routing; no root middleware or next.config.ts."
+        "2026-06-19: Stage 5 first attempt hit file-permission restrictions. Snapshot saved to factory/navdhan-redesign/stage-5-wip. Created clean baseline factory/navdhan-redesign/stage-5-baseline with inline PostCSS/prettier config in package.json. Agents are instructed to use src/ for components/lib/types/db and app/ for routing; no root middleware or next.config.ts.",
+        "2026-06-19: User patched config permissions. Refreshed stage-5-baseline with root .prettierrc, next.config.ts, postcss.config.mjs, complete package.json, and .gitignore. Re-dispatching Stage 5 implementation agents."
     ],
   "linear": {
     "project_name": "NavDhan Redesign 2026",
