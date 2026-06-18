@@ -1,0 +1,1457 @@
+version: "1.0.0"
+project: navdhan-marketing
+branch: factory/navdhan-redesign/marketing/architect
+sources_of_truth:
+  - .opencode/factory/Design.md
+  - .opencode/factory/design/ui-system.md
+  - .opencode/factory/design/ux-ia.md
+description: |
+  Architecture and component contract for the public marketing website of NavDhan.app.
+  Defines the homepage section order, global shell, i18n strategy, component APIs,
+  animation rules, design tokens and static assets for Unit 2 (Marketing Website Rebuild).
+
+stack:
+  framework: Next.js 15 App Router
+  runtime: React 19
+  language: TypeScript (strict mode)
+  styling: Tailwind CSS v4
+  components: shadcn/ui
+  animation:
+    primary: Framer Motion
+    scroll: GSAP + Lenis
+  i18n: next-intl or equivalent App Router i18n layer
+
+i18n:
+  default_locale: en
+  default_label: English
+  locales:
+    en:
+      label: English
+      script: latin
+      dir: ltr
+    hi:
+      label: हिन्दी
+      script: devanagari
+      dir: ltr
+      ui_font: Noto Sans Devanagari
+    bn:
+      label: বাংলা
+      script: bengali
+      dir: ltr
+    te:
+      label: తెలుగు
+      script: telugu
+      dir: ltr
+    mr:
+      label: मराठी
+      script: devanagari
+      dir: ltr
+    ta:
+      label: தமிழ்
+      script: tamil
+      dir: ltr
+    kn:
+      label: ಕನ್ನಡ
+      script: kannada
+      dir: ltr
+    ml:
+      label: മലയാളം
+      script: malayalam
+      dir: ltr
+  route_prefixing:
+    strategy: as-needed
+    note: |
+      Default locale (en) is served without prefix on /. Non-default locales use
+      a /<locale>/ prefix. Middleware redirects/rewrites unknown locale segments
+      to the default equivalent.
+  message_files:
+    base: messages/
+    pattern: messages/{locale}.json
+    namespaces:
+      - global
+      - home
+      - products
+      - why
+      - recognition
+      - stories
+      - emi
+      - team
+      - legal
+      - errors
+  locale_selector:
+    component: LocaleSelector
+    props:
+      value:
+        type: string
+        required: true
+        description: current locale code
+      options:
+        type: LocaleOption[]
+        required: true
+      onChange:
+        type: (locale: string) => void
+        required: true
+      variant:
+        type: enum
+        enum_values:
+          - compact
+          - full
+        default: compact
+  implementation_notes:
+    - Store locale only in the URL path; avoid third-party cookies.
+    - Hindi (hi) copy must be reviewed by a native speaker before release.
+    - All Indic scripts are left-to-right; do not mirror layout.
+
+design_tokens:
+  color:
+    - token: nt-white
+      hex: "#FFFFFF"
+      usage: primary background
+    - token: nt-cream
+      hex: "#FAFAF8"
+      usage: alternate section background
+    - token: nt-orange-500
+      hex: "#F97316"
+      usage: primary brand accent
+    - token: nt-orange-600
+      hex: "#EA580C"
+      usage: primary button / link background
+    - token: nt-orange-700
+      hex: "#C2410C"
+      usage: button hover and active states
+    - token: nt-green-500
+      hex: "#22C55E"
+      usage: approval, progress, success indicators. Never primary CTAs.
+    - token: nt-slate-900
+      hex: "#0F172A"
+      usage: primary text
+    - token: nt-slate-600
+      hex: "#475569"
+      usage: secondary / muted text
+    - token: nt-slate-200
+      hex: "#E2E8F0"
+      usage: input borders and dividers
+    - token: nt-slate-100
+      hex: "#F1F5F9"
+      usage: subtle backgrounds and borders
+    - token: nt-black
+      hex: "#0A0A0A"
+      usage: footer surface, strongest contrast
+    - token: nt-red-500
+      hex: "#EF4444"
+      usage: error text and icons
+    - token: nt-amber-500
+      hex: "#F59E0B"
+      usage: warning indicators
+  usage_constraints:
+    - Green is reserved for success/progress; orange is the only primary CTA color.
+    - White text on nt-orange-600 is acceptable for large UI text only.
+    - Dark mode is out of scope.
+
+  typography:
+    ui_font: "'Inter', 'Noto Sans Devanagari', system-ui, sans-serif"
+    display_font: "'Instrument Serif', Georgia, serif"
+    scale:
+      - token: text-display
+        size: clamp(2.5rem, 6vw, 4.5rem)
+        line_height: 1.05
+        weight: 700
+        letter_spacing: -0.02em
+        usage: hero H1; Instrument Serif may be applied to 1-2 accent words only
+      - token: text-h1
+        size: clamp(2rem, 4vw, 3.5rem)
+        line_height: 1.1
+        weight: 700
+        letter_spacing: -0.02em
+        usage: page titles
+      - token: text-h2
+        size: clamp(1.75rem, 3vw, 2.75rem)
+        line_height: 1.15
+        weight: 600
+        usage: section headings
+      - token: text-h3
+        size: clamp(1.25rem, 2vw, 1.75rem)
+        line_height: 1.25
+        weight: 600
+        usage: card titles
+      - token: text-h4
+        size: 1.125rem
+        line_height: 1.4
+        weight: 600
+        usage: subheadings
+      - token: text-body-lg
+        size: 1.125rem
+        line_height: 1.6
+        weight: 400
+        usage: hero subcopy
+      - token: text-body
+        size: 1rem
+        line_height: 1.6
+        weight: 400
+        usage: body copy
+      - token: text-body-sm
+        size: 0.875rem
+        line_height: 1.5
+        weight: 400
+        usage: labels, captions
+      - token: text-caption
+        size: 0.75rem
+        line_height: 1.4
+        weight: 500
+        usage: legal text and badges
+
+  spacing:
+    base_unit: 4px
+    scale:
+      - 4
+      - 8
+      - 12
+      - 16
+      - 20
+      - 24
+      - 32
+      - 40
+      - 48
+      - 64
+      - 80
+      - 96
+      - 128
+    section_padding_default: clamp(5rem, 8vw, 7rem)
+    section_padding_tight: 2rem
+    container_max: 1280px
+    legal_container_max: 1024px
+    radii:
+      sm: 8px
+      lg: 12px
+      pill: 999px
+
+animation_system:
+  global_principles:
+    - Motion is punctuation, not prose.
+    - All continuous motion respects prefers-reduced-motion.
+    - Avoid scroll-triggered fades on every paragraph.
+    - Use translateY + opacity for reveals; use scale for feedback.
+  reduced_motion_fallback: |
+    When prefers-reduced-motion matches, set animation durations to 0ms,
+    disable auto-advancing carousels and marquees, and render static layouts.
+  utility_curves:
+    ease_default: "cubic-bezier(0.25, 0.46, 0.45, 0.94)"
+    ease_in_out: "cubic-bezier(0.4, 0, 0.2, 1)"
+    ease_out: "cubic-bezier(0, 0, 0.2, 1)"
+
+homepage_sections:
+  - id: announcement
+    component: AnnouncementBar
+    source: data_sources.announcement
+  - id: hero
+    component: Hero
+    source: data_sources.hero
+  - id: association_badges
+    component: AssociationBadges
+    source: data_sources.association_badges
+  - id: tech_ecosystem_ticker
+    component: TechEcosystemTicker
+    source: data_sources.tech_partners
+  - id: loan_products
+    component: LoanProducts
+    source: data_sources.loan_products
+  - id: why_navdhan
+    component: WhyNavDhan
+    source: data_sources.why_navdhan
+  - id: recognition
+    component: RecognitionCarousel
+    source: data_sources.recognition
+  - id: customer_stories
+    component: CustomerStories
+    source: data_sources.customer_stories
+  - id: emi_calculator
+    component: EmiCalculator
+    source: data_sources.emi_defaults
+  - id: final_cta
+    component: FinalCta
+    source: data_sources.final_cta
+  - id: footer
+    component: Footer
+    source: data_sources.footer
+    scope: global_shell
+
+data_sources:
+  announcement:
+    file: messages/global.json
+    schema:
+      type: object
+      fields:
+        messageKey:
+          type: string
+          required: true
+        ctaLabelKey:
+          type: string
+          required: false
+        href:
+          type: string
+          required: false
+        variant:
+          type: enum
+          enum_values:
+            - default
+            - accent
+          default: default
+
+  hero:
+    file: messages/home.json
+    schema:
+      type: object
+      fields:
+        eyebrowKey:
+          type: string
+          required: true
+        headlineKey:
+          type: string
+          required: true
+        bodyKey:
+          type: string
+          required: true
+        primaryCtaKey:
+          type: string
+          required: true
+        primaryHref:
+          type: string
+          required: true
+        secondaryCtaKey:
+          type: string
+          required: true
+        secondaryHref:
+          type: string
+          required: true
+        stats:
+          type: array
+          required: true
+          item_fields:
+            value:
+              type: string
+              required: true
+            labelKey:
+              type: string
+              required: true
+
+  association_badges:
+    file: content/association-badges.json
+    schema:
+      type: array
+      required: true
+      item_fields:
+        name:
+          type: string
+          required: true
+        logoAsset:
+          type: string
+          required: true
+        href:
+          type: string
+          required: false
+        altKey:
+          type: string
+          required: true
+
+  tech_partners:
+    file: content/tech-partners.json
+    schema:
+      type: array
+      required: true
+      item_fields:
+        name:
+          type: string
+          required: true
+        logoAsset:
+          type: string
+          required: true
+        href:
+          type: string
+          required: false
+        altKey:
+          type: string
+          required: true
+
+  loan_products:
+    file: messages/home.json
+    schema:
+      type: object
+      fields:
+        eyebrowKey:
+          type: string
+          required: true
+        headingKey:
+          type: string
+          required: true
+        bodyKey:
+          type: string
+          required: true
+        ctaKey:
+          type: string
+          required: true
+        ctaHref:
+          type: string
+          required: true
+        products:
+          type: array
+          required: true
+          item_fields:
+            id:
+              type: string
+              required: true
+            titleKey:
+              type: string
+              required: true
+            descriptionKey:
+              type: string
+              required: true
+            iconName:
+              type: string
+              required: true
+              description: Lucide icon identifier or custom SVG name
+            href:
+              type: string
+              required: false
+            ctaKey:
+              type: string
+              required: true
+
+  why_navdhan:
+    file: messages/home.json
+    schema:
+      type: object
+      fields:
+        eyebrowKey:
+          type: string
+          required: true
+        headingKey:
+          type: string
+          required: true
+        bodyKey:
+          type: string
+          required: true
+        ctaKey:
+          type: string
+          required: true
+        ctaHref:
+          type: string
+          required: true
+        trustBadgeKeys:
+          type: array
+          required: true
+          item_type: string
+        reasons:
+          type: array
+          required: true
+          item_fields:
+            id:
+              type: string
+              required: true
+            titleKey:
+              type: string
+              required: true
+            bodyKey:
+              type: string
+              required: true
+
+  recognition:
+    file: content/recognition.json
+    schema:
+      type: object
+      fields:
+        eyebrowKey:
+          type: string
+          required: true
+        headingKey:
+          type: string
+          required: true
+        items:
+          type: array
+          required: true
+          item_fields:
+            id:
+              type: string
+              required: true
+            titleKey:
+              type: string
+              required: true
+            descriptionKey:
+              type: string
+              required: true
+            imageAsset:
+              type: string
+              required: false
+            date:
+              type: string
+              required: false
+              description: optional display date such as "2026"
+
+  customer_stories:
+    file: content/stories.json
+    schema:
+      type: array
+      required: true
+          item_fields:
+            id:
+              type: string
+              required: true
+            name:
+              type: string
+              required: true
+            roleKey:
+              type: string
+              required: true
+            questionKey:
+              type: string
+              required: true
+            outcomeKey:
+              type: string
+              required: true
+            imageAsset:
+              type: string
+              required: true
+
+  emi_defaults:
+    file: content/emi-calculator.json
+    schema:
+      type: object
+      fields:
+        minAmount:
+          type: integer
+          required: true
+          unit: INR
+        maxAmount:
+          type: integer
+          required: true
+          unit: INR
+        defaultAmount:
+          type: integer
+          required: true
+        minRate:
+          type: number
+          required: true
+          unit: percent_per_year
+        maxRate:
+          type: number
+          required: true
+          unit: percent_per_year
+        defaultRate:
+          type: number
+          required: true
+        minTenure:
+          type: integer
+          required: true
+          unit: months
+        maxTenure:
+          type: integer
+          required: true
+          unit: months
+        defaultTenure:
+          type: integer
+          required: true
+        ctaKey:
+          type: string
+          required: true
+        ctaHref:
+          type: string
+          required: true
+
+  final_cta:
+    file: messages/home.json
+    schema:
+      type: object
+      fields:
+        headingKey:
+          type: string
+          required: true
+        subtextKey:
+          type: string
+          required: true
+        primaryCtaKey:
+          type: string
+          required: true
+        primaryHref:
+          type: string
+          required: true
+        secondaryCtaKey:
+          type: string
+          required: true
+        secondaryHref:
+          type: string
+          required: true
+
+  footer:
+    file: messages/global.json
+    schema:
+      type: object
+      fields:
+        taglineKey:
+          type: string
+          required: true
+        companyKey:
+          type: string
+          required: true
+        addressKey:
+          type: string
+          required: true
+        copyrightKey:
+          type: string
+          required: true
+        contactLinks:
+          type: array
+          required: true
+          item_fields:
+            labelKey:
+              type: string
+              required: true
+            href:
+              type: string
+              required: true
+              format: mailto or internal path
+        companyLinks:
+          type: array
+          required: true
+          item_fields:
+            labelKey:
+              type: string
+              required: true
+            href:
+              type: string
+              required: true
+        legalLinks:
+          type: array
+          required: true
+          item_fields:
+            labelKey:
+              type: string
+              required: true
+            href:
+              type: string
+              required: true
+        badges:
+          type: array
+          required: true
+          item_type: string
+
+  team:
+    file: content/team.json
+    schema:
+      type: object
+      fields:
+        pageHeadingKey:
+          type: string
+          required: true
+        pageSubtextKey:
+          type: string
+          required: true
+        joinCtaKey:
+          type: string
+          required: true
+        joinHref:
+          type: string
+          required: true
+        members:
+          type: array
+          required: true
+          item_fields:
+            id:
+              type: string
+              required: true
+            name:
+              type: string
+              required: true
+            roleKey:
+              type: string
+              required: true
+            bioKey:
+              type: string
+              required: true
+            imageAsset:
+              type: string
+              required: false
+            linkedIn:
+              type: string
+              required: false
+        advisors:
+          type: array
+          required: true
+          item_fields:
+            id:
+              type: string
+              required: true
+            name:
+              type: string
+              required: true
+            domainKey:
+              type: string
+              required: true
+            contributionKey:
+              type: string
+              required: true
+            imageAsset:
+              type: string
+              required: false
+            linkedIn:
+              type: string
+              required: false
+
+  legal_pages:
+    file: content/legal-pages.json
+    schema:
+      type: array
+      required: true
+      item_fields:
+        slug:
+          type: string
+          required: true
+        titleKey:
+          type: string
+          required: true
+        lastUpdatedKey:
+          type: string
+          required: true
+        bodyKey:
+          type: string
+          required: true
+
+components:
+  shells:
+    AnnouncementBar:
+      path: components/shells/AnnouncementBar
+      scope: global
+      props:
+        message:
+          type: string
+          required: true
+        href:
+          type: string
+          required: false
+        ctaLabel:
+          type: string
+          required: false
+        variant:
+          type: enum
+          enum_values:
+            - default
+            - accent
+          default: default
+        dismissible:
+          type: boolean
+          default: true
+      state:
+        hidden:
+          type: boolean
+          default: false
+          persistence: localStorage
+      events:
+        - onDismiss
+        - onCtaClick
+      variants:
+        - default
+        - accent
+      data_source: data_sources.announcement
+      animation:
+        entrance:
+          type: slideDown
+          duration: 300ms
+          easing: ease_out
+        reduced_motion: render instantly without vertical slide
+
+    Header:
+      path: components/shells/Header
+      scope: global
+      props:
+        navLinks:
+          type: NavLink[]
+          required: true
+        cta:
+          type: Cta
+          required: true
+        showLanguageToggle:
+          type: boolean
+          default: true
+        variant:
+          type: enum
+          enum_values:
+            - transparent
+            - solid
+          default: transparent
+      state:
+        isScrolled:
+          type: boolean
+          default: false
+        isMobileMenuOpen:
+          type: boolean
+          default: false
+      events:
+        - onMenuOpen
+        - onMenuClose
+        - onLocaleChange
+        - onCtaClick
+      slots:
+        - mobileMenuContent
+      variants:
+        - transparent
+        - solid
+      data_source: data_sources.footer/nav
+      animation:
+        scroll_state:
+          type: backgroundSolidifyBlur
+          duration: 200ms
+        reduced_motion: instant background color change
+
+    LocaleSelector:
+      path: components/shells/LocaleSelector
+      scope: global
+      props:
+        value:
+          type: string
+          required: true
+        options:
+          type: LocaleOption[]
+          required: true
+        onChange:
+          type: (locale: string) => void
+          required: true
+        variant:
+          type: enum
+          enum_values:
+            - compact
+            - full
+          default: compact
+      events:
+        - onChange
+      variants:
+        - compact
+        - full
+      data_source: i18n.locales
+      accessibility:
+        - Use native buttons or a labelled combobox.
+        - Expose aria-expanded when a dropdown is used.
+        - Maintain focus trap for full dropdown variant.
+
+    MobileMenu:
+      path: components/shells/MobileMenu
+      scope: global
+      props:
+        isOpen:
+          type: boolean
+          required: true
+        navLinks:
+          type: NavLink[]
+          required: true
+        cta:
+          type: Cta
+          required: true
+        locales:
+          type: LocaleOption[]
+          required: true
+        activeLocale:
+          type: string
+          required: true
+        onClose:
+          type: () => void
+          required: true
+        onLocaleChange:
+          type: (locale: string) => void
+          required: true
+      events:
+        - onClose
+        - onLocaleChange
+        - onCtaClick
+      slots:
+        - header
+        - footer
+      animation:
+        panel:
+          type: slideFromRight
+          duration: 300ms
+          easing: ease_in_out
+        backdrop:
+          type: fade
+          duration: 200ms
+        reduced_motion: panel appears instantly, no backdrop fade
+
+    Footer:
+      path: components/shells/Footer
+      scope: global
+      props:
+        taglineKey:
+          type: string
+          required: true
+        companyKey:
+          type: string
+          required: true
+        addressKey:
+          type: string
+          required: true
+        copyrightKey:
+          type: string
+          required: true
+        contactLinks:
+          type: NavLink[]
+          required: true
+        companyLinks:
+          type: NavLink[]
+          required: true
+        legalLinks:
+          type: NavLink[]
+          required: true
+        badges:
+          type: string[]
+          required: true
+      data_source: data_sources.footer
+      variants:
+        - default
+      animation:
+        reduced_motion: static
+
+  sections:
+    Hero:
+      path: components/sections/Hero
+      props:
+        eyebrowKey:
+          type: string
+          required: true
+        headlineKey:
+          type: string
+          required: true
+        bodyKey:
+          type: string
+          required: true
+        primaryCtaKey:
+          type: string
+          required: true
+        primaryHref:
+          type: string
+          required: true
+        secondaryCtaKey:
+          type: string
+          required: true
+        secondaryHref:
+          type: string
+          required: true
+        stats:
+          type: "{ value: string; labelKey: string }[]"
+          required: true
+      events:
+        - onPrimaryCtaClick
+        - onSecondaryCtaClick
+      variants:
+        - default
+      data_source: data_sources.hero
+      animation:
+        type: staggeredEntrance
+        properties:
+          - opacity 0 -> 1
+          - translateY 16px -> 0
+        stagger: 80ms
+        duration: 700ms
+        easing: cubic-bezier(0.25, 0.46, 0.45, 0.94)
+        reduced_motion: all hero content visible on first paint
+
+    AssociationBadges:
+      path: components/sections/AssociationBadges
+      props:
+        badges:
+          type: "{ name: string; logoAsset: string; href?: string; altKey: string }[]"
+          required: true
+      variants:
+        - default
+      data_source: data_sources.association_badges
+      animation:
+        entrance:
+          type: fadeIn
+          duration: 600ms
+          trigger: viewport
+        reduced_motion: static row
+
+    TechEcosystemTicker:
+      path: components/sections/TechEcosystemTicker
+      props:
+        partners:
+          type: "{ name: string; logoAsset: string; href?: string; altKey: string }[]"
+          required: true
+        speedSeconds:
+          type: number
+          default: 30
+        pauseOnHover:
+          type: boolean
+          default: true
+        direction:
+          type: enum
+          enum_values:
+            - left
+            - right
+          default: left
+      state:
+        isPaused:
+          type: boolean
+          default: false
+      events:
+        - onPartnerClick
+      variants:
+        - default
+      data_source: data_sources.tech_partners
+      animation:
+        type: marquee
+        properties:
+          - translateX 0 -> -50%
+        duration: 30s linear infinite
+        pause: animation-play-state paused on hover
+        reduced_motion: render as a static horizontal scroll-snap list
+
+    LoanProducts:
+      path: components/sections/LoanProducts
+      props:
+        eyebrowKey:
+          type: string
+          required: true
+        headingKey:
+          type: string
+          required: true
+        bodyKey:
+          type: string
+          required: true
+        products:
+          type: ProductCard[]
+          required: true
+        ctaKey:
+          type: string
+          required: true
+        ctaHref:
+          type: string
+          required: true
+      events:
+        - onProductClick
+        - onCtaClick
+      variants:
+        - default
+      data_source: data_sources.loan_products
+      animation:
+        type: staggeredCards
+        properties:
+          - opacity 0 -> 1
+          - translateY 24px -> 0
+        stagger: 100ms
+        duration: 600ms
+        reduced_motion: static cards
+
+    WhyNavDhan:
+      path: components/sections/WhyNavDhan
+      props:
+        eyebrowKey:
+          type: string
+          required: true
+        headingKey:
+          type: string
+          required: true
+        bodyKey:
+          type: string
+          required: true
+        reasons:
+          type: ReasonBlock[]
+          required: true
+        trustBadgeKeys:
+          type: string[]
+          required: true
+        ctaKey:
+          type: string
+          required: true
+        ctaHref:
+          type: string
+          required: true
+      events:
+        - onCtaClick
+      variants:
+        - default
+      data_source: data_sources.why_navdhan
+      animation:
+        type: staggeredGrid
+        stagger: 80ms
+        duration: 600ms
+        reduced_motion: static grid
+
+    RecognitionCarousel:
+      path: components/sections/RecognitionCarousel
+      props:
+        eyebrowKey:
+          type: string
+          required: true
+        headingKey:
+          type: string
+          required: true
+        items:
+          type: RecognitionItem[]
+          required: true
+        autoAdvance:
+          type: boolean
+          default: true
+        interval:
+          type: integer
+          default: 6000
+          unit: ms
+        showControls:
+          type: boolean
+          default: true
+      state:
+        activeIndex:
+          type: number
+          default: 0
+        isPaused:
+          type: boolean
+          default: false
+      events:
+        - onSelect
+        - onPause
+        - onResume
+      variants:
+        - default
+      data_source: data_sources.recognition
+      animation:
+        type: snapScroll
+        auto_advance:
+          interval: 6000ms
+          pause_on_hover: true
+        transition:
+          type: slide
+          duration: 400ms
+          easing: ease_in_out
+        reduced_motion: disable auto-advance; use static grid or manual scroll without motion
+
+    CustomerStories:
+      path: components/sections/CustomerStories
+      props:
+        eyebrowKey:
+          type: string
+          required: true
+        headingKey:
+          type: string
+          required: true
+        stories:
+          type: StoryCard[]
+          required: true
+        ctaKey:
+          type: string
+          required: true
+        ctaHref:
+          type: string
+          required: true
+      state:
+        activeIndex:
+          type: number
+          default: 0
+          description: pagination index for mobile swipe
+      events:
+        - onStoryClick
+        - onCtaClick
+      variants:
+        - default
+      data_source: data_sources.customer_stories
+      animation:
+        type: staggeredCards
+        stagger: 120ms
+        duration: 600ms
+        trigger: viewport
+        reduced_motion: static cards
+
+    EmiCalculator:
+      path: components/sections/EmiCalculator
+      props:
+        minAmount:
+          type: integer
+          required: true
+        maxAmount:
+          type: integer
+          required: true
+        defaultAmount:
+          type: integer
+          required: true
+        minRate:
+          type: number
+          required: true
+        maxRate:
+          type: number
+          required: true
+        defaultRate:
+          type: number
+          required: true
+        minTenure:
+          type: integer
+          required: true
+        maxTenure:
+          type: integer
+          required: true
+        defaultTenure:
+          type: integer
+          required: true
+        ctaKey:
+          type: string
+          required: true
+        ctaHref:
+          type: string
+          required: true
+      state:
+        amount:
+          type: integer
+        rate:
+          type: number
+        tenure:
+          type: integer
+        emi:
+          type: string
+        totalInterest:
+          type: string
+        totalPayable:
+          type: string
+        errors:
+          type: string[]
+      events:
+        - onChange
+        - onCtaClick
+      variants:
+        - default
+        - compact
+      data_source: data_sources.emi_defaults
+      animation:
+        number_change:
+          type: countUp
+          duration: 300ms
+        slider_thumb:
+          type: scale
+          duration: 150ms
+        reduced_motion: values update instantly
+
+    FinalCta:
+      path: components/sections/FinalCta
+      props:
+        headingKey:
+          type: string
+          required: true
+        subtextKey:
+          type: string
+          required: true
+        primaryCtaKey:
+          type: string
+          required: true
+        primaryHref:
+          type: string
+          required: true
+        secondaryCtaKey:
+          type: string
+          required: true
+        secondaryHref:
+          type: string
+          required: true
+      events:
+        - onPrimaryClick
+        - onSecondaryClick
+      variants:
+        - default
+      data_source: data_sources.final_cta
+      animation:
+        type: fadeScale
+        duration: 600ms
+        trigger: viewport
+        reduced_motion: static block
+
+page_contracts:
+  home:
+    route: /
+    file: app/[locale]/(marketing)/page.tsx
+    layout: app/[locale]/(marketing)/layout.tsx
+    sections:
+      - AnnouncementBar
+      - Hero
+      - AssociationBadges
+      - TechEcosystemTicker
+      - LoanProducts
+      - WhyNavDhan
+      - RecognitionCarousel
+      - CustomerStories
+      - EmiCalculator
+      - FinalCta
+      - Footer
+    seo:
+      titleKey: home.meta.title
+      descriptionKey: home.meta.description
+
+  team:
+    route: /team
+    file: app/[locale]/(marketing)/team/page.tsx
+    layout: app/[locale]/(marketing)/layout.tsx
+    data_source: data_sources.team
+    sections:
+      - Header
+      - TeamHero
+      - TeamMembers
+      - Advisors
+      - JoinCta
+      - Footer
+    seo:
+      titleKey: team.meta.title
+      descriptionKey: team.meta.description
+
+  legal:
+    route: /legal/[slug]
+    file: app/[locale]/(marketing)/legal/[slug]/page.tsx
+    layout: app/[locale]/(marketing)/layout.tsx
+    data_source: data_sources.legal_pages
+    params:
+      slug:
+        type: string
+        required: true
+        enum:
+          - privacy-policy
+          - terms-of-use
+          - fair-practices-code
+          - cookie-policy
+          - grievance-redressal
+          - rbi-dlg-disclosure
+          - consent-policy
+    generateStaticParams: true
+    seo:
+      titleKey: legal.{slug}.title
+      descriptionKey: legal.{slug}.description
+
+  apply:
+    route: /apply
+    file: app/[locale]/(apply)/apply/page.tsx
+    owner: unit-3-apply
+    note: |
+      Marketing contract references /apply only as the destination for CTAs.
+      The apply-portal flow, state machine and API contract are defined in
+      apply-contract.yaml.
+
+error_handling:
+  not_found:
+    status: 404
+    file: app/[locale]/not-found.tsx
+    behaviour: |
+      Render a localized "Page not found" message and a link back to the
+      current-locale home page. Avoid auto-redirects that hide the original URL.
+  error_boundary:
+    file: app/[locale]/error.tsx
+    behaviour: |
+      Log client-side error, render localized friendly error message, and provide
+      a "Return home" CTA.
+  invalid_locale:
+    behaviour: |
+      Middleware and the locale segment should treat unknown locale codes as
+      missing; rewrite the URL to the default-locale equivalent route and return 404
+      when the requested path cannot be mapped.
+
+static_assets:
+  logos:
+    - id: navdhan-logo
+      type: svg
+      path: /assets/logos/navdhan-logo.svg
+      alt_key: global.alt.navdhanLogo
+      variants:
+        - default
+    - id: kubar-labs-logo
+      type: svg
+      path: /assets/logos/kubar-labs-logo.svg
+      alt_key: global.alt.kubarLabsLogo
+      variants:
+        - default
+  association_badges:
+    - id: badge-face
+      name: FACE
+      type: svg
+      path: /assets/badges/face-logo.svg
+      alt_key: global.alt.face
+    - id: badge-startup-mahakumbh
+      name: Startup Mahakumbh
+      type: svg
+      path: /assets/badges/startup-mahakumbh-logo.svg
+      alt_key: global.alt.startupMahakumbh
+    - id: badge-stpi-finglobe
+      name: STPI FinGlobe
+      type: svg
+      path: /assets/badges/stpi-finglobe-logo.svg
+      alt_key: global.alt.stpiFinglobe
+    - id: badge-finvision
+      name: FinVision
+      type: svg
+      path: /assets/badges/finvision-logo.svg
+      alt_key: global.alt.finvision
+  tech_partners:
+    - id: partner-google
+      name: Google
+      path: /assets/partners/google-logo.svg
+    - id: partner-nvidia
+      name: NVIDIA
+      path: /assets/partners/nvidia-logo.svg
+    - id: partner-microsoft
+      name: Microsoft
+      path: /assets/partners/microsoft-logo.svg
+    - id: partner-intel
+      name: Intel
+      path: /assets/partners/intel-logo.svg
+    - id: partner-perplexity
+      name: Perplexity
+      path: /assets/partners/perplexity-logo.svg
+    - id: partner-openai
+      name: OpenAI
+      path: /assets/partners/openai-logo.svg
+    - id: partner-amplitude
+      name: Amplitude
+      path: /assets/partners/amplitude-logo.svg
+    - id: partner-elevenlabs
+      name: Eleven Labs
+      path: /assets/partners/elevenlabs-logo.svg
+  recognition_images:
+    - id: recognition-finvision
+      title: FinVision 2026, NIBM
+      path: /assets/recognition/finvision-2026.jpg
+    - id: recognition-india-ai
+      title: India AI Summit
+      path: /assets/recognition/india-ai-summit.jpg
+    - id: recognition-startup-mahakumbh
+      title: Startup Mahakumbh
+      path: /assets/recognition/startup-mahakumbh.jpg
+    - id: recognition-bengaluru-tech
+      title: Bengaluru Tech Summit
+      path: /assets/recognition/bengaluru-tech-summit.jpg
+    - id: recognition-stpi-imc
+      title: STPI IMC
+      path: /assets/recognition/stpi-imc.jpg
+    - id: recognition-kotak-bizlabs
+      title: Kotak BizLabs Demo Day
+      path: /assets/recognition/kotak-bizlabs.jpg
+    - id: recognition-bharat-innovation
+      title: Bharat Innovation Conclave
+      path: /assets/recognition/bharat-innovation-conclave.jpg
+    - id: recognition-rubrix-t-hub
+      title: Rubrix, T-Hub
+      path: /assets/recognition/rubrix-t-hub.jpg
+  customer_stories:
+    - id: story-rajiv
+      name: Rajiv K.
+      path: /assets/stories/rajiv-k.jpg
+    - id: story-sunita
+      name: Sunita M.
+      path: /assets/stories/sunita-m.jpg
+    - id: story-amit
+      name: Amit V.
+      path: /assets/stories/amit-v.jpg
+  team_photos:
+    placeholder: /assets/team/placeholder-avatar.jpg
+    note: Individual member and advisor photos to be sourced later.
+  icons:
+    library: Lucide
+    fallback: custom SVGs in components/icons/
+    note: No emoji icons.
+  favicon_and_og:
+    - /favicon.ico
+    - /apple-touch-icon.png
+    - /og-image.jpg
+    - /twitter-image.jpg
+
+notes:
+  - No implementation code lives in this contract; it is for use by @ui-designer,
+    @frontend and @integrator during the build phase.
+  - The Apply portal is out of scope for Unit 2 except as a CTA destination.
+  - Association badges, partner logos and customer/team images are placeholders
+    pending asset sourcing.
