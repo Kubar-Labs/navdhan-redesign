@@ -1,4 +1,4 @@
-version: "1.0.0"
+version: "1.1.0"
 domain: apply-portal
 source_of_truth: |
   Application-related PostgreSQL schema for the NavDhan /apply loan portal.
@@ -115,9 +115,9 @@ tables:
         nullable: false
         default: "'loan_intent'"
       loan_amount:
-        type: bigint
+        type: decimal(19, 4)
         nullable: true
-        check: "loan_amount IS NULL OR (loan_amount BETWEEN 500000 AND 10000000 AND loan_amount % 10000 = 0)"
+        check: "loan_amount IS NULL OR (loan_amount BETWEEN 500000.0000 AND 10000000.0000 AND loan_amount % 10000 = 0)"
       tenure_months:
         type: smallint
         nullable: true
@@ -175,6 +175,11 @@ tables:
         foreign_key:
           references: applications(id)
           on_delete: CASCADE
+      pii_key_id:
+        type: varchar(255)
+        nullable: false
+        default: "'v1'"
+        description: Data-encryption key version for all encrypted columns in this row. Enables key rotation without re-encrypting every row.
       full_name:
         type: text
         nullable: true
@@ -413,11 +418,11 @@ tables:
         nullable: true
         description: Public CDN URL; validated by server before storing.
       loan_amount:
-        type: bigint
+        type: decimal(19, 4)
         nullable: false
         check: "loan_amount > 0"
       interest_rate_annual:
-        type: numeric(5, 2)
+        type: decimal(5, 2)
         nullable: false
         check: "interest_rate_annual > 0"
       tenure_months:
@@ -425,17 +430,17 @@ tables:
         nullable: false
         check: "tenure_months BETWEEN 3 AND 12"
       emi_amount:
-        type: bigint
+        type: decimal(19, 4)
         nullable: false
       total_interest:
-        type: bigint
+        type: decimal(19, 4)
         nullable: false
       processing_fee:
-        type: bigint
+        type: decimal(19, 4)
         nullable: false
         default: 0
       net_disbursal:
-        type: bigint
+        type: decimal(19, 4)
         nullable: false
       status:
         type: offer_status
@@ -565,6 +570,54 @@ tables:
       - name: idx_otp_attempts_application
         columns: [application_id, created_at]
 
+  - name: idempotency_keys
+    tag: security
+    description: |
+      Stores replay-protected idempotency keys scoped to a session. Mutating
+      apply-portal endpoints read this table before executing business logic.
+      Rows are TTL-purged after the configured window (default 10 minutes).
+    columns:
+      id:
+        type: uuid
+        primary: true
+      key_hash:
+        type: varchar(64)
+        nullable: false
+        description: SHA-256 hash of the concatenation "scope:key" so raw keys are not retained.
+      scope:
+        type: varchar(255)
+        nullable: false
+        description: session identifier (hashed) or webhook sender id.
+      request_path:
+        type: varchar(255)
+        nullable: false
+      payload_hash:
+        type: varchar(64)
+        nullable: false
+        description: SHA-256 hash of the request body used to detect replay-with-different-payload.
+      response_status:
+        type: smallint
+        nullable: false
+      response_body:
+        type: jsonb
+        nullable: true
+        description: Cached JSON response body for exact replays.
+      created_at:
+        type: timestamptz
+        nullable: false
+        default: "now()"
+      expires_at:
+        type: timestamptz
+        nullable: false
+    indexes:
+      - name: idx_idempotency_keys_lookup
+        columns: [key_hash, scope]
+        unique: true
+        description: Unique composite for O(1) idempotency lookups. Use a partial unique index where expires_at > now() to allow stale rows to expire naturally.
+      - name: idx_idempotency_keys_expires
+        columns: [expires_at]
+        description: Used by the TTL purge job.
+
 migration_notes:
   status: new_schema
   assumptions: |
@@ -581,15 +634,21 @@ migration_notes:
     - step: 002_create_core_tables
       description: |
         Create `applications`, `applicants`, `documents`, `consents`, and
-        `lender_offers` tables with indexes and foreign keys.
+        `lender_offers` tables with indexes and foreign keys. All monetary
+        columns use `decimal(19,4)`. `applicants` includes `pii_key_id`.
     - step: 003_create_audit_and_security_tables
       description: |
-        Create `application_events` and `otp_attempts` tables.
+        Create `application_events`, `otp_attempts`, and `idempotency_keys`
+        tables.
     - step: 004_create_updated_at_trigger
       description: |
         Add an `updated_at` trigger function and attach triggers to all tables
         that require auto-updated timestamps, or rely on application-level
         `updated_at` updates explicitly documented in the repository.
+    - step: 004b_idempotency_ttl_job
+      description: |
+        Schedule a periodic job (pg_cron or application worker) to delete rows
+        from `idempotency_keys` where `expires_at <= now()`.
     - step: 005_data_migration_from_legacy
       description: |
         If migrating from a legacy NavDhan schema, map legacy application rows
@@ -605,9 +664,11 @@ migration_notes:
         Run a validation query to confirm no orphaned foreign keys and that all
         `reference_number` values are unique after legacy migration.
   breaking_changes: |
-    v1.0.0 is the initial schema; there are no prior contract versions to
-    migrate from. Any change that renames columns, removes enums, or tightens
-    constraints after first deploy MUST be released as v1.1.0+ with a migration
+    v1.1.0 changes monetary columns from `bigint` to `decimal(19,4)`, adds the
+    `idempotency_keys` table, and adds `applicants.pii_key_id`. Migration from
+    v1.0.0 requires casting existing money values and adding the new columns/tables.
+    Any subsequent change that renames columns, removes enums, or tightens
+    constraints after first deploy MUST be released as v1.2.0+ with a migration
     script and a corresponding update to `apply-contract.yaml`.
 
 pii_inventory:

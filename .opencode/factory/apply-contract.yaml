@@ -1,4 +1,4 @@
-version: "1.0.0"
+version: "1.1.0"
 service: apply-portal
 source_of_truth: |
   This contract defines the public API surface for the integrated /apply multi-step
@@ -108,6 +108,14 @@ security:
   csrf: |
     SameSite=Lax + custom header `x-navdhan-requested-with: apply` for mutating
     Route Handlers. Server rejects requests missing the header.
+  idempotency: |
+    Every mutating request MUST include an `Idempotency-Key` header containing a
+    UUID v4 (36 chars, lowercase). The server stores the key scoped to the
+    session for 10 minutes (configurable via `IDEMPOTENCY_TTL_SECONDS`). A replay
+    with the same key and session returns the cached HTTP status and body
+    without re-executing business logic. Requests missing the header return
+    `400 IDEMPOTENCY_KEY_REQUIRED`. A key that has been used with a different
+    payload returns `409 IDEMPOTENCY_KEY_CONFLICT`.
   rate_limiting:
     - scope: global
       limit: 100
@@ -311,8 +319,10 @@ endpoints:
     method: GET
     description: |
       Returns the current application draft for the session, including completed
-      step data, current step, masked PII, and document metadata. Creates a new
-      draft if none exists.
+      step data, current step, masked PII, and document metadata. Requires a
+      valid session cookie. If the cookie is missing or invalid, returns
+      `401 SESSION_INVALID`. When a valid session exists but has no application,
+      the route creates a new draft and returns it.
     security:
       - session_cookie
       - csrf_header
@@ -349,7 +359,14 @@ endpoints:
     security:
       - session_cookie
       - csrf_header
+      - idempotency_header
     request:
+      headers:
+        Idempotency-Key:
+          type: string
+          format: uuid
+          required: true
+          description: Client-generated UUID v4 idempotency key.
       body:
         application_id:
           type: string
@@ -402,7 +419,13 @@ endpoints:
     security:
       - session_cookie
       - csrf_header
+      - idempotency_header
     request:
+      headers:
+        Idempotency-Key:
+          type: string
+          format: uuid
+          required: true
       body:
         channel:
           type: string
@@ -441,7 +464,13 @@ endpoints:
     security:
       - session_cookie
       - csrf_header
+      - idempotency_header
     request:
+      headers:
+        Idempotency-Key:
+          type: string
+          format: uuid
+          required: true
       body:
         otp_reference_id:
           type: string
@@ -483,7 +512,13 @@ endpoints:
     security:
       - session_cookie
       - csrf_header
+      - idempotency_header
     request:
+      headers:
+        Idempotency-Key:
+          type: string
+          format: uuid
+          required: true
       body:
         document_type:
           type: string
@@ -539,7 +574,13 @@ endpoints:
     security:
       - session_cookie
       - csrf_header
+      - idempotency_header
     request:
+      headers:
+        Idempotency-Key:
+          type: string
+          format: uuid
+          required: true
       body:
         document_type:
           type: string
@@ -589,7 +630,13 @@ endpoints:
     security:
       - session_cookie
       - csrf_header
+      - idempotency_header
     request:
+      headers:
+        Idempotency-Key:
+          type: string
+          format: uuid
+          required: true
       body:
         months_requested:
           type: integer
@@ -637,7 +684,14 @@ endpoints:
     security:
       - hmac_signature
       - session_cookie
+      - idempotency_header
     request:
+      headers:
+        Idempotency-Key:
+          type: string
+          format: uuid
+          required: true
+          description: Perfios gateway correlation id; stub accepts any UUID v4.
       body:
         perfios_transaction_id:
           type: string
@@ -700,7 +754,13 @@ endpoints:
     security:
       - session_cookie
       - csrf_header
+      - idempotency_header
     request:
+      headers:
+        Idempotency-Key:
+          type: string
+          format: uuid
+          required: true
       body:
         application_id:
           type: string
@@ -791,7 +851,13 @@ endpoints:
     security:
       - session_cookie
       - csrf_header
+      - idempotency_header
     request:
+      headers:
+        Idempotency-Key:
+          type: string
+          format: uuid
+          required: true
       body:
         application_id:
           type: string
@@ -842,6 +908,16 @@ responses:
       body:
         error: { type: string, example: RATE_LIMITED }
         retry_after_seconds: { type: integer }
+  IdempotencyKeyRequired:
+    400:
+      description: Missing or invalid Idempotency-Key header
+      body:
+        error: { type: string, example: IDEMPOTENCY_KEY_REQUIRED }
+  IdempotencyKeyConflict:
+    409:
+      description: Idempotency key reused with a different payload
+      body:
+        error: { type: string, example: IDEMPOTENCY_KEY_CONFLICT }
 
 schemas:
   ApplicationState:
