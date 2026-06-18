@@ -1,0 +1,21 @@
+{
+  "name": "NavDhan",
+  "legalName": "Kubar Protocol Private Limited",
+  "cin": "U70200WB2024PTC274850",
+  "address": "156 Tarvakere, BTM Layout 1st Stage, Bengaluru, Karnataka, India",
+  "email": "support@navdhan.app",
+  "contactEmails": {
+    "loan": "loan@navdhan.app",
+    "partnership": "partnership@navdhan.app",
+    "support": "support@navdhan.app",
+    "careers": "careers@navdhan.app",
+    "press": "press@navdhan.app"
+  },
+  "phone": "+91-80-XXXX-XXXX",
+  "website": "https://navdhan.app",
+  "tagline": "Fair loans for India's MSMEs.",
+  "parentCompany": "Kubar Labs",
+  "rbi": {
+    "note": "NavDhan is a technology service provider and does not lend directly. All loans are originated by RBI-registered banks and NBFCs."
+  }
+}
