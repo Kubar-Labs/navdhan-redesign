@@ -1,0 +1,9 @@
+{
+  "status": "failed",
+  "role": "backend",
+  "reason": "Process exited without updating status. Log ends after reading src/types/apply.ts (not found). Likely hit max-steps or the TypeScript write gate before producing route handlers.",
+  "stdout": ".opencode/factory/subagent-status/apply-backend-005b.out.log",
+  "stderr": ".opencode/factory/subagent-status/apply-backend-005b.err.log",
+  "started_at": "2026-06-19T03:09:59+05:30",
+  "finished_at": "2026-06-19T03:25:00+05:30"
+}
