@@ -16,13 +16,13 @@ export interface LegalSectionRendererProps {
 export function LegalSectionRenderer({ section, locale }: LegalSectionRendererProps) {
   switch (section.content_type) {
     case "prose":
-      return <ProseSection section={section} locale={locale} />;
+      return <ProseSection section={section} />;
     case "list":
       return <ListSection section={section} />;
     case "table":
       return <TableSection section={section} />;
     case "contact_card":
-      return <ContactSection section={section} locale={locale} />;
+      return <ContactSection section={section} />;
     default:
       return null;
   }

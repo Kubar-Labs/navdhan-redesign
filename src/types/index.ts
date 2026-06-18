@@ -89,6 +89,6 @@ export interface EmiDefaults {
   minTenure: number;
   maxTenure: number;
   defaultTenure: number;
-  ctaKey: string;
-  ctaHref: string;
+  ctaKey?: string;
+  ctaHref?: string;
 }

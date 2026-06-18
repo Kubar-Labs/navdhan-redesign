@@ -1,12 +1,12 @@
 import type {
   BadgeItem,
   PartnerItem,
-  ProductCardData,
-  ReasonBlockData,
-  RecognitionItemData,
-  StoryCardData,
-  TeamMemberData,
-  AdvisorData,
+  ProductCard,
+  ReasonBlock,
+  RecognitionItem,
+  StoryCard,
+  TeamMember,
+  Advisor,
 } from "@/src/types";
 
 export const associationBadges: BadgeItem[] = [
@@ -75,7 +75,7 @@ export const techPartners: PartnerItem[] = [
   },
 ];
 
-export const loanProducts: ProductCardData[] = [
+export const loanProducts: ProductCard[] = [
   {
     id: "collateral-free",
     titleKey: "Collateral-Free Business Loan",
@@ -113,7 +113,7 @@ export const loanProducts: ProductCardData[] = [
   },
 ];
 
-export const whyReasons: ReasonBlockData[] = [
+export const whyReasons: ReasonBlock[] = [
   {
     id: "multiple-lenders",
     titleKey: "One application, multiple lenders.",
@@ -146,7 +146,7 @@ export const whyReasons: ReasonBlockData[] = [
   },
 ];
 
-export const recognitionItems: RecognitionItemData[] = [
+export const recognitionItems: RecognitionItem[] = [
   {
     id: "finvision",
     titleKey: "FinVision 2026, NIBM",
@@ -205,7 +205,7 @@ export const recognitionItems: RecognitionItemData[] = [
   },
 ];
 
-export const customerStories: StoryCardData[] = [
+export const customerStories: StoryCard[] = [
   {
     id: "rajiv",
     name: "Rajiv K.",
@@ -249,7 +249,7 @@ export const emiDefaults = {
 
 export const trustBadges = ["RBI Aligned", "FACE Registered", "10+ Lender Partners"];
 
-export const teamMembers: TeamMemberData[] = [
+export const teamMembers: TeamMember[] = [
   {
     id: "founder-1",
     name: "Vaibhav Sharma",
@@ -284,7 +284,7 @@ export const teamMembers: TeamMemberData[] = [
   },
 ];
 
-export const advisors: AdvisorData[] = [
+export const advisors: Advisor[] = [
   {
     id: "advisor-1",
     name: "Fintech Advisor",
