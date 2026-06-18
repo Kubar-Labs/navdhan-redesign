@@ -294,8 +294,9 @@
     "Remaining Stage 2 gap: actual .test.ts files for apply portal.",
     "2026-06-18: Patched agent manifests, switched subagent dispatch from Task tool to software-factory/bin/run-factory-subagent.sh (CLI process) to avoid deadlocks, and completed apply-002 test-engineer (tests/apply/*.test.ts + vitest.config.ts).",
     "2026-06-19: Resumability patch applied: committed apply-002 tests, created factory/navdhan-redesign/stage-2-outputs with merged Stage 2 artifacts, created Stage 3 implementation branches, removed missing Design.md input from marketing-003.",
-    "2026-06-19: Contracts updated to v1.1.0 (Idempotency-Key, DECIMAL(19,4) money, idempotency_keys table, pii_key_id). All CDDs revised, reviewed, and approved. Stage 5 implementation starting."
-  ],
+        "2026-06-19: Contracts updated to v1.1.0 (Idempotency-Key, DECIMAL(19,4) money, idempotency_keys table, pii_key_id). All CDDs revised, reviewed, and approved. Stage 5 implementation starting.",
+        "2026-06-19: Stage 5 first attempt hit file-permission restrictions. Snapshot saved to factory/navdhan-redesign/stage-5-wip. Created clean baseline factory/navdhan-redesign/stage-5-baseline with inline PostCSS/prettier config in package.json. Agents are instructed to use src/ for components/lib/types/db and app/ for routing; no root middleware or next.config.ts."
+    ],
   "linear": {
     "project_name": "NavDhan Redesign 2026",
     "team_key": null,
