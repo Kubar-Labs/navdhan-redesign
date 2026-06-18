@@ -1,0 +1,761 @@
+{
+  "version": "1.0.0",
+  "project": "navdhan-redesign-2026",
+  "unit": "apply",
+  "branch": "factory/navdhan-redesign/apply/ui-design",
+  "sources_of_truth": [
+    ".opencode/factory/Design.md",
+    ".opencode/factory/apply-contract.yaml",
+    ".opencode/factory/marketing-contract.yaml",
+    ".opencode/factory/design/ui-system.md"
+  ],
+  "stack": {
+    "framework": "Next.js 15 App Router",
+    "runtime": "React 19",
+    "language": "TypeScript (strict mode)",
+    "styling": "Tailwind CSS v4",
+    "components": "shadcn/ui",
+    "animation": "Framer Motion",
+    "i18n": "next-intl"
+  },
+  "design_tokens": {
+    "primary": "nt-orange-600 (#EA580C)",
+    "success": "nt-green-500 (#22C55E)",
+    "text": "nt-slate-900 (#0F172A)",
+    "muted": "nt-slate-600 (#475569)",
+    "surface_alt": "nt-cream (#FAFAF8)",
+    "error": "nt-red-500 (#EF4444)"
+  },
+  "components": [
+    {
+      "name": "ApplyLayout",
+      "filePath": "app/apply/layout.tsx",
+      "scope": "apply shell",
+      "description": "Locale-aware layout that wraps every /apply route. Renders a minimal sticky header, the wizard, and footer legal links.",
+      "props": {
+        "children": { "type": "React.ReactNode", "required": true, "description": "Wizard page content" },
+        "params": { "type": "{ locale: string }", "required": true, "description": "Next.js route params" },
+        "hideFooter": { "type": "boolean", "default": false, "description": "Hide footer on result screen" }
+      },
+      "state": {},
+      "events": [],
+      "validators": {},
+      "accessibility": [
+        "Set html lang from params.locale",
+        "dir is always ltr for supported Indic scripts",
+        "Provide skip-to-main-content link",
+        "Landmarks: header, main, footer"
+      ],
+      "animation": { "notes": "No page-level animation beyond Next.js default route transitions." }
+    },
+    {
+      "name": "WizardShell",
+      "filePath": "app/apply/_components/WizardShell.tsx",
+      "scope": "apply shell",
+      "description": "Top-level state container for the loan application wizard. Owns step routing, form values, draft persistence, async verification orchestration and submission.",
+      "props": {
+        "initialStepId": { "type": "WizardStepId", "default": "loan-intent", "description": "First step to render" },
+        "applicationId": { "type": "string | undefined", "description": "Existing draft id from URL or localStorage" },
+        "locale": { "type": "string", "required": true, "description": "Active locale code" },
+        "steps": { "type": "StepConfig[]", "required": true, "description": "Ordered step metadata" }
+      },
+      "state": {
+        "currentStepId": { "type": "WizardStepId", "default": "loan-intent" },
+        "formValues": { "type": "ApplyFormValues", "default": {}, "persistence": "localStorage draft" },
+        "wizardStatus": { "type": "'idle' | 'validating' | 'submitting' | 'completed' | 'error'", "default": "idle" },
+        "stepDirection": { "type": "'next' | 'back'", "default": "next" },
+        "submissionResult": { "type": "SubmissionResult | undefined" },
+        "errors": { "type": "Record<string, string[]>", "default": {} }
+      },
+      "stateMachine": {
+        "id": "wizard",
+        "initial": "idle",
+        "states": ["idle", "validating", "submitting", "completed", "error"],
+        "transitions": [
+          { "from": "idle", "to": "validating", "event": "VALIDATE_STEP" },
+          { "from": "validating", "to": "idle", "event": "VALIDATION_PASS" },
+          { "from": "validating", "to": "error", "event": "VALIDATION_FAIL" },
+          { "from": "idle", "to": "submitting", "event": "SUBMIT" },
+          { "from": "submitting", "to": "completed", "event": "SUBMIT_SUCCESS" },
+          { "from": "submitting", "to": "error", "event": "SUBMIT_ERROR" },
+          { "from": "error", "to": "idle", "event": "RESET" }
+        ]
+      },
+      "events": [
+        "step:next",
+        "step:back",
+        "step:goto",
+        "field:change",
+        "field:blur",
+        "otp:request",
+        "otp:verify",
+        "document:upload",
+        "document:remove",
+        "submit",
+        "reset"
+      ],
+      "validators": { "orchestratorNote": "Step-level validators run inside WizardShell before transition. Async validators (Aadhaar/PAN/GST) transition through validating state." },
+      "accessibility": [
+        "Wrap wizard in main landmark labelled 'Loan application form'",
+        "Use aria-live='polite' for status updates",
+        "Manage focus to step heading on every step change",
+        "Disable navigation buttons while status is submitting/validating"
+      ],
+      "animation": {
+        "stepTransition": { "type": "crossFade", "duration": "200ms", "easing": "ease-in-out" },
+        "progressBar": { "type": "width", "duration": "400ms", "easing": "cubic-bezier(0.4, 0, 0.2, 1)" },
+        "reducedMotion": "Swap animated transitions for instant visibility; keep progress value updates instant"
+      }
+    },
+    {
+      "name": "Stepper",
+      "filePath": "app/apply/_components/Stepper.tsx",
+      "scope": "apply shell",
+      "description": "Horizontal progress indicator showing the four high-level wizard phases and the active step.",
+      "props": {
+        "steps": { "type": "StepConfig[]", "required": true },
+        "currentStepId": { "type": "string", "required": true },
+        "progressPercent": { "type": "number", "default": 0, "description": "0-100 continuous progress" },
+        "orientation": { "type": "'horizontal' | 'vertical'", "default": "horizontal" },
+        "interactive": { "type": "boolean", "default": false, "description": "Allow clicking completed steps" }
+      },
+      "state": {},
+      "events": ["onStepClick"],
+      "validators": {},
+      "accessibility": [
+        "role='list' for the step list; each step role='listitem'",
+        "Active step uses aria-current='step'",
+        "Completed steps get aria-label 'completed' prefix",
+        "Progress bar role='progressbar' with aria-valuenow/min/max"
+      ],
+      "animation": {
+        "progressFill": { "type": "width", "duration": "400ms", "easing": "cubic-bezier(0.4, 0, 0.2, 1)" },
+        "stepDot": { "type": "scale + color", "duration": "200ms" },
+        "reducedMotion": "Render progress bar without width transition"
+      }
+    },
+    {
+      "name": "StepContent",
+      "filePath": "app/apply/_components/StepContent.tsx",
+      "scope": "apply shell",
+      "description": "Animated wrapper that renders a single wizard step and handles enter/exit motion direction.",
+      "props": {
+        "stepId": { "type": "string", "required": true },
+        "isActive": { "type": "boolean", "required": true },
+        "direction": { "type": "'next' | 'back'", "default": "next" },
+        "children": { "type": "React.ReactNode", "required": true }
+      },
+      "state": {},
+      "events": ["onEnter", "onExit"],
+      "validators": {},
+      "accessibility": [
+        "role='region' or role='tabpanel'",
+        "aria-labelledby points to stepper label id",
+        "Focus is moved to the step H2 on mount via useFocusEffect"
+      ],
+      "animation": {
+        "enter": { "type": "translateX + opacity", "x": "±16px", "duration": "200ms", "easing": "ease-in-out" },
+        "exit": { "type": "opacity", "duration": "150ms" },
+        "reducedMotion": "Remove translateX; cross-fade duration set to 0ms"
+      }
+    },
+    {
+      "name": "LoanIntentStep",
+      "filePath": "app/apply/_components/LoanIntentStep.tsx",
+      "scope": "step",
+      "description": "Loan intent capture: amount, tenure, purpose and optional referral code.",
+      "props": {
+        "values": { "type": "{ amount?: number; tenure?: number; purpose?: string; referralCode?: string }", "required": true },
+        "errors": { "type": "Record<string, string[]>", "default": {} },
+        "onChange": { "type": "(name: string, value: unknown) => void", "required": true },
+        "onCalculate": { "type": "() => void", "description": "Optional preview EMI" }
+      },
+      "state": { "touched": { "type": "Set<string>", "default": [] } },
+      "events": ["onChange", "onCalculate"],
+      "validators": {
+        "amount": [
+          { "name": "required", "type": "presence", "errorMessageKey": "apply.errors.fieldRequired" },
+          { "name": "range", "type": "range", "params": { "min": 500000, "max": 10000000, "step": 100000 }, "errorMessageKey": "apply.errors.amountRange" }
+        ],
+        "tenure": [
+          { "name": "required", "type": "presence", "errorMessageKey": "apply.errors.fieldRequired" },
+          { "name": "range", "type": "range", "params": { "min": 3, "max": 12, "unit": "months" }, "errorMessageKey": "apply.errors.tenureRange" }
+        ],
+        "purpose": [
+          { "name": "required", "type": "presence", "errorMessageKey": "apply.errors.fieldRequired" },
+          { "name": "enum", "type": "inclusion", "params": { "values": ["working_capital", "inventory", "machinery", "business_growth", "debt_refinance", "other"] }, "errorMessageKey": "apply.errors.purposeInvalid" }
+        ]
+      },
+      "accessibility": [
+        "Group amount/tenure/purpose in a fieldset with legend",
+        "Amount slider announces value changes with aria-live='polite'",
+        "Label every input explicitly; do not rely on placeholder alone"
+      ],
+      "animation": { "notes": "Number highlight uses a 150ms scale pulse on the EMI preview when values change." }
+    },
+    {
+      "name": "PersonalContactStep",
+      "filePath": "app/apply/_components/PersonalContactStep.tsx",
+      "scope": "step",
+      "description": "Borrower personal and contact details.",
+      "props": {
+        "values": { "type": "{ fullName?: string; mobile?: string; email?: string; businessPincode?: string }", "required": true },
+        "errors": { "type": "Record<string, string[]>", "default": {} },
+        "onChange": { "type": "(name: string, value: unknown) => void", "required": true }
+      },
+      "state": {},
+      "events": ["onChange"],
+      "validators": {
+        "fullName": [
+          { "name": "required", "type": "presence", "errorMessageKey": "apply.errors.fieldRequired" },
+          { "name": "minLength", "type": "length", "params": { "min": 3 }, "errorMessageKey": "apply.errors.nameTooShort" }
+        ],
+        "mobile": [
+          { "name": "required", "type": "presence", "errorMessageKey": "apply.errors.fieldRequired" },
+          { "name": "regex", "type": "regex", "params": { "pattern": "^[6-9]\\d{9}$" }, "errorMessageKey": "apply.errors.invalidMobile" }
+        ],
+        "email": [
+          { "name": "required", "type": "presence", "errorMessageKey": "apply.errors.fieldRequired" },
+          { "name": "email", "type": "email", "errorMessageKey": "apply.errors.invalidEmail" }
+        ],
+        "businessPincode": [
+          { "name": "required", "type": "presence", "errorMessageKey": "apply.errors.fieldRequired" },
+          { "name": "regex", "type": "regex", "params": { "pattern": "^\\d{6}$" }, "errorMessageKey": "apply.errors.invalidPincode" }
+        ]
+      },
+      "accessibility": [
+        "Use autocomplete values: name, tel, email",
+        "Mobile input type='tel' and inputmode='numeric'",
+        "Display inline errors with aria-describedby linked to input"
+      ],
+      "animation": { "notes": "No dedicated animation." }
+    },
+    {
+      "name": "AadhaarVerificationStep",
+      "filePath": "app/apply/_components/AadhaarVerificationStep.tsx",
+      "scope": "step",
+      "description": "Aadhaar number input + OTP stub for identity verification.",
+      "props": {
+        "aadhaar": { "type": "string", "default": "" },
+        "otp": { "type": "string", "default": "" },
+        "consent": { "type": "boolean", "default": false },
+        "status": { "type": "AadhaarStatus", "default": "idle" },
+        "errors": { "type": "Record<string, string[]>", "default": {} },
+        "onChange": { "type": "(name: string, value: unknown) => void", "required": true },
+        "onRequestOtp": { "type": "() => void", "required": true },
+        "onVerify": { "type": "() => void", "required": true },
+        "onResend": { "type": "() => void", "description": "Resend OTP" }
+      },
+      "state": {},
+      "stateMachine": {
+        "id": "aadhaarVerification",
+        "initial": "idle",
+        "states": ["idle", "otp_requested", "verifying", "verified", "error"],
+        "transitions": [
+          { "from": "idle", "to": "otp_requested", "event": "REQUEST_OTP" },
+          { "from": "otp_requested", "to": "verifying", "event": "VERIFY_OTP" },
+          { "from": "otp_requested", "to": "otp_requested", "event": "RESEND_OTP" },
+          { "from": "verifying", "to": "verified", "event": "VERIFY_SUCCESS" },
+          { "from": "verifying", "to": "error", "event": "VERIFY_FAIL" },
+          { "from": "error", "to": "idle", "event": "RESET" }
+        ]
+      },
+      "events": ["onRequestOtp", "onVerify", "onResend", "onReset"],
+      "validators": {
+        "aadhaar": [
+          { "name": "required", "type": "presence", "errorMessageKey": "apply.errors.fieldRequired" },
+          { "name": "regex", "type": "regex", "params": { "pattern": "^\\d{12}$" }, "errorMessageKey": "apply.errors.invalidAadhaar" }
+        ],
+        "otp": [
+          { "name": "required", "type": "presence", "params": { "when": "otp_requested" }, "errorMessageKey": "apply.errors.fieldRequired" },
+          { "name": "regex", "type": "regex", "params": { "pattern": "^\\d{6}$" }, "errorMessageKey": "apply.errors.invalidOtp" }
+        ],
+        "consent": [
+          { "name": "accepted", "type": "truthy", "errorMessageKey": "apply.errors.consentRequired" }
+        ]
+      },
+      "accessibility": [
+        "Aadhaar input has aria-describedby='aadhaar-format-hint'",
+        "OTP input is a single accessible component with individual digit labels",
+        "Use aria-live='polite' for OTP sent confirmation"
+      ],
+      "animation": {
+        "otpPanel": { "type": "height reveal", "duration": "200ms" },
+        "successIcon": { "type": "scale", "duration": "300ms" },
+        "reducedMotion": "Height transition disabled"
+      }
+    },
+    {
+      "name": "PanVerificationStep",
+      "filePath": "app/apply/_components/PanVerificationStep.tsx",
+      "scope": "step",
+      "description": "PAN number verification step.",
+      "props": {
+        "pan": { "type": "string", "default": "" },
+        "consent": { "type": "boolean", "default": false },
+        "status": { "type": "VerificationStatus", "default": "idle" },
+        "errors": { "type": "Record<string, string[]>", "default": {} },
+        "onChange": { "type": "(name: string, value: unknown) => void", "required": true },
+        "onVerify": { "type": "() => void", "required": true }
+      },
+      "state": {},
+      "stateMachine": {
+        "id": "panVerification",
+        "initial": "idle",
+        "states": ["idle", "validating", "verified", "error"],
+        "transitions": [
+          { "from": "idle", "to": "validating", "event": "VERIFY" },
+          { "from": "validating", "to": "verified", "event": "VERIFY_SUCCESS" },
+          { "from": "validating", "to": "error", "event": "VERIFY_FAIL" },
+          { "from": "error", "to": "idle", "event": "RESET" }
+        ]
+      },
+      "events": ["onVerify", "onReset"],
+      "validators": {
+        "pan": [
+          { "name": "required", "type": "presence", "errorMessageKey": "apply.errors.fieldRequired" },
+          { "name": "regex", "type": "regex", "params": { "pattern": "^[A-Z]{5}[0-9]{4}[A-Z]$" }, "errorMessageKey": "apply.errors.invalidPan" }
+        ],
+        "consent": [
+          { "name": "accepted", "type": "truthy", "errorMessageKey": "apply.errors.consentRequired" }
+        ]
+      },
+      "accessibility": [
+        "Auto uppercase input with maxLength 10",
+        "Screen reader announces validation result status"
+      ],
+      "animation": {
+        "statusPulse": { "type": "color + scale", "duration": "200ms" },
+        "reducedMotion": "Instant color swap"
+      }
+    },
+    {
+      "name": "GstVerificationStep",
+      "filePath": "app/apply/_components/GstVerificationStep.tsx",
+      "scope": "step",
+      "description": "GSTIN verification with an explicit skip path for unregistered businesses.",
+      "props": {
+        "gstin": { "type": "string", "default": "" },
+        "isRegistered": { "type": "boolean | null", "default": null },
+        "status": { "type": "VerificationStatus", "default": "idle" },
+        "errors": { "type": "Record<string, string[]>", "default": {} },
+        "onChange": { "type": "(name: string, value: unknown) => void", "required": true },
+        "onVerify": { "type": "() => void", "required": true },
+        "onSkip": { "type": "() => void", "required": true }
+      },
+      "state": {},
+      "stateMachine": {
+        "id": "gstVerification",
+        "initial": "idle",
+        "states": ["idle", "validating", "verified", "skipped", "error"],
+        "transitions": [
+          { "from": "idle", "to": "validating", "event": "VERIFY" },
+          { "from": "validating", "to": "verified", "event": "VERIFY_SUCCESS" },
+          { "from": "validating", "to": "error", "event": "VERIFY_FAIL" },
+          { "from": "idle", "to": "skipped", "event": "SKIP" }
+        ]
+      },
+      "events": ["onVerify", "onSkip"],
+      "validators": {
+        "isRegistered": [
+          { "name": "required", "type": "presence", "errorMessageKey": "apply.errors.fieldRequired" }
+        ],
+        "gstin": [
+          { "name": "requiredIf", "type": "presence", "params": { "condition": "isRegistered === true" }, "errorMessageKey": "apply.errors.fieldRequired" },
+          { "name": "regex", "type": "regex", "params": { "pattern": "^\\d{2}[A-Z]{5}\\d{4}[A-Z][1-9A-Z]Z[0-9A-Z]$" }, "errorMessageKey": "apply.errors.invalidGstin" }
+        ]
+      },
+      "accessibility": [
+        "Choice between 'Registered' and 'Not registered' as a radiogroup with legend",
+        "Skip action is a visible secondary button, not hidden",
+        "Explain consequence of skipping with aria-describedby"
+      ],
+      "animation": {
+        "gstinReveal": { "type": "height + opacity", "duration": "200ms" },
+        "reducedMotion": "Show/hide instant"
+      }
+    },
+    {
+      "name": "ItrUploadStep",
+      "filePath": "app/apply/_components/ItrUploadStep.tsx",
+      "scope": "step",
+      "description": "Upload the previous financial year's ITR as PDF or image.",
+      "props": {
+        "file": { "type": "File | null", "default": null },
+        "status": { "type": "UploadStatus", "default": "empty" },
+        "progress": { "type": "number", "default": 0 },
+        "errors": { "type": "Record<string, string[]>", "default": {} },
+        "onUpload": { "type": "(file: File) => void", "required": true },
+        "onRemove": { "type": "() => void", "required": true }
+      },
+      "state": {},
+      "stateMachine": {
+        "id": "itrUpload",
+        "initial": "empty",
+        "states": ["empty", "selecting", "uploading", "uploaded", "reading", "error"],
+        "transitions": [
+          { "from": "empty", "to": "selecting", "event": "SELECT" },
+          { "from": "selecting", "to": "uploading", "event": "UPLOAD" },
+          { "from": "uploading", "to": "reading", "event": "PROGRESS_100" },
+          { "from": "reading", "to": "uploaded", "event": "PARSE_SUCCESS" },
+          { "from": "reading", "to": "error", "event": "PARSE_FAIL" },
+          { "from": "uploading", "to": "error", "event": "UPLOAD_FAIL" },
+          { "from": "uploaded", "to": "empty", "event": "REMOVE" }
+        ]
+      },
+      "events": ["onUpload", "onRemove", "onRetry"],
+      "validators": {
+        "file": [
+          { "name": "required", "type": "presence", "errorMessageKey": "apply.errors.fieldRequired" },
+          { "name": "maxSize", "type": "fileSize", "params": { "maxBytes": 5242880 }, "errorMessageKey": "apply.errors.fileTooLarge" },
+          { "name": "type", "type": "fileType", "params": { "accept": ["application/pdf", "image/jpeg", "image/png"] }, "errorMessageKey": "apply.errors.fileTypeInvalid" }
+        ]
+      },
+      "accessibility": [
+        "Drag-and-drop zone is keyboard accessible (Enter/Space)",
+        "Hidden file input has aria-label and focus outline",
+        "Announce upload progress via aria-live='polite'",
+        "Uploaded file has a remove button with an accessible name"
+      ],
+      "animation": {
+        "dropZone": { "type": "scale + border-color", "duration": "150ms" },
+        "progressBar": { "type": "width", "duration": "200ms", "easing": "linear" },
+        "reducedMotion": "Progress value updates without motion"
+      }
+    },
+    {
+      "name": "BankStatementsStep",
+      "filePath": "app/apply/_components/BankStatementsStep.tsx",
+      "scope": "step",
+      "description": "Upload or link 6-12 months of bank statements via Perfios stub.",
+      "props": {
+        "months": { "type": "number", "default": 12 },
+        "providerLink": { "type": "string | undefined" },
+        "linked": { "type": "boolean", "default": false },
+        "status": { "type": "BankLinkStatus", "default": "idle" },
+        "errors": { "type": "Record<string, string[]>", "default": {} },
+        "onMonthsChange": { "type": "(months: number) => void", "required": true },
+        "onLink": { "type": "() => void", "required": true },
+        "onUnlink": { "type": "() => void", "description": "Reset provider link" }
+      },
+      "state": {},
+      "stateMachine": {
+        "id": "bankStatements",
+        "initial": "idle",
+        "states": ["idle", "linking", "linked", "uploaded", "error"],
+        "transitions": [
+          { "from": "idle", "to": "linking", "event": "LINK" },
+          { "from": "linking", "to": "linked", "event": "LINK_SUCCESS" },
+          { "from": "linking", "to": "error", "event": "LINK_FAIL" },
+          { "from": "linked", "to": "uploaded", "event": "UPLOAD_SUCCESS" },
+          { "from": "linked", "to": "error", "event": "UPLOAD_FAIL" },
+          { "from": "error", "to": "idle", "event": "RESET" }
+        ]
+      },
+      "events": ["onMonthsChange", "onLink", "onUnlink", "onRetry"],
+      "validators": {
+        "months": [
+          { "name": "required", "type": "presence", "errorMessageKey": "apply.errors.fieldRequired" },
+          { "name": "range", "type": "range", "params": { "min": 6, "max": 12 }, "errorMessageKey": "apply.errors.statementsMonthRange" }
+        ]
+      },
+      "accessibility": [
+        "Months selector uses native select or labelled segmented control",
+        "Link button opens provider flow in a modal with focus trap",
+        "Announce linked/unlinked status changes"
+      ],
+      "animation": {
+        "linkPanel": { "type": "height reveal", "duration": "200ms" },
+        "reducedMotion": "No expand animation"
+      }
+    },
+    {
+      "name": "ReviewSubmitStep",
+      "filePath": "app/apply/_components/ReviewSubmitStep.tsx",
+      "scope": "step",
+      "description": "Editable summary of all collected data plus required consent checkboxes before final submission.",
+      "props": {
+        "summary": { "type": "Record<string, unknown>", "required": true, "description": "Structured form data to display" },
+        "consents": { "type": "ConsentItem[]", "required": true },
+        "isSubmitting": { "type": "boolean", "default": false },
+        "errors": { "type": "Record<string, string[]>", "default": {} },
+        "onEdit": { "type": "(stepId: string) => void", "required": true },
+        "onConsentToggle": { "type": "(id: string, checked: boolean) => void", "required": true },
+        "onSubmit": { "type": "() => void", "required": true }
+      },
+      "state": {},
+      "events": ["onEdit", "onConsentToggle", "onSubmit"],
+      "validators": {
+        "consents": [
+          { "name": "allRequired", "type": "allTrue", "params": { "ids": ["dataSharing", "creditCheck", "termsOfUse"] }, "errorMessageKey": "apply.errors.consentRequired" }
+        ]
+      },
+      "accessibility": [
+        "Each summary section has an Edit link with a visible label",
+        "Consent checkboxes are in a labelled fieldset",
+        "Submit button is disabled until all required consents are true",
+        "Use aria-describedby on submit for any form-level error"
+      ],
+      "animation": { "notes": "No heavy motion; consent panel fades in on mount." }
+    },
+    {
+      "name": "SubmissionResultStep",
+      "filePath": "app/apply/_components/SubmissionResultStep.tsx",
+      "scope": "step",
+      "description": "Final success or failure screen after application submission.",
+      "props": {
+        "status": { "type": "'success' | 'failure'", "required": true },
+        "referenceNumber": { "type": "string | undefined" },
+        "headlineKey": { "type": "string", "default": "apply.success.headline" },
+        "subtextKey": { "type": "string", "default": "apply.success.subtext" },
+        "onViewDashboard": { "type": "() => void", "description": "CTA when success" },
+        "onBackHome": { "type": "() => void", "required": true },
+        "onContactSupport": { "type": "() => void", "description": "CTA when failure" }
+      },
+      "state": {},
+      "events": ["onViewDashboard", "onBackHome", "onContactSupport"],
+      "validators": {},
+      "accessibility": [
+        "Success/failure message uses role='status' and aria-live='polite'",
+        "Reference number is selectable and labelled",
+        "Primary action receives initial focus"
+      ],
+      "animation": {
+        "icon": { "type": "scale + opacity", "duration": "300ms" },
+        "content": { "type": "translateY + opacity", "duration": "400ms", "delay": "100ms" },
+        "reducedMotion": "Icon and text visible immediately"
+      }
+    },
+    {
+      "name": "ConsentPanel",
+      "filePath": "app/apply/_components/ConsentPanel.tsx",
+      "scope": "shared",
+      "description": "Reusable consent checkbox group with linked legal copy.",
+      "props": {
+        "items": { "type": "ConsentItem[]", "required": true },
+        "values": { "type": "Record<string, boolean>", "required": true },
+        "onToggle": { "type": "(id: string, checked: boolean) => void", "required": true },
+        "error": { "type": "string | undefined" }
+      },
+      "state": {},
+      "events": ["onToggle"],
+      "validators": {},
+      "accessibility": [
+        "Fieldset with legend describes purpose",
+        "Each checkbox label contains the legal link rendered as a real anchor",
+        "Error message tied to fieldset via aria-describedby"
+      ],
+      "animation": { "notes": "No animation; static form component." }
+    },
+    {
+      "name": "FormField",
+      "filePath": "app/apply/_components/FormField.tsx",
+      "scope": "shared",
+      "description": "Layout primitive pairing label, hint, error and control.",
+      "props": {
+        "id": { "type": "string", "required": true },
+        "label": { "type": "string", "required": true },
+        "children": { "type": "React.ReactNode", "required": true },
+        "hint": { "type": "string | undefined" },
+        "error": { "type": "string | undefined" },
+        "required": { "type": "boolean", "default": false }
+      },
+      "state": {},
+      "events": [],
+      "validators": {},
+      "accessibility": [
+        "Label uses htmlFor matching the control id",
+        "Wrap control aria-describedby with hint and error ids when present",
+        "Add aria-invalid='true' when error is truthy",
+        "Required fields use aria-required and visual asterisk"
+      ],
+      "animation": {
+        "error": { "type": "height + opacity reveal", "duration": "150ms" },
+        "reducedMotion": "Error appears instantly"
+      }
+    },
+    {
+      "name": "FileUpload",
+      "filePath": "app/apply/_components/FileUpload.tsx",
+      "scope": "shared",
+      "description": "Drag-and-drop file picker with validation, progress and removal.",
+      "props": {
+        "id": { "type": "string", "required": true },
+        "accept": { "type": "string", "default": ".pdf,.jpg,.jpeg,.png" },
+        "maxSizeBytes": { "type": "number", "default": 5242880 },
+        "file": { "type": "File | null", "default": null },
+        "status": { "type": "UploadStatus", "default": "empty" },
+        "progress": { "type": "number", "default": 0 },
+        "error": { "type": "string | undefined" },
+        "onSelect": { "type": "(file: File) => void", "required": true },
+        "onRemove": { "type": "() => void", "required": true }
+      },
+      "state": {},
+      "events": ["onSelect", "onRemove", "onRetry"],
+      "validators": {
+        "generic": [
+          { "name": "maxSize", "type": "fileSize", "params": { "maxBytesKey": "maxSizeBytes" }, "errorMessageKey": "apply.errors.fileTooLarge" },
+          { "name": "type", "type": "fileType", "params": { "accept": "accept" }, "errorMessageKey": "apply.errors.fileTypeInvalid" }
+        ]
+      },
+      "accessibility": [
+        "Drop zone is a button or has role='button' tabIndex=0",
+        "Keyboard Space/Enter triggers file dialog",
+        "Announce file selection and removal via aria-live",
+        "Progress bar has aria-valuenow/min/max"
+      ],
+      "animation": {
+        "dropZone": { "type": "scale + border-color", "duration": "150ms" },
+        "progressBar": { "type": "width", "duration": "200ms" },
+        "reducedMotion": "No scale or width animation"
+      }
+    },
+    {
+      "name": "OtpInput",
+      "filePath": "app/apply/_components/OtpInput.tsx",
+      "scope": "shared",
+      "description": "Accessible multi-digit OTP input.",
+      "props": {
+        "length": { "type": "number", "default": 6 },
+        "value": { "type": "string", "default": "" },
+        "disabled": { "type": "boolean", "default": false },
+        "error": { "type": "string | undefined" },
+        "onChange": { "type": "(value: string) => void", "required": true },
+        "onComplete": { "type": "(value: string) => void", "description": "Fired when all digits filled" }
+      },
+      "state": {},
+      "events": ["onChange", "onComplete"],
+      "validators": {
+        "otp": [
+          { "name": "length", "type": "length", "params": { "min": 6, "max": 6 }, "errorMessageKey": "apply.errors.invalidOtp" }
+        ]
+      },
+      "accessibility": [
+        "Container has role='group' and aria-label='One-time password'",
+        "Each input has aria-label 'Digit {n} of {length}'",
+        "Auto-focus next input on digit entry; Shift+Tab moves back",
+        "Paste fills all boxes and validates length"
+      ],
+      "animation": {
+        "focus": { "type": "border-color + subtle scale", "duration": "100ms" },
+        "reducedMotion": "No focus motion"
+      }
+    },
+    {
+      "name": "OfferCard",
+      "filePath": "app/apply/_components/OfferCard.tsx",
+      "scope": "shared",
+      "description": "Loan offer card shown in the offers step.",
+      "props": {
+        "offer": { "type": "LoanOffer", "required": true },
+        "selected": { "type": "boolean", "default": false },
+        "onSelect": { "type": "() => void", "required": true }
+      },
+      "state": {},
+      "events": ["onSelect"],
+      "validators": {},
+      "accessibility": [
+        "Rendered as a button or radio-like selectable card",
+        "Selected state uses aria-pressed='true'",
+        "Amount and EMI are announced as a single labelled region"
+      ],
+      "animation": {
+        "selection": { "type": "border-color + scale", "duration": "150ms" },
+        "reducedMotion": "Instant border change"
+      }
+    },
+    {
+      "name": "SummaryList",
+      "filePath": "app/apply/_components/SummaryList.tsx",
+      "scope": "shared",
+      "description": "Read-only grouped data display with per-section Edit actions.",
+      "props": {
+        "groups": { "type": "SummaryGroup[]", "required": true },
+        "onEdit": { "type": "(stepId: string) => void", "required": true },
+        "editable": { "type": "boolean", "default": true }
+      },
+      "state": {},
+      "events": ["onEdit"],
+      "validators": {},
+      "accessibility": [
+        "Use dl/dt/dd for key-value pairs when semantics allow",
+        "Each Edit button has aria-label 'Edit {section label}'",
+        "Group headings use h3"
+      ],
+      "animation": { "notes": "No animation; content should remain static." }
+    },
+    {
+      "name": "ErrorState",
+      "filePath": "app/apply/_components/ErrorState.tsx",
+      "scope": "shared",
+      "description": "Reusable error screen for step-level and wizard-level failures.",
+      "props": {
+        "title": { "type": "string", "required": true },
+        "message": { "type": "string", "required": true },
+        "onRetry": { "type": "() => void" },
+        "onSupport": { "type": "() => void" }
+      },
+      "state": {},
+      "events": ["onRetry", "onSupport"],
+      "validators": {},
+      "accessibility": [
+        "role='alert' for screen reader announcement",
+        "Focus is moved to the title when error appears",
+        "Retry button receives focus next in tab order"
+      ],
+      "animation": {
+        "entrance": { "type": "fadeIn", "duration": "200ms" },
+        "reducedMotion": "Instant display"
+      }
+    },
+    {
+      "name": "LoadingState",
+      "filePath": "app/apply/_components/LoadingState.tsx",
+      "scope": "shared",
+      "description": "Loading/pending state for async verification or submission.",
+      "props": {
+        "message": { "type": "string", "required": true },
+        "progress": { "type": "number | undefined", "description": "0-100 optional" },
+        "showProgress": { "type": "boolean", "default": false }
+      },
+      "state": {},
+      "events": [],
+      "validators": {},
+      "accessibility": [
+        "role='status' aria-live='polite' aria-busy='true'",
+        "Progress bar exposes aria-valuenow when present",
+        "Do not auto-focus; avoid focus loss from active element"
+      ],
+      "animation": {
+        "spinner": { "type": "rotate", "duration": "1s", "easing": "linear" },
+        "progressBar": { "type": "width", "duration": "200ms" },
+        "reducedMotion": "Spinner replaced by static text"
+      }
+    },
+    {
+      "name": "NavigationFooter",
+      "filePath": "app/apply/_components/NavigationFooter.tsx",
+      "scope": "shared",
+      "description": "Bottom bar with Back and Continue/Submit actions.",
+      "props": {
+        "onBack": { "type": "() => void", "description": "Hidden on first step" },
+        "onContinue": { "type": "() => void", "required": true },
+        "continueLabel": { "type": "string", "default": "Continue" },
+        "continueDisabled": { "type": "boolean", "default": false },
+        "isLoading": { "type": "boolean", "default": false },
+        "showSave": { "type": "boolean", "default": false },
+        "onSave": { "type": "() => void" }
+      },
+      "state": {},
+      "events": ["onBack", "onContinue", "onSave"],
+      "validators": {},
+      "accessibility": [
+        "Use native button elements",
+        "Loading continue button keeps accessible name and disabled state",
+        "Group in role='group' aria-label='Application navigation'",
+        "Back button is visually and keyboard reachable"
+      ],
+      "animation": { "notes": "No animation; fixed or sticky bottom bar." }
+    }
+  ]
+}
