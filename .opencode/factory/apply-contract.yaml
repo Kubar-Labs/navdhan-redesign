@@ -1,0 +1,1102 @@
+version: "1.0.0"
+service: apply-portal
+source_of_truth: |
+  This contract defines the public API surface for the integrated /apply multi-step
+  loan application portal on NavDhan.app. Implementers (backend Route Handlers and
+  frontend wizard) MUST NOT deviate from request/response shapes, error codes, or
+  state transitions without updating this contract.
+
+state_machine:
+  name: ApplicationWizard
+  initial_state: loan_intent
+  terminal_states:
+    - submitted_success
+    - submitted_failure
+    - abandoned
+  steps:
+    - id: loan_intent
+      order: 1
+      title_i18n_key: apply.steps.loanIntent.title
+      description_i18n_key: apply.steps.loanIntent.description
+      next: personal_contact
+      fields:
+        - loan_amount
+        - tenure_months
+        - purpose
+        - referral_code
+    - id: personal_contact
+      order: 2
+      title_i18n_key: apply.steps.personalContact.title
+      description_i18n_key: apply.steps.personalContact.description
+      next: aadhaar_verification
+      fields:
+        - full_name
+        - mobile_number
+        - email
+        - business_pin_code
+    - id: aadhaar_verification
+      order: 3
+      title_i18n_key: apply.steps.aadhaarVerification.title
+      description_i18n_key: apply.steps.aadhaarVerification.description
+      next: pan_verification
+      fields:
+        - aadhaar_number
+        - aadhaar_otp
+      requires_consent: true
+      consent_i18n_key: apply.consent.aadhaarPurpose
+    - id: pan_verification
+      order: 4
+      title_i18n_key: apply.steps.panVerification.title
+      description_i18n_key: apply.steps.panVerification.description
+      next: gst_verification
+      fields:
+        - pan_number
+    - id: gst_verification
+      order: 5
+      title_i18n_key: apply.steps.gstVerification.title
+      description_i18n_key: apply.steps.gstVerification.description
+      next: itr_upload
+      fields:
+        - gstin
+        - gstin_skipped
+      skippable: true
+      skip_note_i18n_key: apply.steps.gstVerification.skipNote
+    - id: itr_upload
+      order: 6
+      title_i18n_key: apply.steps.itrUpload.title
+      description_i18n_key: apply.steps.itrUpload.description
+      next: bank_statements
+      fields:
+        - itr_document_id
+      requires_consent: true
+      consent_i18n_key: apply.consent.itrPurpose
+    - id: bank_statements
+      order: 7
+      title_i18n_key: apply.steps.bankStatements.title
+      description_i18n_key: apply.steps.bankStatements.description
+      next: review_submit
+      fields:
+        - perfios_transaction_id
+        - statement_months
+      requires_consent: true
+      consent_i18n_key: apply.consent.bankStatementPurpose
+    - id: review_submit
+      order: 8
+      title_i18n_key: apply.steps.reviewSubmit.title
+      description_i18n_key: apply.steps.reviewSubmit.description
+      next: submission_result
+      fields:
+        - consent_marketing
+        - consent_terms
+        - consent_privacy
+        - consent_credit_bureau
+    - id: submission_result
+      order: 9
+      title_i18n_key: apply.steps.submissionResult.title
+      description_i18n_key: apply.steps.submissionResult.description
+      terminal: true
+      outcomes:
+        - submitted_success
+        - submitted_failure
+
+security:
+  transport: TLS 1.2+
+  session: |
+    Encrypted HTTP-only session cookie (e.g. `nd_session`). No JWT in localStorage.
+    Cookie MUST carry `__Host-` prefix, `SameSite=Lax`, and an expiry aligned with
+    the inactivity timeout (30 minutes).
+  csrf: |
+    SameSite=Lax + custom header `x-navdhan-requested-with: apply` for mutating
+    Route Handlers. Server rejects requests missing the header.
+  rate_limiting:
+    - scope: global
+      limit: 100
+      window: 60s
+      targets: all /api/apply/* routes
+    - scope: per_ip
+      limit: 10
+      window: 60s
+      targets:
+        - /api/apply/otp/send
+    - scope: per_session
+      limit: 5
+      window: 300s
+      targets:
+        - /api/apply/otp/verify
+  file_upload:
+    allowed_mime_types:
+      - application/pdf
+    max_file_size_bytes: 5242880
+    max_total_upload_bytes_per_application: 52428800
+    storage: |
+      Documents are stored in a private object store bucket. The API returns a
+      short-lived presigned URL for client upload; base64 is accepted only as a
+      fall-back for clients that cannot stream binary directly.
+  input_sanitization:
+    - Trim leading/trailing whitespace on all string fields.
+    - Normalize mobile numbers to 10 digits; reject country prefixes.
+    - Upper-case PAN, GSTIN, and Aadhaar OTP destinations.
+    - Strip HTML and control characters from free-text fields.
+    - Reject non-printable Unicode and zero-width joiners.
+  pii_handling:
+    - Aadhaar numbers are NEVER returned in full; only the last 4 digits are echoed.
+    - PAN is masked as `ABCXX***X` in GET responses; full value is used only for
+      downstream verification and is encrypted at rest.
+    - Mobile numbers are masked as `91-XXXXXX1234` in summary responses.
+    - Files are encrypted at rest using envelope encryption (KMS/AES-256-GCM).
+  consent_audit:
+    - Every consent checkbox is recorded with: step_id, consent_i18n_key, locale,
+      timestamp, client_ip, user_agent hash, application_id.
+    - Consent records are append-only and retain a textual snapshot of the statement
+      shown to the user.
+    - Withdrawal is not supported in MVP; the record is immutable.
+
+i18n:
+  supported_locales:
+    - en
+    - hi
+    - bn
+    - te
+    - mr
+    - ta
+    - kn
+    - ml
+  default_locale: en
+  required_user_facing_keys:
+    step_titles:
+      - apply.steps.loanIntent.title
+      - apply.steps.personalContact.title
+      - apply.steps.aadhaarVerification.title
+      - apply.steps.panVerification.title
+      - apply.steps.gstVerification.title
+      - apply.steps.itrUpload.title
+      - apply.steps.bankStatements.title
+      - apply.steps.reviewSubmit.title
+      - apply.steps.submissionResult.title
+    step_descriptions:
+      - apply.steps.loanIntent.description
+      - apply.steps.personalContact.description
+      - apply.steps.aadhaarVerification.description
+      - apply.steps.panVerification.description
+      - apply.steps.gstVerification.description
+      - apply.steps.itrUpload.description
+      - apply.steps.bankStatements.description
+      - apply.steps.reviewSubmit.description
+      - apply.steps.submissionResult.description
+    labels:
+      - apply.fields.loanAmount.label
+      - apply.fields.tenureMonths.label
+      - apply.fields.purpose.label
+      - apply.fields.referralCode.label
+      - apply.fields.fullName.label
+      - apply.fields.mobileNumber.label
+      - apply.fields.email.label
+      - apply.fields.businessPinCode.label
+      - apply.fields.aadhaarNumber.label
+      - apply.fields.aadhaarOtp.label
+      - apply.fields.panNumber.label
+      - apply.fields.gstin.label
+      - apply.fields.itrDocument.label
+      - apply.fields.bankStatementMonths.label
+      - apply.fields.consentTerms.label
+      - apply.fields.consentPrivacy.label
+      - apply.fields.consentCreditBureau.label
+      - apply.fields.consentMarketing.label
+    helper_text:
+      - apply.helpers.loanAmountRange
+      - apply.helpers.tenureRange
+      - apply.helpers.referralCodeOptional
+      - apply.helpers.gstinSkip
+      - apply.helpers.itrPdfOnly
+      - apply.helpers.bankStatementRange
+    buttons:
+      - apply.buttons.continue
+      - apply.buttons.back
+      - apply.buttons.saveAndContinue
+      - apply.buttons.checkEligibility
+      - apply.buttons.uploadDocument
+      - apply.buttons.verifyOtp
+      - apply.buttons.requestNewOtp
+      - apply.buttons.submitApplication
+      - apply.buttons.backToHome
+      - apply.buttons.viewDashboard
+    errors:
+      - apply.errors.invalidMobile
+      - apply.errors.invalidEmail
+      - apply.errors.requiredField
+      - apply.errors.fileTooLarge
+      - apply.errors.fileUnreadable
+      - apply.errors.serverError
+      - apply.errors.noLenderMatch
+      - apply.errors.invalidOtp
+      - apply.errors.invalidAmount
+      - apply.errors.invalidTenure
+      - apply.errors.invalidPinCode
+      - apply.errors.invalidAadhaar
+      - apply.errors.invalidPan
+      - apply.errors.invalidGstin
+      - apply.errors.sessionExpired
+
+validation_rules:
+  loan_amount:
+    type: integer
+    min: 500000
+    max: 10000000
+    multiple_of: 10000
+    currency: INR
+  tenure_months:
+    type: integer
+    min: 3
+    max: 12
+  purpose:
+    type: string
+    enum:
+      - working_capital
+      - machinery
+      - inventory
+      - business_expansion
+      - debt_refinancing
+      - other
+  referral_code:
+    type: string
+    max_length: 20
+    nullable: true
+    pattern: "^[A-Za-z0-9_-]+$"
+  full_name:
+    type: string
+    min_length: 2
+    max_length: 150
+    pattern: "^[A-Za-z\\s'.-]+$"
+  mobile_number:
+    type: string
+    pattern: "^[6-9][0-9]{9}$"
+    normalized: 10 digits, no country code
+  email:
+    type: string
+    format: email
+    max_length: 255
+  business_pin_code:
+    type: string
+    pattern: "^[1-9][0-9]{5}$"
+  aadhaar_number:
+    type: string
+    pattern: "^[0-9]{12}$"
+    storage: masked last-4 only; encrypted full value at rest
+  aadhaar_otp:
+    type: string
+    pattern: "^[0-9]{6}$"
+    ttl_seconds: 300
+    max_attempts: 3
+  pan_number:
+    type: string
+    pattern: "^[A-Z]{5}[0-9]{4}[A-Z]$"
+  gstin:
+    type: string
+    nullable: true
+    pattern: "^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$"
+  itr_document:
+    type: file
+    mime_types: [application/pdf]
+    max_size_bytes: 5242880
+    required_for: previous_financial_year
+  bank_statements:
+    type: perfios_statement_set
+    min_months: 6
+    max_months: 12
+    required_account_types: [current, savings]
+
+endpoints:
+  - id: get_apply_state
+    path: /api/apply/state
+    method: GET
+    description: |
+      Returns the current application draft for the session, including completed
+      step data, current step, masked PII, and document metadata. Creates a new
+      draft if none exists.
+    security:
+      - session_cookie
+      - csrf_header
+    request:
+      query:
+        locale:
+          type: string
+          enum: [en, hi, bn, te, mr, ta, kn, ml]
+          required: false
+          default: en
+    response:
+      200:
+        description: Application state retrieved
+        body:
+          $ref: "#/schemas/ApplicationState"
+      401:
+        description: Session invalid or expired
+        body:
+          error: { type: string, example: SESSION_INVALID }
+          message_i18n_key: { type: string, example: apply.errors.sessionExpired }
+      429:
+        description: Rate limit exceeded
+        body:
+          error: { type: string, example: RATE_LIMITED }
+          retry_after_seconds: { type: integer }
+
+  - id: update_apply_state
+    path: /api/apply/state
+    method: POST
+    description: |
+      Idempotent upsert of one or more step payloads. The server validates the
+      payload for the requested step, updates the draft, and returns the next
+      allowed step and any validation errors.
+    security:
+      - session_cookie
+      - csrf_header
+    request:
+      body:
+        application_id:
+          type: string
+          format: uuid
+          required: false
+          description: Optional; server creates a new draft if omitted and none exists.
+        current_step:
+          type: string
+          enum: [loan_intent, personal_contact, aadhaar_verification, pan_verification, gst_verification, itr_upload, bank_statements, review_submit]
+          required: true
+        payload:
+          type: object
+          required: true
+          description: Step-specific object. See schemas below.
+        locale:
+          type: string
+          enum: [en, hi, bn, te, mr, ta, kn, ml]
+          required: false
+          default: en
+    response:
+      200:
+        description: Step saved successfully
+        body:
+          $ref: "#/schemas/ApplicationState"
+      400:
+        description: Validation error
+        body:
+          error: { type: string, example: VALIDATION_ERROR }
+          field_errors:
+            type: array
+            items:
+              $ref: "#/schemas/FieldError"
+      409:
+        description: Step transition not allowed
+        body:
+          error: { type: string, example: INVALID_TRANSITION }
+          current_step: { type: string }
+          expected_step: { type: string }
+      401:
+        $ref: "#/responses/Unauthorized"
+      429:
+        $ref: "#/responses/RateLimited"
+
+  - id: send_otp
+    path: /api/apply/otp/send
+    method: POST
+    description: |
+      Sends a mock OTP to the given destination (mobile for Aadhaar-link or
+      Aadhaar number itself in stub mode). Rate-limited per destination.
+    security:
+      - session_cookie
+      - csrf_header
+    request:
+      body:
+        channel:
+          type: string
+          enum: [sms, aadhaar]
+          required: true
+        destination:
+          type: string
+          required: true
+          description: 10-digit mobile or 12-digit Aadhaar depending on channel.
+        purpose:
+          type: string
+          enum: [aadhaar_verification, mobile_verification]
+          required: true
+    response:
+      200:
+        description: OTP dispatched (mock)
+        body:
+          otp_reference_id: { type: string, format: uuid }
+          expires_at: { type: string, format: date-time }
+          cooldown_seconds: { type: integer, example: 60 }
+      400:
+        description: Invalid destination
+        body:
+          error: { type: string, example: INVALID_DESTINATION }
+          field_errors:
+            type: array
+            items:
+              $ref: "#/schemas/FieldError"
+      429:
+        $ref: "#/responses/RateLimited"
+
+  - id: verify_otp
+    path: /api/apply/otp/verify
+    method: POST
+    description: Verifies the OTP entered by the user. Mock backend accepts any 6-digit code in development.
+    security:
+      - session_cookie
+      - csrf_header
+    request:
+      body:
+        otp_reference_id:
+          type: string
+          format: uuid
+          required: true
+        otp:
+          type: string
+          pattern: "^[0-9]{6}$"
+          required: true
+        purpose:
+          type: string
+          enum: [aadhaar_verification, mobile_verification]
+          required: true
+    response:
+      200:
+        description: OTP verified
+        body:
+          verified: { type: boolean, example: true }
+          verification_token: { type: string, description: Short-lived token bound to the step }
+      400:
+        description: OTP validation failed
+        body:
+          error: { type: string, example: INVALID_OTP }
+          remaining_attempts: { type: integer }
+          message_i18n_key: { type: string, example: apply.errors.invalidOtp }
+      410:
+        description: OTP expired
+        body:
+          error: { type: string, example: OTP_EXPIRED }
+      429:
+        $ref: "#/responses/RateLimited"
+
+  - id: request_upload_url
+    path: /api/apply/documents/upload-url
+    method: POST
+    description: |
+      Returns a presigned URL and document_id for direct client upload. This is
+      the preferred flow for PDF uploads.
+    security:
+      - session_cookie
+      - csrf_header
+    request:
+      body:
+        document_type:
+          type: string
+          enum: [itr, bank_statement, gst_return, other]
+          required: true
+        file_name:
+          type: string
+          required: true
+          max_length: 255
+        file_size_bytes:
+          type: integer
+          required: true
+          max: 5242880
+        mime_type:
+          type: string
+          required: true
+          enum: [application/pdf]
+        financial_year:
+          type: string
+          required: false
+          description: Required for ITR/GST returns, e.g. "2024-25".
+    response:
+      200:
+        description: Presigned URL issued
+        body:
+          document_id: { type: string, format: uuid }
+          upload_url: { type: string, format: uri }
+          upload_method: { type: string, enum: [PUT, POST], example: PUT }
+          expires_at: { type: string, format: date-time }
+          public_url_after_upload: { type: string, format: uri, nullable: true }
+      400:
+        description: Invalid file metadata
+        body:
+          error: { type: string, example: VALIDATION_ERROR }
+          field_errors:
+            type: array
+            items:
+              $ref: "#/schemas/FieldError"
+      413:
+        description: File too large
+        body:
+          error: { type: string, example: FILE_TOO_LARGE }
+          max_size_bytes: { type: integer }
+      429:
+        $ref: "#/responses/RateLimited"
+
+  - id: upload_document_base64
+    path: /api/apply/documents/upload
+    method: POST
+    description: |
+      Fallback upload endpoint that accepts a base64-encoded PDF. Server performs
+      virus/malware scan stub and returns document metadata.
+    security:
+      - session_cookie
+      - csrf_header
+    request:
+      body:
+        document_type:
+          type: string
+          enum: [itr, bank_statement, gst_return, other]
+          required: true
+        file_name:
+          type: string
+          required: true
+          max_length: 255
+        mime_type:
+          type: string
+          required: true
+          enum: [application/pdf]
+        base64_content:
+          type: string
+          required: true
+          description: Base64-encoded PDF bytes.
+        financial_year:
+          type: string
+          required: false
+    response:
+      201:
+        description: Document uploaded and scanned
+        body:
+          $ref: "#/schemas/Document"
+      400:
+        description: Invalid document
+        body:
+          error: { type: string, example: VALIDATION_ERROR }
+          field_errors:
+            type: array
+            items:
+              $ref: "#/schemas/FieldError"
+      415:
+        description: Unsupported media type
+        body:
+          error: { type: string, example: UNSUPPORTED_MEDIA_TYPE }
+      429:
+        $ref: "#/responses/RateLimited"
+
+  - id: perfios_initiate
+    path: /api/apply/perfios/initiate
+    method: POST
+    description: |
+      Creates a Perfios transaction stub and returns a redirect URL or widget token
+      for the borrower to link their bank account. No real Perfios call in MVP.
+    security:
+      - session_cookie
+      - csrf_header
+    request:
+      body:
+        months_requested:
+          type: integer
+          required: true
+          min: 6
+          max: 12
+        preferred_bank:
+          type: string
+          required: false
+          max_length: 100
+        consent_accepted:
+          type: boolean
+          required: true
+          description: Must be true; server records consent snapshot.
+    response:
+      200:
+        description: Perfios session initiated
+        body:
+          perfios_transaction_id: { type: string }
+          redirect_url: { type: string, format: uri }
+          widget_token: { type: string, nullable: true }
+          expires_at: { type: string, format: date-time }
+      400:
+        description: Validation error
+        body:
+          error: { type: string, example: VALIDATION_ERROR }
+          field_errors:
+            type: array
+            items:
+              $ref: "#/schemas/FieldError"
+      424:
+        description: Perfios provider unavailable (stub)
+        body:
+          error: { type: string, example: PERFIOS_UNAVAILABLE }
+      429:
+        $ref: "#/responses/RateLimited"
+
+  - id: perfios_callback
+    path: /api/apply/perfios/callback
+    method: POST
+    description: |
+      Webhook-style callback used by the Perfios stub to report statement fetch
+      status. In production this would be called by the Perfios gateway; in MVP
+      the frontend may poll `/api/apply/perfios/status` after redirect.
+    security:
+      - hmac_signature
+      - session_cookie
+    request:
+      body:
+        perfios_transaction_id:
+          type: string
+          required: true
+        status:
+          type: string
+          enum: [success, failure, partial]
+          required: true
+        statement_count:
+          type: integer
+          required: false
+        month_count:
+          type: integer
+          required: false
+        failure_reason:
+          type: string
+          required: false
+        metadata:
+          type: object
+          required: false
+    response:
+      204:
+        description: Callback accepted
+      400:
+        description: Invalid callback payload
+        body:
+          error: { type: string, example: INVALID_CALLBACK }
+      401:
+        description: Invalid signature
+        body:
+          error: { type: string, example: INVALID_SIGNATURE }
+
+  - id: perfios_status
+    path: /api/apply/perfios/status
+    method: GET
+    description: Poll Perfios transaction status.
+    security:
+      - session_cookie
+    request:
+      query:
+        perfios_transaction_id:
+          type: string
+          required: true
+    response:
+      200:
+        description: Perfios status
+        body:
+          perfios_transaction_id: { type: string }
+          status: { type: string, enum: [pending, success, failure, partial] }
+          statement_count: { type: integer, nullable: true }
+          month_count: { type: integer, nullable: true }
+
+  - id: submit_application
+    path: /api/apply/submit
+    method: POST
+    description: |
+      Final submission. Server validates all mandatory steps and consents,
+      records the final audit event, generates a reference number, requests
+      lender matching stub, and returns success or failure with support path.
+    security:
+      - session_cookie
+      - csrf_header
+    request:
+      body:
+        application_id:
+          type: string
+          format: uuid
+          required: true
+        final_consents:
+          type: object
+          required: true
+          properties:
+            terms:
+              type: boolean
+              required: true
+            privacy:
+              type: boolean
+              required: true
+            credit_bureau:
+              type: boolean
+              required: true
+            marketing:
+              type: boolean
+              required: true
+        locale:
+          type: string
+          enum: [en, hi, bn, te, mr, ta, kn, ml]
+          required: false
+          default: en
+    response:
+      200:
+        description: Application submitted
+        body:
+          $ref: "#/schemas/SubmissionResult"
+      400:
+        description: Submission validation error
+        body:
+          error: { type: string, example: VALIDATION_ERROR }
+          missing_steps:
+            type: array
+            items: { type: string }
+          missing_consents:
+            type: array
+            items: { type: string }
+      422:
+        description: Step data incomplete for submission
+        body:
+          error: { type: string, example: INCOMPLETE_APPLICATION }
+      429:
+        $ref: "#/responses/RateLimited"
+      500:
+        description: Submission processing failed
+        body:
+          error: { type: string, example: SUBMISSION_FAILED }
+          support_reference: { type: string }
+          support_path: { type: string, enum: [email, phone, chat_stub] }
+
+  - id: get_offers
+    path: /api/apply/offers
+    method: GET
+    description: |
+      Returns stub lender offers for an application after successful submission.
+      Real matching runs asynchronously; this endpoint returns cached offers.
+    security:
+      - session_cookie
+    request:
+      query:
+        application_id:
+          type: string
+          format: uuid
+          required: true
+    response:
+      200:
+        description: Lender offers
+        body:
+          offers:
+            type: array
+            items:
+              $ref: "#/schemas/LenderOffer"
+      404:
+        description: Application not found or not submitted
+        body:
+          error: { type: string, example: APPLICATION_NOT_FOUND }
+
+  - id: record_consent
+    path: /api/apply/consent
+    method: POST
+    description: |
+      Explicitly records a consent decision at any step. Usually invoked by the
+      frontend before proceeding from a consent-gated step.
+    security:
+      - session_cookie
+      - csrf_header
+    request:
+      body:
+        application_id:
+          type: string
+          format: uuid
+          required: true
+        step_id:
+          type: string
+          required: true
+        consent_key:
+          type: string
+          required: true
+        accepted:
+          type: boolean
+          required: true
+        locale:
+          type: string
+          required: false
+          default: en
+        statement_snapshot:
+          type: string
+          required: true
+          max_length: 2000
+          description: The exact consent text shown to the user, in selected locale.
+    response:
+      201:
+        description: Consent recorded
+        body:
+          $ref: "#/schemas/ConsentRecord"
+      400:
+        description: Consent validation error
+        body:
+          error: { type: string, example: VALIDATION_ERROR }
+          field_errors:
+            type: array
+            items:
+              $ref: "#/schemas/FieldError"
+
+responses:
+  Unauthorized:
+    401:
+      description: Session invalid or expired
+      body:
+        error: { type: string, example: SESSION_INVALID }
+        message_i18n_key: { type: string }
+  RateLimited:
+    429:
+      description: Rate limit exceeded
+      body:
+        error: { type: string, example: RATE_LIMITED }
+        retry_after_seconds: { type: integer }
+
+schemas:
+  ApplicationState:
+    type: object
+    properties:
+      application_id:
+        type: string
+        format: uuid
+      current_step:
+        type: string
+        enum: [loan_intent, personal_contact, aadhaar_verification, pan_verification, gst_verification, itr_upload, bank_statements, review_submit, submission_result]
+      status:
+        type: string
+        enum: [draft, submitted, declined, expired]
+      reference_number:
+        type: string
+        nullable: true
+        description: Generated only after successful submission.
+      loan_intent:
+        type: object
+        nullable: true
+        properties:
+          loan_amount: { type: integer, min: 500000, max: 10000000 }
+          tenure_months: { type: integer, min: 3, max: 12 }
+          purpose: { type: string }
+          referral_code: { type: string, nullable: true }
+      personal_contact:
+        type: object
+        nullable: true
+        properties:
+          full_name: { type: string }
+          mobile_number: { type: string }
+          email: { type: string, format: email }
+          business_pin_code: { type: string, pattern: "^[1-9][0-9]{5}$" }
+      aadhaar_verification:
+        type: object
+        nullable: true
+        properties:
+          masked_aadhaar: { type: string, example: "XXXX XXXX 1234" }
+          verified: { type: boolean }
+          verified_at: { type: string, format: date-time, nullable: true }
+      pan_verification:
+        type: object
+        nullable: true
+        properties:
+          masked_pan: { type: string, example: "ABCXX***X" }
+          verified: { type: boolean }
+          verified_at: { type: string, format: date-time, nullable: true }
+      gst_verification:
+        type: object
+        nullable: true
+        properties:
+          gstin: { type: string, nullable: true }
+          skipped: { type: boolean }
+          skipped_reason_i18n_key: { type: string, nullable: true }
+      itr_upload:
+        type: object
+        nullable: true
+        properties:
+          document_id: { type: string, format: uuid }
+          file_name: { type: string }
+          financial_year: { type: string }
+          status: { type: string, enum: [uploaded, scanned, failed] }
+      bank_statements:
+        type: object
+        nullable: true
+        properties:
+          perfios_transaction_id: { type: string }
+          status: { type: string, enum: [pending, success, failure, partial] }
+          month_count: { type: integer, min: 6, max: 12, nullable: true }
+      consents:
+        type: array
+        items:
+          $ref: "#/schemas/ConsentRecord"
+      last_activity_at:
+        type: string
+        format: date-time
+      expires_at:
+        type: string
+        format: date-time
+
+  FieldError:
+    type: object
+    properties:
+      field:
+        type: string
+      message_i18n_key:
+        type: string
+      params:
+        type: object
+        description: Interpolation values for the translated message.
+
+  Document:
+    type: object
+    properties:
+      document_id:
+        type: string
+        format: uuid
+      application_id:
+        type: string
+        format: uuid
+      document_type:
+        type: string
+        enum: [itr, bank_statement, gst_return, other]
+      file_name:
+        type: string
+      mime_type:
+        type: string
+      storage_path:
+        type: string
+        description: Internal object-store path; never exposed to client.
+      status:
+        type: string
+        enum: [pending, uploaded, scanned, failed]
+      scan_result:
+        type: string
+        enum: [clean, infected, unreadable]
+        nullable: true
+      financial_year:
+        type: string
+        nullable: true
+      created_at:
+        type: string
+        format: date-time
+      updated_at:
+        type: string
+        format: date-time
+
+  ConsentRecord:
+    type: object
+    properties:
+      consent_id:
+        type: string
+        format: uuid
+      application_id:
+        type: string
+        format: uuid
+      step_id:
+        type: string
+      consent_key:
+        type: string
+        description: Stable i18n key for the consent being granted.
+      accepted:
+        type: boolean
+      statement_snapshot:
+        type: string
+        max_length: 2000
+      locale:
+        type: string
+      client_ip_hash:
+        type: string
+        description: SHA-256 hash of client IP; raw IP never stored with consent text.
+      recorded_at:
+        type: string
+        format: date-time
+
+  SubmissionResult:
+    type: object
+    properties:
+      application_id:
+        type: string
+        format: uuid
+      reference_number:
+        type: string
+        description: Human-readable reference, e.g. NDH-20260618-XXXXXX.
+      outcome:
+        type: string
+        enum: [submitted_success, submitted_failure]
+      message_i18n_key:
+        type: string
+      next_step:
+        type: string
+        enum: [offers, support]
+      support:
+        type: object
+        nullable: true
+        properties:
+          support_reference: { type: string }
+          email: { type: string, format: email }
+          phone: { type: string }
+
+  LenderOffer:
+    type: object
+    description: Stub lender offer shape returned by /api/apply/offers.
+    properties:
+      offer_id:
+        type: string
+        format: uuid
+      application_id:
+        type: string
+        format: uuid
+      lender_name:
+        type: string
+      lender_logo_url:
+        type: string
+        format: uri
+        nullable: true
+      loan_amount:
+        type: integer
+      interest_rate_annual:
+        type: number
+        description: Annualised interest rate in percent.
+      tenure_months:
+        type: integer
+      emi_amount:
+        type: integer
+      total_interest:
+        type: integer
+      processing_fee:
+        type: integer
+      net_disbursal:
+        type: integer
+      status:
+        type: string
+        enum: [eligible, selected, expired, rejected]
+      expires_at:
+        type: string
+        format: date-time
+        nullable: true
+
+perfios_integration:
+  status: stubbed
+  notes: |
+    The Perfios integration is stubbed for the redesign factory. No outbound
+    network call to Perfios is made. The stub generates a transaction id,
+    returns a redirect URL to a placeholder success/cancel page, and accepts a
+    callback that simulates statement fetch success or failure.
+  expected_data_from_perfios:
+    - account_holder_name
+    - account_number (masked)
+    - ifsc_code
+    - bank_name
+    - statement_period_start
+    - statement_period_end
+    - monthly_closing_balance array
+    - average_monthly_balance
+    - total_credits
+    - total_debits
+    - bounce_count
+    - e Nach/emi_mandate flags
+    - raw_statement_url (stored securely, not returned to client)
+  stub_endpoints_for_frontend:
+    initiate:
+      method: POST
+      path: /api/apply/perfios/initiate
+      returns: perfios_transaction_id, redirect_url, widget_token, expires_at
+    callback:
+      method: POST
+      path: /api/apply/perfios/callback
+      accepts: perfios_transaction_id, status, statement_count, month_count, failure_reason
+    status:
+      method: GET
+      path: /api/apply/perfios/status
+      returns: status, statement_count, month_count
+  security:
+    - Callback MUST be validated with an HMAC signature in production.
+    - Never expose raw bank account numbers or full statements to the frontend.
+    - Store Perfios responses in the encrypted documents store.
