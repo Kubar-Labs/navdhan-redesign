@@ -97,10 +97,7 @@ function LocaleSelector({ currentLocale, pathnameWithoutLocale }: LocaleSelector
         value={currentLocale}
         onChange={(event) => {
           const locale = event.target.value as Locale;
-          const target =
-            locale === defaultLocale
-              ? pathnameWithoutLocale || "/"
-              : `/${locale}${pathnameWithoutLocale || ""}`;
+          const target = `/${locale}${pathnameWithoutLocale || ""}`;
           window.location.href = target;
         }}
         className="rounded-md border border-nt-slate-300 bg-nt-white px-2 py-1.5 text-sm focus-visible:border-nt-orange-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-nt-orange-600"
@@ -114,6 +111,3 @@ function LocaleSelector({ currentLocale, pathnameWithoutLocale }: LocaleSelector
     </label>
   );
 }
-
-// Re-export defaultLocale so the locale selector can use it without a second import.
-const defaultLocale = "en";

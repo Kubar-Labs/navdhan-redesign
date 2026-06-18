@@ -1,0 +1,9 @@
+{
+  "status": "success",
+  "role": "database",
+  "exit_code": 0,
+  "stdout": ".opencode/factory/subagent-status/apply-database-completion.out.log",
+  "stderr": ".opencode/factory/subagent-status/apply-database-completion.err.log",
+  "started_at": "2026-06-19T04:55:56+05:30",
+  "finished_at": "2026-06-19T05:00:08+05:30"
+}

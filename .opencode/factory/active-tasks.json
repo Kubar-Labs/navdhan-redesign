@@ -5,8 +5,8 @@
   "status": "stage-5-implementation",
   "lock": {
     "locked": true,
-    "since": "2026-06-19T03:40:00+05:30",
-    "reason": "Stage 5 implementation re-dispatch after config patch"
+    "since": "2026-06-19T05:00:00+05:30",
+    "reason": "Stage 5 completion agents dispatched"
   },
   "units": [
     {

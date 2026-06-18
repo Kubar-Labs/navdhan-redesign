@@ -1,0 +1,9 @@
+{
+  "status": "success",
+  "role": "backend",
+  "exit_code": 0,
+  "stdout": ".opencode/factory/subagent-status/apply-backend-completion.out.log",
+  "stderr": ".opencode/factory/subagent-status/apply-backend-completion.err.log",
+  "started_at": "2026-06-19T04:55:54+05:30",
+  "finished_at": "2026-06-19T05:06:47+05:30"
+}

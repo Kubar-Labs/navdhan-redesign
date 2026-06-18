@@ -134,7 +134,9 @@ export const applications = pgTable(
     statusCreatedIdx: index("idx_applications_status_created").on(table.status, table.createdAt),
     chkLoanAmount: check(
       "chk_applications_loan_amount",
-      sql`${table.loanAmount} IS NULL OR (${table.loanAmount} BETWEEN ${500000} AND ${10000000} AND ${table.loanAmount} % ${10000} = 0)`,
+      sql.raw(
+        "loan_amount IS NULL OR (loan_amount BETWEEN 500000.0000 AND 10000000.0000 AND loan_amount % 10000 = 0)",
+      ),
     ),
     chkTenure: check(
       "chk_applications_tenure",
@@ -142,7 +144,7 @@ export const applications = pgTable(
     ),
     chkReferral: check(
       "chk_applications_referral",
-      sql`${table.referralCode} IS NULL OR ${table.referralCode} ~ ${"^[A-Za-z0-9_-]+$"}`,
+      sql.raw("referral_code IS NULL OR referral_code ~ '^[A-Za-z0-9_-]+$'"),
     ),
   }),
 );
@@ -186,11 +188,11 @@ export const applicants = pgTable(
     gstinIdx: index("idx_applicants_gstin").on(table.gstin),
     chkBusinessPinCode: check(
       "chk_applicants_business_pin_code",
-      sql`${table.businessPinCode} IS NULL OR ${table.businessPinCode} ~ ${"^[1-9][0-9]{5}$"}`,
+      sql.raw("business_pin_code IS NULL OR business_pin_code ~ '^[1-9][0-9]{5}$'"),
     ),
     chkGstin: check(
       "chk_applicants_gstin",
-      sql`${table.gstin} IS NULL OR ${table.gstin} ~ ${"^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$"}`,
+      sql.raw("gstin IS NULL OR gstin ~ '^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$'"),
     ),
   }),
 );
@@ -221,10 +223,10 @@ export const documents = pgTable(
       table.documentType,
     ),
     statusIdx: index("idx_documents_status").on(table.status, table.updatedAt),
-    chkMimeType: check("chk_documents_mime_type", sql`${table.mimeType} = ${"application/pdf"}`),
+    chkMimeType: check("chk_documents_mime_type", sql.raw("mime_type = 'application/pdf'")),
     chkFileSize: check(
       "chk_documents_file_size",
-      sql`${table.fileSizeBytes} > 0 AND ${table.fileSizeBytes} <= ${5242880}`,
+      sql.raw("file_size_bytes > 0 AND file_size_bytes <= 5242880"),
     ),
   }),
 );
