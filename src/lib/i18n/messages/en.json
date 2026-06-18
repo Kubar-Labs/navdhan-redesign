@@ -1,0 +1,232 @@
+{
+  "global": {
+    "announcement": {
+      "message": "Aap business badhayein, hum funding sambhalte hain.",
+      "ctaLabel": "Apply now",
+      "href": "/apply"
+    },
+    "alt": {
+      "navdhanLogo": "NavDhan",
+      "kubarLabsLogo": "Kubar Labs"
+    },
+    "nav": {
+      "products": { "label": "Loan Products", "href": "#products" },
+      "why": { "label": "Why NavDhan", "href": "#why" },
+      "emi": { "label": "EMI Calculator", "href": "#emi" },
+      "stories": { "label": "Customer Stories", "href": "#stories" },
+      "team": { "label": "Team", "href": "/team" }
+    },
+    "cta": {
+      "apply": { "label": "Apply Loan", "href": "/apply", "variant": "primary" }
+    },
+    "localeSelector": {
+      "label": "Select language",
+      "current": "Language"
+    },
+    "mobileMenu": {
+      "open": "Open menu",
+      "close": "Close menu",
+      "ariaLabel": "Mobile navigation"
+    },
+    "footer": {
+      "tagline": "Fair loans for India's MSMEs. Built by Kubar Labs.",
+      "company": "Kubar Protocol Private Limited (CIN: U70200WB2024PTC274850)",
+      "address": "156 Tarvakere, BTM Layout 1st Stage, Bengaluru, Karnataka, India",
+      "copyright": "© 2026 Kubar Protocol Private Limited. NavDhan is a product of Kubar Labs.",
+      "contactHeading": "Contact",
+      "companyHeading": "Company",
+      "legalHeading": "Legal",
+      "contactLinks": [
+        { "labelKey": "Loan Enquiry", "href": "mailto:loan@navdhan.app" },
+        { "labelKey": "Partnership Enquiry", "href": "mailto:partnership@navdhan.app" },
+        { "labelKey": "Support", "href": "mailto:support@navdhan.app" },
+        { "labelKey": "Careers", "href": "mailto:careers@navdhan.app" },
+        { "labelKey": "Press", "href": "mailto:press@navdhan.app" }
+      ],
+      "companyLinks": [
+        { "labelKey": "About us", "href": "#" },
+        { "labelKey": "Team", "href": "/team" },
+        { "labelKey": "Contact", "href": "mailto:support@navdhan.app" }
+      ],
+      "legalLinks": [
+        { "labelKey": "Privacy Policy", "href": "/legal/privacy-policy" },
+        { "labelKey": "Terms of Use", "href": "/legal/terms-of-use" },
+        { "labelKey": "Fair Practices Code", "href": "/legal/fair-practices-code" },
+        { "labelKey": "Cookie Policy", "href": "/legal/cookie-policy" },
+        { "labelKey": "Grievance Redressal", "href": "/legal/grievance-redressal" },
+        { "labelKey": "RBI-DLG Disclosure", "href": "/legal/rbi-dlg-disclosure" },
+        { "labelKey": "Consent Policy", "href": "/legal/consent-policy" }
+      ],
+      "badges": ["RBI Aligned", "FACE Registered", "10+ Lender Partners"]
+    }
+  },
+  "home": {
+    "meta": {
+      "title": "NavDhan — Business Loans for India's MSMEs",
+      "description": "Get ₹5L to ₹1Cr business loans from trusted lenders. One application, multiple offers, zero platform fee."
+    },
+    "hero": {
+      "eyebrow": "Fast business loans for India's MSMEs",
+      "headline": "Get the right business loan, without chasing banks.",
+      "body": "NavDhan helps small and growing businesses find fair, fast loans from trusted lenders. One application. Multiple offers. Zero platform fee.",
+      "primaryCta": "Check Eligibility",
+      "secondaryCta": "Talk to Us",
+      "stats": [
+        { "value": "₹5L – ₹1Cr", "label": "loan range" },
+        { "value": "10+", "label": "active lending partners" },
+        { "value": "3–12 month", "label": "tenures" }
+      ]
+    },
+    "associationBadges": {
+      "heading": "Recognised by"
+    },
+    "ecosystemTicker": {
+      "heading": "Built on a trusted technology ecosystem"
+    },
+    "loanProducts": {
+      "eyebrow": "Loan products",
+      "heading": "A loan for the real things your business needs.",
+      "body": "From buying stock and machinery to managing daily expenses — choose the loan that fits your plan, not the other way around.",
+      "cta": "Compare Loan Options",
+      "productCta": "Learn more",
+      "products": [
+        {
+          "id": "collateral-free",
+          "titleKey": "Collateral-Free Business Loan",
+          "descriptionKey": "Unsecured funding up to ₹1 Crore based on your business cash flow. No property or asset needed.",
+          "iconName": "ShieldCheck",
+          "ctaKey": "Learn more"
+        },
+        {
+          "id": "working-capital",
+          "titleKey": "Working Capital Loan",
+          "descriptionKey": "Cover salaries, stock, supplier payments, or everyday gaps with flexible repayment.",
+          "iconName": "Briefcase",
+          "ctaKey": "Learn more"
+        },
+        {
+          "id": "machinery",
+          "titleKey": "Asset / Machinery Finance",
+          "descriptionKey": "Buy equipment, vehicles, or tools with EMIs that match your cash cycle.",
+          "iconName": "Factory",
+          "ctaKey": "Learn more"
+        },
+        {
+          "id": "growth",
+          "titleKey": "Business Growth Loan",
+          "descriptionKey": "Larger-ticket capital to expand to a new city, add capacity, or take on bigger orders.",
+          "iconName": "TrendingUp",
+          "ctaKey": "Learn more"
+        }
+      ]
+    },
+    "whyNavdhan": {
+      "eyebrow": "Why NavDhan",
+      "heading": "Built for business owners, not paperwork collectors.",
+      "body": "You are running a business, not a bank branch. We keep the process digital, transparent, and focused on getting you an offer that works.",
+      "cta": "Apply Now",
+      "trustBadges": ["RBI Aligned", "FACE Registered", "10+ Lender Partners"],
+      "reasons": [
+        {
+          "id": "one-application",
+          "titleKey": "One application, multiple lenders.",
+          "bodyKey": "Apply once and see offers from several trusted lenders side by side."
+        },
+        {
+          "id": "loan-sizes",
+          "titleKey": "Loan sizes that fit.",
+          "bodyKey": "From ₹5 Lakhs to ₹1 Crore, borrow what your business actually needs."
+        },
+        {
+          "id": "clear-rates",
+          "titleKey": "Clear interest rates.",
+          "bodyKey": "Rates from 12% to 24% p.a., with all costs explained upfront."
+        },
+        {
+          "id": "fast-decisions",
+          "titleKey": "Fast, honest decisions.",
+          "bodyKey": "Approvals typically within 24 hours to 7 days, depending on documents."
+        },
+        {
+          "id": "online-process",
+          "titleKey": "Fully online process.",
+          "bodyKey": "Submit documents and e-sign from your phone or laptop."
+        },
+        {
+          "id": "zero-fee",
+          "titleKey": "Zero platform fee.",
+          "bodyKey": "You pay only what the lender charges. Nothing extra to NavDhan."
+        }
+      ]
+    },
+    "recognition": {
+      "eyebrow": "Recognition",
+      "heading": "Trusted by lenders. Recognised by the industry."
+    },
+    "stories": {
+      "eyebrow": "Customer stories",
+      "heading": "Real businesses. Real outcomes.",
+      "cta": "Read more stories"
+    },
+    "emi": {
+      "eyebrow": "EMI Calculator",
+      "heading": "Plan your monthly outgo before you apply.",
+      "intro": "Move the sliders to see an estimate. Your final rate will depend on your business profile, lender, and tenure.",
+      "amount": "Loan amount",
+      "rate": "Interest rate",
+      "tenure": "Tenure",
+      "monthly": "Monthly EMI",
+      "principal": "Principal",
+      "totalInterest": "Total interest",
+      "totalPayable": "Total payable",
+      "cta": "Check Eligibility"
+    },
+    "finalCta": {
+      "heading": "The right loan for your business is a few clicks away.",
+      "subtext": "Zero platform fee · Multiple lender offers · Quick, transparent process",
+      "primaryCta": "Apply Online",
+      "secondaryCta": "Talk to Us"
+    }
+  },
+  "team": {
+    "meta": {
+      "title": "Our Team — NavDhan",
+      "description": "Meet the people building fair, fast business loans for India's MSMEs."
+    },
+    "hero": {
+      "heading": "Built by people who believe MSMEs deserve better credit.",
+      "subtext": "We are a team of operators, engineers, and bankers working to make business funding calm, clear, and accessible."
+    },
+    "members": {
+      "heading": "Leadership"
+    },
+    "advisors": {
+      "heading": "Advisors"
+    },
+    "join": {
+      "heading": "Want to shape the future of MSME credit?",
+      "subtext": "We are always looking for thoughtful people who care about Indian businesses.",
+      "cta": "Join the team"
+    }
+  },
+  "legal": {
+    "lastUpdated": "Last updated:",
+    "contactCard": {
+      "role": "Grievance / Data Protection Officer",
+      "emailLabel": "Email",
+      "addressLabel": "Address"
+    }
+  },
+  "errors": {
+    "notFound": {
+      "title": "Page not found",
+      "message": "Sorry, we could not find the page you were looking for.",
+      "cta": "Back to home"
+    },
+    "boundary": {
+      "title": "Something went wrong",
+      "message": "Please try again, or return to the home page.",
+      "cta": "Return home"
+    }
+  }
+}

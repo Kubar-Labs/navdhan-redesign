@@ -1,0 +1,62 @@
+{
+  "eyebrowKey": "home.recognition.eyebrow",
+  "headingKey": "home.recognition.heading",
+  "items": [
+    {
+      "id": "finvision-2026",
+      "titleKey": "FinVision 2026, NIBM",
+      "descriptionKey": "Demoed at India's national banking innovation fest.",
+      "imageAsset": "",
+      "date": "2026"
+    },
+    {
+      "id": "india-ai-summit",
+      "titleKey": "India AI Summit",
+      "descriptionKey": "Pitched NavDhan's AI-powered credit matching to policymakers and investors.",
+      "imageAsset": "",
+      "date": "2026"
+    },
+    {
+      "id": "startup-mahakumbh",
+      "titleKey": "Startup Mahakumbh",
+      "descriptionKey": "Popular Choice recognition from India's largest startup congregation.",
+      "imageAsset": "",
+      "date": "2026"
+    },
+    {
+      "id": "bengaluru-tech-summit",
+      "titleKey": "Bengaluru Tech Summit",
+      "descriptionKey": "Official launch of NavDhan to Karnataka's tech ecosystem.",
+      "imageAsset": "",
+      "date": "2026"
+    },
+    {
+      "id": "stpi-imc",
+      "titleKey": "STPI IMC",
+      "descriptionKey": "Recognised at STPI's India Accelerator and innovation cohort.",
+      "imageAsset": "",
+      "date": "2026"
+    },
+    {
+      "id": "kotak-bizlabs",
+      "titleKey": "Kotak BizLabs Demo Day",
+      "descriptionKey": "Featured fintech among Kotak's enterprise startup network.",
+      "imageAsset": "",
+      "date": "2026"
+    },
+    {
+      "id": "bharat-innovation",
+      "titleKey": "Bharat Innovation Conclave",
+      "descriptionKey": "National showcase for inclusive finance innovation.",
+      "imageAsset": "",
+      "date": "2026"
+    },
+    {
+      "id": "rubrix-t-hub",
+      "titleKey": "Rubrix, T-Hub",
+      "descriptionKey": "Selected at T-Hub's Rubrix program for high-growth startups.",
+      "imageAsset": "",
+      "date": "2026"
+    }
+  ]
+}

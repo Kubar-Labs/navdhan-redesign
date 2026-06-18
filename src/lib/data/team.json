@@ -1,0 +1,50 @@
+{
+  "pageHeadingKey": "team.hero.heading",
+  "pageSubtextKey": "team.hero.subtext",
+  "joinCtaKey": "team.join.cta",
+  "joinHref": "mailto:careers@navdhan.app",
+  "members": [
+    {
+      "id": "founder-1",
+      "name": "Vaibhav Sharma",
+      "roleKey": "Founder & Head of Product",
+      "bioKey": "Building NavDhan to make MSME credit calm, fair and accessible across India.",
+      "imageAsset": "",
+      "linkedIn": ""
+    },
+    {
+      "id": "cto",
+      "name": "Engineering Lead",
+      "roleKey": "Chief Technology Officer",
+      "bioKey": "Leads platform engineering, data pipelines and lender integrations.",
+      "imageAsset": "",
+      "linkedIn": ""
+    },
+    {
+      "id": "head-ops",
+      "name": "Operations Lead",
+      "roleKey": "Head of Operations",
+      "bioKey": "Drives customer success, lender operations and compliance workflows.",
+      "imageAsset": "",
+      "linkedIn": ""
+    }
+  ],
+  "advisors": [
+    {
+      "id": "advisor-credit",
+      "name": "Senior Credit Advisor",
+      "domainKey": "Retail & MSME Credit",
+      "contributionKey": "Advises on underwriting frameworks, lender partnerships and regulatory alignment.",
+      "imageAsset": "",
+      "linkedIn": ""
+    },
+    {
+      "id": "advisor-fintech",
+      "name": "Fintech Advisor",
+      "domainKey": "Digital Lending",
+      "contributionKey": "Guides product scale, distribution strategy and inclusive finance design.",
+      "imageAsset": "",
+      "linkedIn": ""
+    }
+  ]
+}

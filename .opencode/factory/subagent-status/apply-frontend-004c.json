@@ -1,0 +1,9 @@
+{
+  "status": "success",
+  "role": "frontend",
+  "exit_code": 0,
+  "stdout": ".opencode/factory/subagent-status/apply-frontend-004c.out.log",
+  "stderr": ".opencode/factory/subagent-status/apply-frontend-004c.err.log",
+  "started_at": "2026-06-19T04:34:18+05:30",
+  "finished_at": "2026-06-19T04:41:15+05:30"
+}
