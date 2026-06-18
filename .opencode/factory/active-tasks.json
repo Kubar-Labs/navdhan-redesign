@@ -4,9 +4,7 @@
   "project_root": "/home/yash/opencode-workspace/navdhan-redesign-2026",
   "status": "stage-5-implementation",
   "lock": {
-    "locked": true,
-    "since": "2026-06-19T05:00:00+05:30",
-    "reason": "Stage 5 completion agents dispatched"
+    "locked": false
   },
   "units": [
     {
@@ -67,7 +65,8 @@
           "id": "marketing-003",
           "agent": "frontend",
           "description": "Implement marketing site pages, sections, animations, team page, footer/legal shell",
-          "status": "in_progress",
+          "status": "blocked",
+          "blocker": "Stage-5 agents produced many components but never wired them into Next.js pages/layouts and stopped before commit. Needs focused integrator/manual scaffolding to create routable pages and shell.",
           "branch": "factory/navdhan-redesign/marketing/frontend",
           "inputs": ["Design.md", "marketing-contract.yaml", "ui-component-registry.json", "scratchpads/marketing-frontend-cdd.md"],
           "outputs": ["app/(marketing)/**", "components/sections/**"],
@@ -125,7 +124,8 @@
           "id": "apply-004",
           "agent": "frontend",
           "description": "Implement /apply multi-step React form with Aadhaar eKYC, PAN, GST, bank, ITR upload",
-          "status": "in_progress",
+          "status": "blocked",
+          "blocker": "Wizard components exist but no /apply page or layout wires them; integrator step-run produced no files.",
           "branch": "factory/navdhan-redesign/apply/frontend",
           "inputs": ["apply-contract.yaml", "apply-ui-registry.json", "tests/apply/**", "scratchpads/apply-frontend-cdd.md"],
           "outputs": ["app/apply/**"],
@@ -145,7 +145,8 @@
           "id": "apply-005",
           "agent": "backend",
           "description": "Implement API routes for apply flow, Perfios adapters, document storage",
-          "status": "in_progress",
+          "status": "blocked",
+          "blocker": "Only stub route exists; remaining apply API routes not created before agent step limit.",
           "branch": "factory/navdhan-redesign/apply/backend",
           "inputs": ["apply-contract.yaml", "db-schema.yaml", "scratchpads/apply-backend-cdd.md"],
           "outputs": ["app/api/apply/**"],
@@ -165,7 +166,8 @@
           "id": "apply-006",
           "agent": "database",
           "description": "Implement application data model and migration",
-          "status": "in_progress",
+          "status": "blocked",
+          "blocker": "Schema file exists but Drizzle client/config/migration not completed before agent step limit.",
           "branch": "factory/navdhan-redesign/apply/database",
           "inputs": ["apply-contract.yaml", "scratchpads/apply-database-cdd.md"],
           "outputs": ["app/db/**", "migrations/**"],
@@ -203,7 +205,8 @@
           "id": "legal-002",
           "agent": "frontend",
           "description": "Implement legal pages: Privacy Policy, Terms, Fair Practices Code, Cookie Policy, Grievance, RBI-DLG, Consent Notice",
-          "status": "in_progress",
+          "status": "blocked",
+          "blocker": "Legal renderer components and content exist but dynamic `app/[locale]/(marketing)/legal/[slug]/page.tsx` is missing and `LegalSectionRenderer.tsx` has a type error.",
           "branch": "factory/navdhan-redesign/legal/frontend",
           "inputs": ["legal-contract.yaml", "scratchpads/legal-frontend-cdd.md"],
           "outputs": ["app/legal/**"],
@@ -298,6 +301,7 @@
     "2026-06-19: Resumability patch applied: committed apply-002 tests, created factory/navdhan-redesign/stage-2-outputs with merged Stage 2 artifacts, created Stage 3 implementation branches, removed missing Design.md input from marketing-003.",
         "2026-06-19: Contracts updated to v1.1.0 (Idempotency-Key, DECIMAL(19,4) money, idempotency_keys table, pii_key_id). All CDDs revised, reviewed, and approved. Stage 5 implementation starting.",
         "2026-06-19: Stage 5 first attempt hit file-permission restrictions. Snapshot saved to factory/navdhan-redesign/stage-5-wip. Created clean baseline factory/navdhan-redesign/stage-5-baseline with inline PostCSS/prettier config in package.json. Agents are instructed to use src/ for components/lib/types/db and app/ for routing; no root middleware or next.config.ts.",
+        "2026-06-19: Permissions patched. Stage 5 completion agents produced uncommitted foundation (src/types, src/lib, src/db/schema.ts, app/apply/_components, app/api/apply/state/route.ts, src/components/legal, i18n/content JSONs, globals.css). Consolidated into factory/navdhan-redesign/stage-5-foundation, then stage-5-progress. Missing: Next.js pages/layouts, shell (Header/Footer), full API routes, Drizzle client/config/migration, type fix. Integrator hit max steps after reading legal contract only.",
         "2026-06-19: User patched config permissions. Refreshed stage-5-baseline with root .prettierrc, next.config.ts, postcss.config.mjs, complete package.json, and .gitignore. Re-dispatching Stage 5 implementation agents."
     ],
   "linear": {
