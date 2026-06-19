@@ -36,6 +36,7 @@ const messages = {
       startupMahakumbh: "Startup Mahakumbh",
       stpiFinglobe: "STPI FinGlobe",
       finvision: "FinVision",
+      rbi: "RBI Aligned",
       partnerLogo: "{name} logo",
       recognitionImage: "{title} recognition",
       customerPhoto: "Photo of {name}",

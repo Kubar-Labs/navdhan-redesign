@@ -12,26 +12,26 @@ import type {
 export const associationBadges: BadgeItem[] = [
   {
     name: "FACE",
-    logoAsset: "/assets/badges/face-logo.svg",
+    logoAsset: "/assets/badges/face.png",
     altKey: "global.alt.face",
     href: "#",
   },
   {
-    name: "Startup Mahakumbh",
-    logoAsset: "/assets/badges/startup-mahakumbh-logo.svg",
-    altKey: "global.alt.startupMahakumbh",
-    href: "#",
-  },
-  {
     name: "STPI FinGlobe",
-    logoAsset: "/assets/badges/stpi-finglobe-logo.svg",
+    logoAsset: "/assets/badges/finglobe.png",
     altKey: "global.alt.stpiFinglobe",
     href: "#",
   },
   {
     name: "FinVision",
-    logoAsset: "/assets/badges/finvision-logo.svg",
+    logoAsset: "/assets/badges/finvision.png",
     altKey: "global.alt.finvision",
+    href: "#",
+  },
+  {
+    name: "RBI Aligned",
+    logoAsset: "/assets/badges/rbi.png",
+    altKey: "global.alt.rbi",
     href: "#",
   },
 ];
@@ -39,38 +39,52 @@ export const associationBadges: BadgeItem[] = [
 export const techPartners: PartnerItem[] = [
   {
     name: "Google",
-    logoAsset: "/assets/partners/google-logo.svg",
+    logoAsset: "/assets/partners/google.png",
     altKey: "global.alt.partnerLogo",
   },
   {
     name: "NVIDIA",
-    logoAsset: "/assets/partners/nvidia-logo.svg",
+    logoAsset: "/assets/partners/nvidia.png",
     altKey: "global.alt.partnerLogo",
   },
   {
     name: "Microsoft",
-    logoAsset: "/assets/partners/microsoft-logo.svg",
+    logoAsset: "/assets/partners/microsoft.png",
     altKey: "global.alt.partnerLogo",
   },
-  { name: "Intel", logoAsset: "/assets/partners/intel-logo.svg", altKey: "global.alt.partnerLogo" },
+  {
+    name: "Polkadot Blockchain Academy",
+    logoAsset: "/assets/partners/pba.png",
+    altKey: "global.alt.partnerLogo",
+  },
   {
     name: "Perplexity",
-    logoAsset: "/assets/partners/perplexity-logo.svg",
+    logoAsset: "/assets/partners/perplexity.png",
     altKey: "global.alt.partnerLogo",
   },
   {
     name: "OpenAI",
-    logoAsset: "/assets/partners/openai-logo.svg",
+    logoAsset: "/assets/partners/openai.png",
+    altKey: "global.alt.partnerLogo",
+  },
+  {
+    name: "Uniswap",
+    logoAsset: "/assets/partners/uniswap.png",
+    altKey: "global.alt.partnerLogo",
+  },
+  {
+    name: "Intel",
+    logoAsset: "/assets/partners/intel.png",
     altKey: "global.alt.partnerLogo",
   },
   {
     name: "Amplitude",
-    logoAsset: "/assets/partners/amplitude-logo.svg",
+    logoAsset: "/assets/partners/amplitude.png",
     altKey: "global.alt.partnerLogo",
   },
   {
-    name: "Eleven Labs",
-    logoAsset: "/assets/partners/elevenlabs-logo.svg",
+    name: "ElevenLabs",
+    logoAsset: "/assets/partners/eleven.png",
     altKey: "global.alt.partnerLogo",
   },
 ];

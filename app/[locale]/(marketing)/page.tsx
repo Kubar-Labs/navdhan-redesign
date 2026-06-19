@@ -1,16 +1,10 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import {
-  ShieldCheck,
-  Briefcase,
-  Factory,
-  TrendingUp,
-  ChevronRight,
-  Mail,
-} from "lucide-react";
+import { ShieldCheck, Briefcase, Factory, TrendingUp, ChevronRight, Mail } from "lucide-react";
 import { Container } from "@/src/components/layout/Container";
 import { Section } from "@/src/components/layout/Section";
 import { getMessages } from "@/src/lib/i18n/messages";
@@ -24,10 +18,7 @@ import {
   emiDefaults,
   trustBadges,
 } from "@/src/lib/data/siteData";
-import {
-  calculateEmiBreakdown,
-  formatCurrencyInr,
-} from "@/src/lib/utils/emi";
+import { calculateEmiBreakdown, formatCurrencyInr } from "@/src/lib/utils/emi";
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   ShieldCheck,
@@ -112,12 +103,23 @@ export default function HomePage() {
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-8">
             {associationBadges.map((badge) => (
-              <span
+              <div
                 key={badge.name}
-                className="inline-flex h-12 items-center rounded-md border border-nt-slate-200 bg-nt-cream px-4 text-sm font-semibold text-nt-slate-700"
+                className="relative flex h-14 items-center justify-center rounded-md border border-nt-slate-200 bg-nt-cream px-6"
+                title={badge.name}
               >
-                {badge.name}
-              </span>
+                {badge.logoAsset ? (
+                  <Image
+                    src={badge.logoAsset}
+                    alt={t(badge.altKey) || badge.name}
+                    width={120}
+                    height={40}
+                    className="max-h-8 w-auto object-contain"
+                  />
+                ) : (
+                  <span className="text-sm font-semibold text-nt-slate-700">{badge.name}</span>
+                )}
+              </div>
             ))}
           </div>
         </Container>
@@ -187,10 +189,7 @@ export default function HomePage() {
           </h2>
           <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {recognitionItems.map((item) => (
-              <div
-                key={item.id}
-                className="rounded-xl border border-nt-slate-200 bg-nt-cream p-6"
-              >
+              <div key={item.id} className="rounded-xl border border-nt-slate-200 bg-nt-cream p-6">
                 <p className="text-sm font-semibold text-nt-orange-600">{item.date}</p>
                 <h3 className="mt-2 text-lg font-semibold text-nt-slate-900">{item.titleKey}</h3>
                 <p className="mt-2 text-sm text-nt-slate-600">{item.descriptionKey}</p>
@@ -215,7 +214,9 @@ export default function HomePage() {
                 key={story.id}
                 className="rounded-xl border border-nt-slate-200 bg-white p-6"
               >
-                <p className="text-sm italic text-nt-slate-600">&ldquo;{story.questionKey}&rdquo;</p>
+                <p className="text-sm italic text-nt-slate-600">
+                  &ldquo;{story.questionKey}&rdquo;
+                </p>
                 <p className="mt-4 font-semibold text-nt-slate-900">{story.outcomeKey}</p>
                 <footer className="mt-4 text-sm text-nt-slate-500">
                   — {story.name}, {story.roleKey}
@@ -234,12 +235,25 @@ export default function HomePage() {
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-6">
             {techPartners.map((partner) => (
-              <span
+              <div
                 key={partner.name}
-                className="inline-flex h-12 items-center rounded-md border border-nt-slate-200 bg-nt-cream px-4 text-sm font-semibold text-nt-slate-700"
+                className="relative flex h-14 w-36 items-center justify-center rounded-md border border-nt-slate-200 bg-nt-cream px-4"
+                title={partner.name}
               >
-                {partner.name}
-              </span>
+                {partner.logoAsset ? (
+                  <Image
+                    src={partner.logoAsset}
+                    alt={t(partner.altKey) || partner.name}
+                    width={128}
+                    height={40}
+                    className="max-h-7 w-auto object-contain"
+                  />
+                ) : (
+                  <span className="text-sm font-semibold text-nt-slate-700">
+                    {partner.name}
+                  </span>
+                )}
+              </div>
             ))}
           </div>
         </Container>
@@ -314,7 +328,9 @@ export default function HomePage() {
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-nt-slate-600">{t("home.emiCalculator.totalPayable")}</p>
+                  <p className="text-sm text-nt-slate-600">
+                    {t("home.emiCalculator.totalPayable")}
+                  </p>
                   <p className="mt-1 text-xl font-semibold text-nt-slate-900">
                     {formatCurrencyInr(breakdown.totalPayable)}
                   </p>
@@ -326,7 +342,9 @@ export default function HomePage() {
                   </p>
                 </div>
                 <div>
-                  <p className="text-sm text-nt-slate-600">{t("home.emiCalculator.totalInterest")}</p>
+                  <p className="text-sm text-nt-slate-600">
+                    {t("home.emiCalculator.totalInterest")}
+                  </p>
                   <p className="mt-1 text-xl font-semibold text-nt-slate-900">
                     {formatCurrencyInr(breakdown.totalInterest)}
                   </p>
