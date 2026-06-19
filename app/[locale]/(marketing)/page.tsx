@@ -63,7 +63,7 @@ export default function HomePage() {
       <Section background="cream" padding="tight" id="top">
         <Container>
           <div className="py-20 md:py-28">
-            <StaggerContainer stagger={0.1}>
+            <div>
               <p className="mb-4 text-sm font-semibold uppercase tracking-wide text-nt-orange-600">
                 {t("home.hero.eyebrow")}
               </p>
@@ -101,7 +101,7 @@ export default function HomePage() {
                   </div>
                 ))}
               </div>
-            </StaggerContainer>
+            </div>
           </div>
         </Container>
       </Section>
