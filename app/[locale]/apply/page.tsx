@@ -65,8 +65,7 @@ const copyByLocale: Record<string, ApplyCopy> = {
     pinCodeLabel: "Business PIN code",
     pinCodePlaceholder: "6-digit PIN",
     emiLabel: "Estimated EMI",
-    emiNote: (total) =>
-      `Total payable ${total} @ 18% p.a. This is only an estimate.`,
+    emiNote: (total) => `Total payable ${total} @ 18% p.a. This is only an estimate.`,
     consentDataPrefix: "I agree to NavDhan's",
     consentAnd: "and",
     consentPolicy: "Consent Policy",
@@ -107,8 +106,7 @@ const copyByLocale: Record<string, ApplyCopy> = {
     pinCodeLabel: "व्यवसाय का PIN कोड",
     pinCodePlaceholder: "6-अंकों का PIN",
     emiLabel: "अनुमानित EMI",
-    emiNote: (total) =>
-      `कुल देय ${total} @ 18% प्रति वर्ष। यह केवल एक अनुमान है।`,
+    emiNote: (total) => `कुल देय ${total} @ 18% प्रति वर्ष। यह केवल एक अनुमान है।`,
     consentDataPrefix: "मैं NavDhan की",
     consentAnd: "और",
     consentPolicy: "सहमति नीति",
@@ -118,8 +116,7 @@ const copyByLocale: Record<string, ApplyCopy> = {
     submit: "पात्रता जाँचें",
     submitting: "जाँच हो रही है...",
     successHeading: "धन्यवाद",
-    successBody:
-      "हमें आपका आवेदन मिल गया है। NavDhan सलाहकार 24 घंटों के भीतर संपर्क करेगा।",
+    successBody: "हमें आपका आवेदन मिल गया है। NavDhan सलाहकार 24 घंटों के भीतर संपर्क करेगा।",
     successCta: "होम पर वापस जाएँ",
     errorHeading: "कुछ गड़बड़ हुई",
     errorBody: "कृपया अपने विवरण जाँचें और पुनः प्रयास करें।",
@@ -158,23 +155,22 @@ export default function ApplyPage() {
         : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
     try {
-      const response = await fetch(`/api/apply/state`, {
+      const response = await fetch(`/api/apply/lead`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Idempotency-Key": idempotencyKey,
         },
         body: JSON.stringify({
-          step: "loan_intent",
-          data: {
-            loanAmount: Number(form.amount),
-            tenureMonths: Number(form.tenure),
-            purpose: form.purpose,
-            fullName: form.fullName,
-            mobileNumber: form.mobile,
-            email: form.email,
-            businessPinCode: form.pinCode,
-          },
+          amount: Number(form.amount),
+          tenure: Number(form.tenure),
+          purpose: form.purpose,
+          fullName: form.fullName,
+          mobile: form.mobile,
+          email: form.email,
+          pinCode: form.pinCode,
+          consentData: form.consentData,
+          consentLender: form.consentLender,
         }),
       });
       if (!response.ok) {
@@ -223,7 +219,9 @@ export default function ApplyPage() {
 
         <form onSubmit={handleSubmit} className="mt-10 space-y-8">
           <fieldset className="space-y-6">
-            <legend className="text-lg font-semibold text-nt-slate-900">{copy.loanDetailsTitle}</legend>
+            <legend className="text-lg font-semibold text-nt-slate-900">
+              {copy.loanDetailsTitle}
+            </legend>
             <div>
               <label htmlFor="amount" className="block text-sm font-medium text-nt-slate-700">
                 {copy.amountLabel}
@@ -282,7 +280,9 @@ export default function ApplyPage() {
           </fieldset>
 
           <fieldset className="space-y-6">
-            <legend className="text-lg font-semibold text-nt-slate-900">{copy.aboutYouTitle}</legend>
+            <legend className="text-lg font-semibold text-nt-slate-900">
+              {copy.aboutYouTitle}
+            </legend>
             <div>
               <label htmlFor="fullName" className="block text-sm font-medium text-nt-slate-700">
                 {copy.fullNameLabel}
