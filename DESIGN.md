@@ -139,6 +139,106 @@ Homepage section order:
 - **Buttons/inputs:** subtle scale/focus-ring micro-interactions.
 - **Reduced motion:** disable translateY/parallax; use simple opacity or no animation.
 
+### Copy & voice
+
+Recovered from the original design-agency copywriter and strategist deliverables. This is source material to draw from, not a word-for-word mandate. All copy must still pass the Content Rules below, especially the borrower-only framing and anti-platform/anti-lender language.
+
+#### Voice
+
+Warm, accessible English with subtle Hinglish. Calm, trustworthy, respectful. No jargon, no hype, no filler.
+
+#### Tagline options
+
+1. Sahi loan, sahi lender — bina kisi rukaawat ke.
+2. Aap business badhayein, hum funding sambhalte hain.
+3. Business ka next step, aasaan loan ke saath.
+4. Paisa supply chain ke liye; paperwork chain nahi.
+5. Apke business ke kaam aane wala loan.
+
+**Public English tagline (used in footer and key surfaces):** "One stop-solution for all your working capital needs".
+
+**Hinglish/Hindi hero tagline (used in hi locale or as a warm accent in en hero):** "Aap business badhayein, hum funding sambhalte hain."
+
+#### Hinglish accents to sprinkle
+
+Use lightly and only when natural:
+
+- bina tension ke
+- aasaan process
+- baat karein
+- aapka business
+- samajhdaar faisla
+- seedha, sachcha
+- kaam ki baat
+- rukaawat nahi
+- bharosa rakhein
+- sirf ek click
+- aapke liye
+- chinta chhodo (very sparingly)
+
+#### Section copy matrix (source)
+
+These are starting versions. Replace lender/marketplace/platform phrases with borrower-approved language before publishing.
+
+**Hero**
+- eyebrow: Fast business loans for India's MSMEs
+- heading: Get the right business loan, without chasing banks.
+- body: NavDhan helps small and growing businesses find fair, fast loans. One application. Multiple options. Zero platform fee.
+- CTA primary: Check Eligibility
+- CTA secondary: Talk to Us
+- Stats: ₹5L – ₹1Cr loan range · 3–12 month tenures · 12–24% p.a. rates
+
+**Loan products**
+- eyebrow: Loan products
+- heading: A loan that fits what your business actually needs.
+- body: From buying stock and machinery to managing everyday expenses, choose the loan that fits your plan.
+- Items: Collateral-Free Business Loan, Working Capital Loan, Asset / Machinery Finance, Business Growth Loan.
+- CTA: Compare Loan Options
+
+**Why NavDhan**
+- eyebrow: Why NavDhan
+- heading: Built for business owners, not bankers.
+- body: You are running a business, not a bank branch. We keep the process digital, transparent, and focused on getting you an offer that works.
+- Reasons: one application, matched offers · loan sizes that fit (₹5L–₹1Cr) · clear interest rates (12–24% p.a.) · fast, honest decisions · fully online process · zero platform fee.
+- CTA: Apply Now
+
+**How it works**
+- eyebrow: How it works
+- heading: Apply once. Get matched. Receive funds.
+- Step 1: Share your business details.
+- Step 2: Compare loan offers.
+- Step 3: Complete KYC and get funded.
+- CTA: Start Application
+
+**Customer stories**
+- eyebrow: Customer stories
+- heading: Real businesses. Real loans. Real growth.
+- Story 1: Rajiv K., Garment Shop Owner — "I wanted to stock up for the wedding season, but I did not have collateral." → ₹25 Lakh collateral-free business loan.
+- Story 2: Sunita M., Handicraft Artisan, Varanasi — "Our loom needed upgrading, but cash flow was tight." → ₹15 Lakh machinery loan.
+- Story 3: Amit V., E-commerce Logistics, Gurugram — "We needed working capital to hire more staff and take on bigger orders." → ₹18 Lakh working capital loan.
+
+**Final CTA**
+- heading: The right loan for your business is a few clicks away.
+- subtext: Zero platform fee · matched offers · quick, transparent process
+- CTAs: Apply Online / Talk to Us
+
+**Apply portal microcopy**
+- Step titles: Business details, Documents, Offers, KYC & disbursal.
+- Button labels: Continue, Back, Save and continue, Check eligibility, Upload document, Choose this offer, Verify OTP, E-sign documents, View dashboard, Back to home.
+- Error messages:
+  - "Please enter a valid 10-digit mobile number."
+  - "Please enter a valid email address."
+  - "This field is required so we can review your application."
+  - "File too large. Please upload a PDF or image under 5 MB."
+  - "We could not read this file. Please upload a clear PDF or image."
+  - "Something went wrong on our side. Please try again, or call us for help."
+  - "We could not find a matching offer right now. Let's look at what we can do next."
+  - "OTP did not match. Please try again or request a new code."
+- Success screen:
+  - Heading: Aapka application humare paas aa gaya hai.
+  - Subtext: We are reviewing your details. Expect a call or message from our team within 24 hours. You can also check your offers anytime from your dashboard.
+  - Buttons: View Dashboard / Back to Home
+
 ### Content rules
 
 - Product name: **NavDhan** (capital N and D, rest lowercase in body).
