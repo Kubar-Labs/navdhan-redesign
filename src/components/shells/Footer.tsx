@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Container } from "@/src/components/layout/Container";
+import { Logo } from "@/src/components/shells/Logo";
 import { legalSlugs } from "@/src/lib/legal/loader";
 import { getTranslator } from "@/src/lib/i18n/translations";
 
@@ -29,9 +30,9 @@ export async function Footer({ locale }: FooterProps) {
           <div className="lg:col-span-1">
             <Link
               href={`/${locale}`}
-              className="text-xl font-bold text-white focus-visible:rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-nt-orange-600"
+              className="focus-visible:rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-nt-orange-600"
             >
-              NavDhan
+              <Logo variant="light" />
             </Link>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-nt-slate-300">{tagline}</p>
             <p className="mt-6 text-xs text-nt-slate-400">{copyright}</p>
@@ -45,7 +46,7 @@ export async function Footer({ locale }: FooterProps) {
               <li>
                 <Link
                   href={`/${locale}/team`}
-                  className="block text-sm text-nt-slate-600 hover:text-nt-orange-600 transition-colors"
+                  className="block text-sm text-nt-slate-300 hover:text-white transition-colors"
                 >
                   {t("global.nav.team")}
                 </Link>
@@ -67,22 +68,52 @@ export async function Footer({ locale }: FooterProps) {
             </p>
             <ul className="mt-4 space-y-3 text-sm text-nt-slate-300">
               <li>
-                <a href={`mailto:${t("global.contact.loan")}`}>Loan Enquiry</a>
+                <a
+                  href={`mailto:${t("global.contact.loan")}`}
+                  className="hover:text-white transition-colors"
+                >
+                  Loan Enquiry
+                </a>
               </li>
               <li>
-                <a href={`mailto:${t("global.contact.partnership")}`}>Partnership Enquiry</a>
+                <a
+                  href={`mailto:${t("global.contact.partnership")}`}
+                  className="hover:text-white transition-colors"
+                >
+                  Partnership Enquiry
+                </a>
               </li>
               <li>
-                <a href={`mailto:${t("global.contact.outreach")}`}>Talk to Us</a>
+                <a
+                  href={`mailto:${t("global.contact.outreach")}`}
+                  className="hover:text-white transition-colors"
+                >
+                  Talk to Us
+                </a>
               </li>
               <li>
-                <a href={`mailto:${t("global.contact.support")}`}>Support</a>
+                <a
+                  href={`mailto:${t("global.contact.support")}`}
+                  className="hover:text-white transition-colors"
+                >
+                  Support
+                </a>
               </li>
               <li>
-                <a href={`mailto:${t("global.contact.careers")}`}>Careers</a>
+                <a
+                  href={`mailto:${t("global.contact.careers")}`}
+                  className="hover:text-white transition-colors"
+                >
+                  Careers
+                </a>
               </li>
               <li>
-                <a href={`mailto:${t("global.contact.press")}`}>Press</a>
+                <a
+                  href={`mailto:${t("global.contact.press")}`}
+                  className="hover:text-white transition-colors"
+                >
+                  Press
+                </a>
               </li>
             </ul>
           </div>

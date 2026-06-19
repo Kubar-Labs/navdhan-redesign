@@ -1,13 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Container } from "@/src/components/layout/Container";
+import { Logo } from "@/src/components/shells/Logo";
 import { cn } from "@/src/lib/utils/cn";
 import { Menu, X } from "lucide-react";
-import { defaultLocale, localeOptions, isValidLocale, type Locale } from "@/src/lib/i18n/config";
+import { localeOptions, isValidLocale, type Locale } from "@/src/lib/i18n/config";
 
 export interface NavLink {
   label: string;
@@ -45,16 +45,9 @@ export function Header({ navLinks, cta, currentLocale }: HeaderProps) {
         <nav aria-label="Primary" className="flex h-16 items-center justify-between gap-4">
           <Link
             href={`/${currentLocale}`}
-            className="flex items-center focus-visible:rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-nt-orange-600"
+            className="focus-visible:rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-nt-orange-600"
           >
-            <Image
-              src="/assets/logos/NavDhan.png"
-              alt="NavDhan"
-              width={130}
-              height={32}
-              className="h-7 w-auto object-contain"
-              priority
-            />
+            <Logo variant="dark" />
           </Link>
 
           <div className="flex items-center gap-2 md:gap-6">
