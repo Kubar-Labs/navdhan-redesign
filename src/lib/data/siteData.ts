@@ -43,11 +43,6 @@ export const techPartners: PartnerItem[] = [
     altKey: "global.alt.partnerLogo",
   },
   {
-    name: "ElevenLabs",
-    logoAsset: "/assets/partners/eleven.png",
-    altKey: "global.alt.partnerLogo",
-  },
-  {
     name: "Google",
     logoAsset: "/assets/partners/google.png",
     altKey: "global.alt.partnerLogo",
@@ -63,18 +58,8 @@ export const techPartners: PartnerItem[] = [
     altKey: "global.alt.partnerLogo",
   },
   {
-    name: "NVIDIA",
-    logoAsset: "/assets/partners/nvidia.png",
-    altKey: "global.alt.partnerLogo",
-  },
-  {
     name: "OpenAI",
     logoAsset: "/assets/partners/openai.png",
-    altKey: "global.alt.partnerLogo",
-  },
-  {
-    name: "Perplexity",
-    logoAsset: "/assets/partners/perplexity.png",
     altKey: "global.alt.partnerLogo",
   },
 ];
