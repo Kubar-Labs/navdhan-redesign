@@ -7,6 +7,7 @@ import { useParams } from "next/navigation";
 import { ShieldCheck, Briefcase, Factory, TrendingUp, ChevronRight, Mail } from "lucide-react";
 import { Container } from "@/src/components/layout/Container";
 import { Section } from "@/src/components/layout/Section";
+import { RecognitionCarousel } from "@/src/components/sections/RecognitionCarousel";
 import { getMessages } from "@/src/lib/i18n/messages";
 import {
   associationBadges,
@@ -72,7 +73,7 @@ export default function HomePage() {
                 <ChevronRight className="h-4 w-4" />
               </Link>
               <a
-                href="mailto:hello@kubar.tech"
+                href="mailto:outreach@kubar.tech"
                 className="inline-flex items-center gap-2 rounded-md border border-nt-slate-300 bg-white px-6 py-3 text-sm font-semibold text-nt-slate-900 hover:bg-nt-slate-50"
               >
                 <Mail className="h-4 w-4" />
@@ -178,24 +179,14 @@ export default function HomePage() {
         </Container>
       </Section>
 
-      {/* Recognition carousel (static grid) */}
+      {/* Recognition carousel */}
       <Section background="white">
         <Container>
-          <p className="text-sm font-semibold uppercase tracking-wide text-nt-orange-600">
-            {t("home.recognition.eyebrow")}
-          </p>
-          <h2 className="mt-4 text-3xl font-semibold tracking-tight text-nt-slate-900 md:text-4xl">
-            {t("home.recognition.heading")}
-          </h2>
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {recognitionItems.map((item) => (
-              <div key={item.id} className="rounded-xl border border-nt-slate-200 bg-nt-cream p-6">
-                <p className="text-sm font-semibold text-nt-orange-600">{item.date}</p>
-                <h3 className="mt-2 text-lg font-semibold text-nt-slate-900">{item.titleKey}</h3>
-                <p className="mt-2 text-sm text-nt-slate-600">{item.descriptionKey}</p>
-              </div>
-            ))}
-          </div>
+          <RecognitionCarousel
+            eyebrow={t("home.recognition.eyebrow")}
+            heading={t("home.recognition.heading")}
+            items={recognitionItems}
+          />
         </Container>
       </Section>
 
@@ -249,9 +240,7 @@ export default function HomePage() {
                     className="max-h-7 w-auto object-contain"
                   />
                 ) : (
-                  <span className="text-sm font-semibold text-nt-slate-700">
-                    {partner.name}
-                  </span>
+                  <span className="text-sm font-semibold text-nt-slate-700">{partner.name}</span>
                 )}
               </div>
             ))}
