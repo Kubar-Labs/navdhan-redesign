@@ -140,17 +140,13 @@ export default function HomePage() {
       </Section>
 
       {/* Technology partnerships marquee */}
-      <Section background="white" padding="tight">
-        <Container>
-          <EcosystemTicker
-            eyebrow={t("home.ecosystem.eyebrow")}
-            partners={techPartners.map((partner) => ({
-              ...partner,
-              alt: t(partner.altKey, { name: partner.name }),
-            }))}
-          />
-        </Container>
-      </Section>
+      <EcosystemTicker
+        eyebrow={t("home.ecosystem.eyebrow")}
+        partners={techPartners.map((partner) => ({
+          ...partner,
+          alt: t(partner.altKey, { name: partner.name }),
+        }))}
+      />
 
       {/* Loan products */}
       <Section background="white" id="products">
@@ -244,18 +240,29 @@ export default function HomePage() {
             stagger={0.1}
           >
             {customerStories.map((story) => (
-              <blockquote
+              <article
                 key={story.id}
-                className="rounded-xl border border-nt-slate-200 bg-white p-6"
+                className="group overflow-hidden rounded-xl border border-nt-slate-200 bg-white"
               >
-                <p className="text-sm italic text-nt-slate-600">
-                  &ldquo;{story.questionKey}&rdquo;
-                </p>
-                <p className="mt-4 font-semibold text-nt-slate-900">{story.outcomeKey}</p>
-                <footer className="mt-4 text-sm text-nt-slate-500">
-                  — {story.name}, {story.roleKey}
-                </footer>
-              </blockquote>
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-nt-slate-100">
+                  <Image
+                    src={story.imageAsset}
+                    alt={t("global.alt.customerPhoto", { name: story.name })}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  />
+                </div>
+                <blockquote className="p-6">
+                  <p className="text-sm italic text-nt-slate-600">
+                    &ldquo;{story.questionKey}&rdquo;
+                  </p>
+                  <p className="mt-4 font-semibold text-nt-slate-900">{story.outcomeKey}</p>
+                  <footer className="mt-4 text-sm text-nt-slate-500">
+                    {story.name}, {story.roleKey}
+                  </footer>
+                </blockquote>
+              </article>
             ))}
           </StaggerContainer>
         </Container>

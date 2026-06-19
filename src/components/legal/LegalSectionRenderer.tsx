@@ -6,6 +6,7 @@ import type {
   ListLegalSection,
   TableLegalSection,
   ContactLegalSection,
+  LegalCrossLink,
 } from "@/src/types/legal";
 
 export interface LegalSectionRendererProps {
@@ -13,16 +14,36 @@ export interface LegalSectionRendererProps {
   locale?: string;
 }
 
-export function LegalSectionRenderer({ section, locale }: LegalSectionRendererProps) {
+function localizeHref(href: string, locale: string): string {
+  if (href.startsWith("/legal/")) {
+    return `/${locale}${href}`;
+  }
+  return href;
+}
+
+function CrossLinkNode({ link, locale }: { link: LegalCrossLink; locale: string }) {
+  return (
+    <p className="mt-4">
+      <Link
+        href={localizeHref(`/legal/${link.slug}`, locale)}
+        className="font-medium text-nt-orange-600 underline underline-offset-2 hover:text-nt-orange-700 focus-visible:rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-nt-orange-600"
+      >
+        {link.label}
+      </Link>
+    </p>
+  );
+}
+
+export function LegalSectionRenderer({ section, locale = "en" }: LegalSectionRendererProps) {
   switch (section.content_type) {
     case "prose":
-      return <ProseSection section={section} />;
+      return <ProseSection section={section} locale={locale} />;
     case "list":
       return <ListSection section={section} />;
     case "table":
       return <TableSection section={section} />;
     case "contact_card":
-      return <ContactSection section={section} />;
+      return <ContactSection section={section} locale={locale} />;
     default:
       return null;
   }
@@ -30,25 +51,17 @@ export function LegalSectionRenderer({ section, locale }: LegalSectionRendererPr
 
 interface ProseSectionProps {
   section: ProseLegalSection;
+  locale: string;
 }
 
-function ProseSection({ section }: ProseSectionProps) {
+function ProseSection({ section, locale }: ProseSectionProps) {
   return (
     <section id={section.id} className="scroll-mt-24">
       <h2 className="mb-4 text-2xl font-semibold tracking-tight text-nt-slate-900">
         {section.title}
       </h2>
       <p className="max-w-prose text-base leading-relaxed text-nt-slate-700">{section.body}</p>
-      {section.cross_link && (
-        <p className="mt-4">
-          <Link
-            href={`/legal/${section.cross_link.slug}`}
-            className="font-medium text-nt-orange-600 underline underline-offset-2 hover:text-nt-orange-700 focus-visible:rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-nt-orange-600"
-          >
-            {section.cross_link.label}
-          </Link>
-        </p>
-      )}
+      {section.cross_link && <CrossLinkNode link={section.cross_link} locale={locale} />}
     </section>
   );
 }
@@ -98,9 +111,10 @@ function TableSection({ section }: TableSectionProps) {
 
 interface ContactSectionProps {
   section: ContactLegalSection;
+  locale: string;
 }
 
-function ContactSection({ section }: ContactSectionProps) {
+function ContactSection({ section, locale }: ContactSectionProps) {
   return (
     <section id={section.id} className="scroll-mt-24">
       <h2 className="mb-4 text-2xl font-semibold tracking-tight text-nt-slate-900">
@@ -119,16 +133,7 @@ function ContactSection({ section }: ContactSectionProps) {
         </p>
         <p className="mt-2 whitespace-pre-line text-nt-slate-700">{section.contact.address}</p>
       </address>
-      {section.cross_link && (
-        <p className="mt-4">
-          <Link
-            href={`/legal/${section.cross_link.slug}`}
-            className="font-medium text-nt-orange-600 underline underline-offset-2 hover:text-nt-orange-700 focus-visible:rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-nt-orange-600"
-          >
-            {section.cross_link.label}
-          </Link>
-        </p>
-      )}
+      {section.cross_link && <CrossLinkNode link={section.cross_link} locale={locale} />}
     </section>
   );
 }

@@ -52,7 +52,7 @@ export function LegalPageShell({ page, locale }: LegalPageShellProps) {
             <article className="order-2 lg:order-1 lg:col-span-8">
               <div className="space-y-12 md:space-y-14">
                 {page.sections.map((section) => (
-                  <LegalSectionRenderer key={section.id} section={section} />
+                  <LegalSectionRenderer key={section.id} section={section} locale={locale} />
                 ))}
               </div>
             </article>
