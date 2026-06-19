@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import type { PartnerItem } from "@/src/types";
 import { FadeIn } from "@/src/components/motion/FadeIn";
@@ -12,17 +13,32 @@ export interface EcosystemTickerProps {
 
 export function EcosystemTicker({ eyebrow, partners }: EcosystemTickerProps) {
   const reduced = useReducedMotion();
+  const [loadedCount, setLoadedCount] = useState(0);
 
   const duplicated = [...partners, ...partners];
+  const ready = loadedCount >= duplicated.length;
+
+  if (reduced) {
+    return (
+      <FadeIn className="text-center">
+        <p className="text-sm font-semibold uppercase tracking-wide text-nt-slate-500">{eyebrow}</p>
+        <div className="mt-6 flex flex-wrap items-center justify-center gap-6">
+          {partners.map((partner) => (
+            <TickerLogo key={`${partner.name}-static`} partner={partner} isStatic />
+          ))}
+        </div>
+      </FadeIn>
+    );
+  }
 
   return (
     <FadeIn className="text-center">
       <p className="text-sm font-semibold uppercase tracking-wide text-nt-slate-500">{eyebrow}</p>
 
-      {reduced ? (
+      {!ready ? (
         <div className="mt-6 flex flex-wrap items-center justify-center gap-6">
           {partners.map((partner) => (
-            <TickerLogo key={`${partner.name}-static`} partner={partner} isStatic />
+            <TickerLogo key={`${partner.name}-preload`} partner={partner} isStatic />
           ))}
         </div>
       ) : (
@@ -38,7 +54,11 @@ export function EcosystemTicker({ eyebrow, partners }: EcosystemTickerProps) {
         >
           <div className="animate-marquee flex w-max items-center gap-8 md:gap-12 group-hover:[animation-play-state:paused]">
             {duplicated.map((partner, index) => (
-              <TickerLogo key={`${partner.name}-${index}`} partner={partner} />
+              <TickerLogo
+                key={`${partner.name}-${index}`}
+                partner={partner}
+                onLoad={() => setLoadedCount((c) => c + 1)}
+              />
             ))}
           </div>
         </div>
@@ -50,9 +70,10 @@ export function EcosystemTicker({ eyebrow, partners }: EcosystemTickerProps) {
 interface TickerLogoProps {
   partner: PartnerItem;
   isStatic?: boolean;
+  onLoad?: () => void;
 }
 
-function TickerLogo({ partner, isStatic = false }: TickerLogoProps) {
+function TickerLogo({ partner, isStatic = false, onLoad }: TickerLogoProps) {
   const alt = partner.altKey || `${partner.name} logo`;
 
   const content = (
@@ -68,6 +89,7 @@ function TickerLogo({ partner, isStatic = false }: TickerLogoProps) {
           height={40}
           loading="eager"
           decoding="sync"
+          onLoadingComplete={onLoad}
           className="h-8 w-auto max-w-[120px] object-contain grayscale transition-all duration-300 hover:grayscale-0 focus-visible:grayscale-0 md:h-10 md:max-w-[140px]"
         />
       ) : (
