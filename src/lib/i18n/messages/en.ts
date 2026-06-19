@@ -160,6 +160,15 @@ const messages = {
     },
     lastUpdated: "Last updated: {date}",
   },
+  apply: {
+    heading: "Get the right business loan, without chasing banks.",
+    description: "Fill a few details to check your eligibility. It takes less than 5 minutes.",
+    consentData:
+      "I consent to NavDhan using my details to assess eligibility and share a loan offer.",
+    consentLender:
+      "I consent to sharing my details so NavDhan can find a loan offer for my business.",
+    submit: "Check Eligibility",
+  },
   errors: {
     notFound: {
       heading: "Page not found",

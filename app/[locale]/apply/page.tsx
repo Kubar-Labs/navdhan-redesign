@@ -7,8 +7,29 @@ import { Container } from "@/src/components/layout/Container";
 import { emiDefaults } from "@/src/lib/data/siteData";
 import { formatCurrencyInr, calculateEmiBreakdown } from "@/src/lib/utils/emi";
 
+const copyByLocale: Record<
+  string,
+  { heading: string; description: string; consentLender: string; submit: string }
+> = {
+  en: {
+    heading: "Get the right business loan, without chasing banks.",
+    description: "Fill a few details to check your eligibility. It takes less than 5 minutes.",
+    consentLender:
+      "I consent to sharing my details so NavDhan can find a loan offer for my business.",
+    submit: "Check Eligibility",
+  },
+  hi: {
+    heading: "सही बिज़नेस लोन पाएँ, बैंकों के पीछे न भागें।",
+    description: "पात्रता जाँचने के लिए कुछ विवरण भरें। इसमें 5 मिनट से भी कम समय लगता है।",
+    consentLender:
+      "मैं सहमत हूँ कि मेरे व्यवसाय के लिए लोन ऑफ़र ढूंढने के लिए NavDhan मेरे विवरण साझा कर सकता है।",
+    submit: "पात्रता जाँचें",
+  },
+};
+
 export default function ApplyPage() {
   const { locale } = useParams<{ locale: string }>();
+  const copy = copyByLocale[locale] ?? copyByLocale.en;
   const [submitted, setSubmitted] = useState(false);
   const [form, setForm] = useState({
     amount: String(emiDefaults.defaultAmount),
@@ -73,11 +94,9 @@ export default function ApplyPage() {
           Business loan application
         </p>
         <h1 className="mt-4 text-3xl font-semibold tracking-tight text-nt-slate-900">
-          Aap business badhayein, hum funding sambhalte hain.
+          {copy.heading}
         </h1>
-        <p className="mt-4 text-nt-slate-600">
-          Fill a few details to check your eligibility. It takes less than 5 minutes.
-        </p>
+        <p className="mt-4 text-nt-slate-600">{copy.description}</p>
 
         <form onSubmit={handleSubmit} className="mt-10 space-y-6">
           <div>
@@ -194,11 +213,17 @@ export default function ApplyPage() {
               />
               <span>
                 I agree to NavDhan{"'"}s{" "}
-                <Link href={`/${locale}/legal/consent-policy`} className="text-nt-orange-600 underline">
+                <Link
+                  href={`/${locale}/legal/consent-policy`}
+                  className="text-nt-orange-600 underline"
+                >
                   Consent Policy
                 </Link>{" "}
                 and{" "}
-                <Link href={`/${locale}/legal/privacy-policy`} className="text-nt-orange-600 underline">
+                <Link
+                  href={`/${locale}/legal/privacy-policy`}
+                  className="text-nt-orange-600 underline"
+                >
                   Privacy Policy
                 </Link>
                 .
@@ -211,10 +236,7 @@ export default function ApplyPage() {
                 checked={form.consentLender}
                 onChange={(e) => setForm({ ...form, consentLender: e.target.checked })}
               />
-              <span>
-                I consent to sharing my details with NavDhan{"'"}s lending partners to receive loan
-                offers.
-              </span>
+              <span>{copy.consentLender}</span>
             </label>
           </div>
 
@@ -222,7 +244,7 @@ export default function ApplyPage() {
             type="submit"
             className="w-full rounded-md bg-nt-orange-600 px-6 py-3 text-sm font-semibold text-white hover:bg-nt-orange-700"
           >
-            Check Eligibility
+            {copy.submit}
           </button>
         </form>
       </div>

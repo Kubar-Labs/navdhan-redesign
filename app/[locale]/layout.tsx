@@ -11,7 +11,6 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
   if (!isValidLocale(locale)) {
     notFound();
   }
-
   return (
     <div lang={locale} className="min-h-screen">
       {children}
@@ -20,5 +19,14 @@ export default async function LocaleLayout({ children, params }: LocaleLayoutPro
 }
 
 export function generateStaticParams() {
-  return [{ locale: "en" }, { locale: "hi" }, { locale: "bn" }, { locale: "te" }, { locale: "mr" }, { locale: "ta" }, { locale: "kn" }, { locale: "ml" }];
+  return [
+    { locale: "en" },
+    { locale: "hi" },
+    { locale: "bn" },
+    { locale: "te" },
+    { locale: "mr" },
+    { locale: "ta" },
+    { locale: "kn" },
+    { locale: "ml" },
+  ];
 }
