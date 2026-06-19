@@ -66,6 +66,8 @@ function TickerLogo({ partner, isStatic = false }: TickerLogoProps) {
           alt={alt}
           width={144}
           height={40}
+          loading="eager"
+          decoding="sync"
           className="h-8 w-auto max-w-[120px] object-contain grayscale transition-all duration-300 hover:grayscale-0 focus-visible:grayscale-0 md:h-10 md:max-w-[140px]"
         />
       ) : (
