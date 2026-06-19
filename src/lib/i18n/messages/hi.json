@@ -64,6 +64,9 @@
       "press": "press@kubar.tech",
       "outreach": "outreach@kubar.tech"
     },
+    "cta": {
+      "backToHome": "होम पर वापस जाएँ"
+    },
     "nav": {
       "loanProducts": "लोन उत्पाद",
       "whyNavDhan": "NavDhan क्यों",

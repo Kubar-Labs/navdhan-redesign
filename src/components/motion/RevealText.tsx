@@ -11,7 +11,6 @@ export interface RevealTextProps {
   className?: string;
   delay?: number;
   stagger?: number;
-  once?: boolean;
 }
 
 export function RevealText({
@@ -20,18 +19,18 @@ export function RevealText({
   className,
   delay = 0,
   stagger = 0.04,
-  once = true,
 }: RevealTextProps) {
   const reduced = useReducedMotion();
-  const [mounted, setMounted] = useState(false);
+  const [animate, setAnimate] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
+    const id = requestAnimationFrame(() => setAnimate(true));
+    return () => cancelAnimationFrame(id);
   }, []);
 
   const words = text.split(" ");
 
-  if (reduced || !mounted) {
+  if (reduced) {
     return <Tag className={className}>{text}</Tag>;
   }
 
@@ -46,8 +45,7 @@ export function RevealText({
           <motion.span
             className="inline-block will-change-transform"
             initial={{ y: "110%" }}
-            whileInView={{ y: 0 }}
-            viewport={{ once, amount: 0.5 }}
+            animate={animate ? { y: 0 } : { y: "110%" }}
             transition={{
               duration: 0.55,
               delay: delay + index * stagger,

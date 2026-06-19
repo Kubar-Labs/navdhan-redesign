@@ -9,7 +9,6 @@ import { Container } from "@/src/components/layout/Container";
 import { Section } from "@/src/components/layout/Section";
 import { FadeIn } from "@/src/components/motion/FadeIn";
 import { StaggerContainer } from "@/src/components/motion/StaggerContainer";
-import { RevealText } from "@/src/components/motion/RevealText";
 import { EcosystemTicker } from "@/src/components/sections/EcosystemTicker";
 import { RecognitionCarousel } from "@/src/components/sections/RecognitionCarousel";
 import { getMessages } from "@/src/lib/i18n/messages";
@@ -69,7 +68,7 @@ export default function HomePage() {
                 {t("home.hero.eyebrow")}
               </p>
               <h1 className="max-w-4xl text-4xl font-semibold tracking-tight text-nt-slate-900 md:text-5xl lg:text-6xl">
-                <RevealText as="span" text={t("home.hero.headline")} />
+                {t("home.hero.headline")}
               </h1>
               <p className="mt-6 max-w-2xl text-lg leading-relaxed text-nt-slate-600 md:text-xl">
                 {t("home.hero.body")}

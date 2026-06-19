@@ -21,7 +21,8 @@
         "label": "Apply Loan",
         "href": "/apply",
         "variant": "primary"
-      }
+      },
+      "backToHome": "Back to home"
     },
     "localeSelector": {
       "label": "Select language",
