@@ -1,7 +1,7 @@
 {
   "global": {
     "announcement": {
-      "message": "Aap business badhayein, hum funding sambhalte hain.",
+      "message": "One stop-solution for all your working capital needs.",
       "ctaLabel": "Apply now",
       "href": "/apply"
     },
@@ -44,7 +44,7 @@
       "tagline": "One stop-solution for all your working capital needs",
       "company": "Kubar Protocol Private Limited (CIN: U70200WB2024PTC274850)",
       "address": "156, Tarvakere, BTM Layout 1st Stage, Bengaluru, Karnataka",
-      "copyright": "© 2026 Kubar Protocol Private Limited. NavDhan is powered by Kubar.",
+      "copyright": "\u00a9 2026 Kubar Protocol Private Limited. NavDhan is powered by Kubar.",
       "contactHeading": "Contact",
       "companyHeading": "Company",
       "legalHeading": "Legal",
@@ -128,7 +128,7 @@
   "home": {
     "meta": {
       "title": "NavDhan: Business Loans for India's MSMEs",
-      "description": "Get ₹5L to ₹1Cr business loans. One application, multiple offers, zero platform fee."
+      "description": "Get \u20b95L to \u20b91Cr business loans. One application, multiple offers, zero platform fee."
     },
     "hero": {
       "eyebrow": "Fast business loans for India's MSMEs",
@@ -138,7 +138,7 @@
       "secondaryCta": "Talk to Us",
       "stats": [
         {
-          "value": "₹5L – ₹1Cr",
+          "value": "\u20b95L \u2013 \u20b91Cr",
           "label": "loan range"
         },
         {
@@ -146,7 +146,7 @@
           "label": "interest rate p.a."
         },
         {
-          "value": "3–12 month",
+          "value": "3\u201312 month",
           "label": "tenures"
         }
       ]
@@ -167,7 +167,7 @@
         {
           "id": "collateral-free",
           "titleKey": "Collateral-Free Business Loan",
-          "descriptionKey": "Unsecured funding up to ₹1 Crore based on your business cash flow. No property or asset needed.",
+          "descriptionKey": "Unsecured funding up to \u20b91 Crore based on your business cash flow. No property or asset needed.",
           "iconName": "ShieldCheck",
           "ctaKey": "Learn more"
         },
@@ -213,7 +213,7 @@
         {
           "id": "loan-sizes",
           "titleKey": "Loan sizes that fit.",
-          "bodyKey": "From ₹5 Lakhs to ₹1 Crore, borrow what your business actually needs."
+          "bodyKey": "From \u20b95 Lakhs to \u20b91 Crore, borrow what your business actually needs."
         },
         {
           "id": "clear-rates",
@@ -261,7 +261,7 @@
     },
     "finalCta": {
       "heading": "The right loan for your business is a few clicks away.",
-      "subtext": "Zero platform fee · Multiple loan offers · Quick, transparent process",
+      "subtext": "Zero platform fee \u00b7 Multiple loan offers \u00b7 Quick, transparent process",
       "primaryCta": "Apply Online",
       "secondaryCta": "Talk to Us"
     }

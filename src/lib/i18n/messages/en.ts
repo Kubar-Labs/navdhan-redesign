@@ -6,7 +6,7 @@ const messages = {
   },
   global: {
     announcement: {
-      message: "Aap business badhayein, hum funding sambhalte hain.",
+      message: "One stop-solution for all your working capital needs.",
       ctaLabel: "Check eligibility",
       href: "/apply",
     },
