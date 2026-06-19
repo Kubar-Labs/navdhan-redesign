@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { useReducedMotion } from "@/src/hooks/useReducedMotion";
 import { cn } from "@/src/lib/utils/cn";
@@ -29,9 +30,14 @@ export function FadeIn({
   direction = "up",
 }: FadeInProps) {
   const reduced = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
   const offset = directionOffsets[direction];
 
-  if (reduced) {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (reduced || !mounted) {
     return <div className={className}>{children}</div>;
   }
 
@@ -44,7 +50,7 @@ export function FadeIn({
       transition={{
         duration: 0.6,
         delay,
-        ease: [0.25, 0.1, 0.25, 1],
+        ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number],
       }}
     >
       {children}

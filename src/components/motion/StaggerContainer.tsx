@@ -1,6 +1,6 @@
 "use client";
 
-import { Children, type ReactNode } from "react";
+import { Children, type ReactNode, useEffect, useState } from "react";
 import { motion, type Variants } from "framer-motion";
 import { useReducedMotion } from "@/src/hooks/useReducedMotion";
 import { cn } from "@/src/lib/utils/cn";
@@ -35,8 +35,13 @@ export function StaggerContainer({
   amount = 0.2,
 }: StaggerContainerProps) {
   const reduced = useReducedMotion();
+  const [mounted, setMounted] = useState(false);
 
-  if (reduced) {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (reduced || !mounted) {
     return <div className={className}>{children}</div>;
   }
 
