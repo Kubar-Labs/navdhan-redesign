@@ -131,14 +131,22 @@ export function RecognitionCarousel({ eyebrow, heading, items }: RecognitionCaro
             </button>
 
             <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-nt-slate-100">
-              <Image
-                src={selected.imageAsset}
-                alt={selected.titleKey}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 768px"
-                priority
-              />
+              {selected.imageAsset ? (
+                <Image
+                  src={selected.imageAsset}
+                  alt={selected.titleKey}
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 768px"
+                  priority
+                />
+              ) : (
+                <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-nt-slate-100 to-nt-slate-200 px-8 text-center">
+                  <span className="text-lg font-medium text-nt-slate-500">
+                    {selected.titleKey}
+                  </span>
+                </div>
+              )}
             </div>
 
             <div className="mt-6">
@@ -149,9 +157,7 @@ export function RecognitionCarousel({ eyebrow, heading, items }: RecognitionCaro
               >
                 {selected.titleKey}
               </h3>
-              <p className="mt-4 text-base leading-relaxed text-nt-slate-700">
-                {selected.writeUp}
-              </p>
+              <p className="mt-4 text-base leading-relaxed text-nt-slate-700">{selected.writeUp}</p>
             </div>
 
             {selected.galleryAssets.length > 0 && (

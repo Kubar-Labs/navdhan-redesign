@@ -46,7 +46,8 @@ const messages = {
       tagline: "One stop-solution for all your working capital needs",
       company: "Kubar Protocol Private Limited (CIN: U70200WB2024PTC274850)",
       address: "156, Tarvakere, BTM Layout 1st Stage, Bengaluru, Karnataka",
-      copyright: "© 2026 Kubar Protocol Private Limited. NavDhan is powered by Kubar.",
+      copyright:
+        "© 2026 Kubar Protocol Private Limited. NavDhan is a product of Kubar Protocol Private Limited.",
       contactHeading: "Contact",
       companyHeading: "Company",
       legalHeading: "Legal",
@@ -84,7 +85,7 @@ const messages = {
       eyebrow: "Recognised by",
     },
     ecosystem: {
-      eyebrow: "Powered by Kubar",
+      eyebrow: "Technology Partnerships",
     },
     loanProducts: {
       eyebrow: "Loan products",
