@@ -11,6 +11,12 @@
   "team": {
     "meta": {
       "title": "आमची टीम : NavDhan"
+    },
+    "members": {
+      "eyebrow": "Leadership"
+    },
+    "advisors": {
+      "eyebrow": "Advisors"
     }
   },
   "global": {

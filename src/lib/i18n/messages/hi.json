@@ -37,6 +37,12 @@
     "meta": {
       "title": "हमारी टीम : NavDhan",
       "description": "भारत की MSMEs के लिए निष्पक्ष और तेज़ बिज़नेस लोन बनाने वाले लोगों से मिलें।"
+    },
+    "members": {
+      "eyebrow": "Leadership"
+    },
+    "advisors": {
+      "eyebrow": "Advisors"
     }
   },
   "global": {

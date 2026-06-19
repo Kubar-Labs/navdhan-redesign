@@ -276,10 +276,12 @@
       "subtext": "We are a team of operators, engineers, and bankers working to make business funding calm, clear, and accessible."
     },
     "members": {
-      "heading": "Leadership"
+      "heading": "Leadership",
+      "eyebrow": "Leadership"
     },
     "advisors": {
-      "heading": "Advisors"
+      "heading": "Advisors",
+      "eyebrow": "Advisors"
     },
     "join": {
       "heading": "Want to shape the future of MSME credit?",
