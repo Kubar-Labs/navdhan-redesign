@@ -10,14 +10,18 @@
       "kubarLabsLogo": "Kubar"
     },
     "nav": {
-      "products": { "label": "Loan Products", "href": "#products" },
-      "why": { "label": "Why NavDhan", "href": "#why" },
-      "emi": { "label": "EMI Calculator", "href": "#emi" },
-      "stories": { "label": "Customer Stories", "href": "#stories" },
-      "team": { "label": "Team", "href": "/team" }
+      "loanProducts": "Loan Products",
+      "whyNavDhan": "Why NavDhan",
+      "emiCalculator": "EMI Calculator",
+      "customerStories": "Customer Stories",
+      "team": "Team"
     },
     "cta": {
-      "apply": { "label": "Apply Loan", "href": "/apply", "variant": "primary" }
+      "apply": {
+        "label": "Apply Loan",
+        "href": "/apply",
+        "variant": "primary"
+      }
     },
     "localeSelector": {
       "label": "Select language",
@@ -45,28 +49,80 @@
       "companyHeading": "Company",
       "legalHeading": "Legal",
       "contactLinks": [
-        { "labelKey": "Loan Enquiry", "href": "mailto:loan@kubar.tech" },
-        { "labelKey": "Partnership Enquiry", "href": "mailto:partnerships@kubar.tech" },
-        { "labelKey": "Talk to Us", "href": "mailto:outreach@kubar.tech" },
-        { "labelKey": "Support", "href": "mailto:support@kubar.tech" },
-        { "labelKey": "Careers", "href": "mailto:careers@kubar.tech" },
-        { "labelKey": "Press", "href": "mailto:press@kubar.tech" }
+        {
+          "labelKey": "Loan Enquiry",
+          "href": "mailto:loan@kubar.tech"
+        },
+        {
+          "labelKey": "Partnership Enquiry",
+          "href": "mailto:partnerships@kubar.tech"
+        },
+        {
+          "labelKey": "Talk to Us",
+          "href": "mailto:outreach@kubar.tech"
+        },
+        {
+          "labelKey": "Support",
+          "href": "mailto:support@kubar.tech"
+        },
+        {
+          "labelKey": "Careers",
+          "href": "mailto:careers@kubar.tech"
+        },
+        {
+          "labelKey": "Press",
+          "href": "mailto:press@kubar.tech"
+        }
       ],
       "companyLinks": [
-        { "labelKey": "About us", "href": "#" },
-        { "labelKey": "Team", "href": "/team" },
-        { "labelKey": "Contact", "href": "mailto:hello@kubar.tech" }
+        {
+          "labelKey": "About us",
+          "href": "#"
+        },
+        {
+          "labelKey": "Team",
+          "href": "/team"
+        },
+        {
+          "labelKey": "Contact",
+          "href": "mailto:hello@kubar.tech"
+        }
       ],
       "legalLinks": [
-        { "labelKey": "Privacy Policy", "href": "/legal/privacy-policy" },
-        { "labelKey": "Terms of Use", "href": "/legal/terms-of-use" },
-        { "labelKey": "Fair Practices Code", "href": "/legal/fair-practices-code" },
-        { "labelKey": "Cookie Policy", "href": "/legal/cookie-policy" },
-        { "labelKey": "Grievance Redressal", "href": "/legal/grievance-redressal" },
-        { "labelKey": "RBI-DLG Disclosure", "href": "/legal/rbi-dlg-disclosure" },
-        { "labelKey": "Consent Policy", "href": "/legal/consent-policy" }
+        {
+          "labelKey": "Privacy Policy",
+          "href": "/legal/privacy-policy"
+        },
+        {
+          "labelKey": "Terms of Use",
+          "href": "/legal/terms-of-use"
+        },
+        {
+          "labelKey": "Fair Practices Code",
+          "href": "/legal/fair-practices-code"
+        },
+        {
+          "labelKey": "Cookie Policy",
+          "href": "/legal/cookie-policy"
+        },
+        {
+          "labelKey": "Grievance Redressal",
+          "href": "/legal/grievance-redressal"
+        },
+        {
+          "labelKey": "RBI-DLG Disclosure",
+          "href": "/legal/rbi-dlg-disclosure"
+        },
+        {
+          "labelKey": "Consent Policy",
+          "href": "/legal/consent-policy"
+        }
       ],
-      "badges": ["RBI Aligned", "FACE Registered", "Powered by Kubar"]
+      "badges": [
+        "RBI Aligned",
+        "FACE Registered",
+        "Powered by Kubar"
+      ]
     }
   },
   "home": {
@@ -81,9 +137,18 @@
       "primaryCta": "Check Eligibility",
       "secondaryCta": "Talk to Us",
       "stats": [
-        { "value": "₹5L – ₹1Cr", "label": "loan range" },
-        { "value": "12-24%", "label": "interest rate p.a." },
-        { "value": "3–12 month", "label": "tenures" }
+        {
+          "value": "₹5L – ₹1Cr",
+          "label": "loan range"
+        },
+        {
+          "value": "12-24%",
+          "label": "interest rate p.a."
+        },
+        {
+          "value": "3–12 month",
+          "label": "tenures"
+        }
       ]
     },
     "associationBadges": {
@@ -134,7 +199,11 @@
       "heading": "Built for business owners, not paperwork collectors.",
       "body": "You are running a business, not a bank branch. We keep the process digital, transparent, and focused on getting you an offer that works.",
       "cta": "Apply Now",
-      "trustBadges": ["RBI Aligned", "FACE Registered", "Powered by Kubar"],
+      "trustBadges": [
+        "RBI Aligned",
+        "FACE Registered",
+        "Powered by Kubar"
+      ],
       "reasons": [
         {
           "id": "one-application",

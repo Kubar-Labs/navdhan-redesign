@@ -33,10 +33,11 @@
       "outreach": "outreach@kubar.tech"
     },
     "nav": {
-      "team": {
-        "label": "Team",
-        "href": "/team"
-      }
+      "loanProducts": "கடன் தயாரிப்புகள்",
+      "whyNavDhan": "ஏன் NavDhan",
+      "emiCalculator": "EMI கால்குலேட்டர்",
+      "customerStories": "வாடிக்கையாளர் கதைகள்",
+      "team": "குழு"
     }
   }
 }
