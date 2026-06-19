@@ -1,0 +1,9 @@
+{
+  "status": "success",
+  "role": "frontend",
+  "exit_code": 0,
+  "stdout": ".opencode/factory/subagent-status/apply-wizard-rebuild.out.log",
+  "stderr": ".opencode/factory/subagent-status/apply-wizard-rebuild.err.log",
+  "started_at": "2026-06-19T06:12:44+05:30",
+  "finished_at": "2026-06-19T06:17:31+05:30"
+}

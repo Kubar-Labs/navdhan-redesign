@@ -8,8 +8,8 @@
     "name": "NavDhan",
     "legalName": "Kubar Protocol Private Limited",
     "cin": "U70200WB2024PTC274850",
-    "address": "156 Tarvakere, BTM Layout 1st Stage, Bengaluru, Karnataka, India",
-    "email": "support@navdhan.app",
+    "address": "156, Tarvakere, BTM Layout 1st Stage, Bengaluru, Karnataka",
+    "email": "support@kubar.tech",
     "phone": "+91-80-XXXX-XXXX",
     "website": "https://navdhan.app"
   },
@@ -31,7 +31,7 @@
       "items": [
         {
           "heading": "Email us",
-          "body": "Send your complaint to support@navdhan.app with the subject line \"Complaint\"."
+          "body": "Send your complaint to support@kubar.tech with the subject line \"Complaint\"."
         },
         {
           "heading": "Write to us",
@@ -98,8 +98,8 @@
       "contact": {
         "name": "NavDhan Support",
         "role": "Nodal Grievance Officer",
-        "email": "support@navdhan.app",
-        "address": "156 Tarvakere, BTM Layout 1st Stage, Bengaluru, Karnataka, India"
+        "email": "support@kubar.tech",
+        "address": "156, Tarvakere, BTM Layout 1st Stage, Bengaluru, Karnataka"
       }
     },
     {

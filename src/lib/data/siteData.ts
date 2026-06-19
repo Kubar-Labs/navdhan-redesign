@@ -78,9 +78,9 @@ export const techPartners: PartnerItem[] = [
 export const loanProducts: ProductCard[] = [
   {
     id: "collateral-free",
-    titleKey: "Collateral-Free Business Loan",
+    titleKey: "Term Loan up to ₹1 Crore",
     descriptionKey:
-      "Unsecured funding up to ₹1 Crore based on your business cash flow. No property or asset needed.",
+      "Unsecured funding based on your business cash flow. No property or asset needed.",
     iconName: "ShieldCheck",
     ctaKey: "global.cta.learnMore",
     href: "/apply",
@@ -115,9 +115,9 @@ export const loanProducts: ProductCard[] = [
 
 export const whyReasons: ReasonBlock[] = [
   {
-    id: "multiple-lenders",
-    titleKey: "One application, multiple lenders.",
-    bodyKey: "Apply once and see offers from several trusted lenders side by side.",
+    id: "matched-offers",
+    titleKey: "One application, matched offers.",
+    bodyKey: "Apply once and see loan options worked out for your business.",
   },
   {
     id: "loan-sizes",
@@ -142,7 +142,7 @@ export const whyReasons: ReasonBlock[] = [
   {
     id: "zero-fee",
     titleKey: "Zero platform fee.",
-    bodyKey: "You pay only what the lender charges. Nothing extra to NavDhan.",
+    bodyKey: "You only pay what your loan agreement says. Nothing extra to NavDhan.",
   },
 ];
 
@@ -150,56 +150,63 @@ export const recognitionItems: RecognitionItem[] = [
   {
     id: "finvision",
     titleKey: "FinVision 2026, NIBM",
-    descriptionKey: "Demoed at India's national banking innovation fest.",
+    descriptionKey: "Showcased NavDhan's work in building simpler credit access for India's MSMEs.",
     imageAsset: "/assets/recognition/finvision-2026.jpg",
     date: "2026",
   },
   {
     id: "india-ai",
     titleKey: "India AI Summit",
-    descriptionKey: "Pitched NavDhan's AI-powered credit matching to policymakers and investors.",
+    descriptionKey:
+      "Shared NavDhan's vision for simple, fair business loans with policymakers and investors.",
     imageAsset: "/assets/recognition/india-ai-summit.jpg",
     date: "2026",
   },
   {
     id: "startup-mahakumbh",
     titleKey: "Startup Mahakumbh",
-    descriptionKey: "Popular Choice recognition from India's largest startup congregation.",
+    descriptionKey:
+      "Chosen by India's largest startup gathering for making finance more accessible to small businesses.",
     imageAsset: "/assets/recognition/startup-mahakumbh.jpg",
     date: "2026",
   },
   {
     id: "bengaluru-tech",
     titleKey: "Bengaluru Tech Summit",
-    descriptionKey: "Official launch of NavDhan to Karnataka's tech ecosystem.",
+    descriptionKey:
+      "Introduced NavDhan as a calm, simple way for Karnataka businesses to access working capital.",
     imageAsset: "/assets/recognition/bengaluru-tech-summit.jpg",
     date: "2026",
   },
   {
     id: "stpi-imc",
     titleKey: "STPI IMC",
-    descriptionKey: "Recognised at STPI's India Accelerator and innovation cohort.",
+    descriptionKey:
+      "Recognised by STPI's India Accelerator for innovation in small business finance.",
     imageAsset: "/assets/recognition/stpi-imc.jpg",
     date: "2026",
   },
   {
     id: "kotak-bizlabs",
     titleKey: "Kotak BizLabs Demo Day",
-    descriptionKey: "Featured fintech among Kotak's enterprise startup network.",
+    descriptionKey:
+      "Featured by Kotak's enterprise startup network for practical financial tools for MSMEs.",
     imageAsset: "/assets/recognition/kotak-bizlabs.jpg",
     date: "2026",
   },
   {
     id: "bharat-innovation",
     titleKey: "Bharat Innovation Conclave",
-    descriptionKey: "National showcase for inclusive finance innovation.",
+    descriptionKey:
+      "Showcased at a national forum for inclusive finance solutions that support real businesses.",
     imageAsset: "/assets/recognition/bharat-innovation-conclave.jpg",
     date: "2026",
   },
   {
     id: "rubrix-t-hub",
     titleKey: "Rubrix, T-Hub",
-    descriptionKey: "Selected at T-Hub's Rubrix program for high-growth startups.",
+    descriptionKey:
+      "Selected by T-Hub's Rubrix program for building high-impact solutions for Indian businesses.",
     imageAsset: "/assets/recognition/rubrix-t-hub.jpg",
     date: "2026",
   },
@@ -247,7 +254,7 @@ export const emiDefaults = {
   defaultTenure: 9,
 };
 
-export const trustBadges = ["RBI Aligned", "FACE Registered", "10+ Lender Partners"];
+export const trustBadges = ["RBI Aligned", "FACE Registered", "Powered by Kubar"];
 
 export const teamMembers: TeamMember[] = [
   {
@@ -264,7 +271,7 @@ export const teamMembers: TeamMember[] = [
     name: "Engineering Lead",
     roleKey: "Chief Technology Officer",
     bioKey:
-      "Architecting the platform that matches borrowers with the right lenders securely and at scale.",
+      "Architecting the secure, scalable technology that makes business loans simple and fair.",
     imageAsset: "/assets/team/placeholder-avatar.jpg",
     linkedIn: "https://www.linkedin.com",
   },
@@ -272,7 +279,7 @@ export const teamMembers: TeamMember[] = [
     id: "credit-1",
     name: "Credit Lead",
     roleKey: "Head of Credit",
-    bioKey: "Designing underwriting standards that keep lenders safe and borrowers fairly treated.",
+    bioKey: "Designing underwriting standards that treat borrowers fairly while managing risk.",
     imageAsset: "/assets/team/placeholder-avatar.jpg",
   },
   {
@@ -290,7 +297,7 @@ export const advisors: Advisor[] = [
     name: "Fintech Advisor",
     domainKey: "Digital Lending & Compliance",
     contributionKey:
-      "Advises on regulatory alignment, partner lender strategy, and transparent product design.",
+      "Advises on regulatory alignment, transparent product design, and trust-building practices.",
     imageAsset: "/assets/team/placeholder-avatar.jpg",
     linkedIn: "https://www.linkedin.com",
   },

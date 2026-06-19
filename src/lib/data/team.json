@@ -2,7 +2,7 @@
   "pageHeadingKey": "team.hero.heading",
   "pageSubtextKey": "team.hero.subtext",
   "joinCtaKey": "team.join.cta",
-  "joinHref": "mailto:careers@navdhan.app",
+  "joinHref": "mailto:careers@kubar.tech",
   "members": [
     {
       "id": "founder-1",
@@ -16,7 +16,7 @@
       "id": "cto",
       "name": "Engineering Lead",
       "roleKey": "Chief Technology Officer",
-      "bioKey": "Leads platform engineering, data pipelines and lender integrations.",
+      "bioKey": "Leads platform engineering, data pipelines and integrations that power fast, fair loan decisions.",
       "imageAsset": "",
       "linkedIn": ""
     },
@@ -24,7 +24,7 @@
       "id": "head-ops",
       "name": "Operations Lead",
       "roleKey": "Head of Operations",
-      "bioKey": "Drives customer success, lender operations and compliance workflows.",
+      "bioKey": "Drives customer success, operations and compliance workflows so every business owner feels supported.",
       "imageAsset": "",
       "linkedIn": ""
     }
@@ -34,7 +34,7 @@
       "id": "advisor-credit",
       "name": "Senior Credit Advisor",
       "domainKey": "Retail & MSME Credit",
-      "contributionKey": "Advises on underwriting frameworks, lender partnerships and regulatory alignment.",
+      "contributionKey": "Advises on underwriting frameworks, fair-practice design and regulatory alignment.",
       "imageAsset": "",
       "linkedIn": ""
     },

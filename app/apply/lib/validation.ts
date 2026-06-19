@@ -17,7 +17,7 @@ export const LOAN_AMOUNT_STEP = 10_000;
 export const TENURE_MIN = 3;
 export const TENURE_MAX = 12;
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
 
 export function validateLoanAmount(value: unknown): boolean {
   if (!Number.isInteger(value)) return false;
@@ -83,5 +83,5 @@ export function validatePanNumber(value: unknown): boolean {
 export function validateGstin(value: unknown): boolean {
   if (value === null || value === undefined || value === "") return true;
   if (typeof value !== "string") return false;
-  return /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$/.test(value);
+  return /^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[1-9A-Z]$/.test(value);
 }

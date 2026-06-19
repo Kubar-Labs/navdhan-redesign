@@ -45,17 +45,17 @@ export async function Footer({ locale }: FooterProps) {
               <li>
                 <Link
                   href={`/${locale}/team`}
-                  className="hover:text-white focus-visible:rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-nt-orange-600"
+                  className="block text-sm text-nt-slate-600 hover:text-nt-orange-600 transition-colors"
                 >
                   {t("global.nav.team")}
                 </Link>
               </li>
               <li>
                 <a
-                  href={`mailto:${t("global.contact.support")}@navdhan.app`}
+                  href="mailto:hello@kubar.tech"
                   className="hover:text-white focus-visible:rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-nt-orange-600"
                 >
-                  {t("global.contact.support")}
+                  Contact
                 </a>
               </li>
             </ul>
@@ -66,11 +66,24 @@ export async function Footer({ locale }: FooterProps) {
               {t("global.footer.contactHeading")}
             </p>
             <ul className="mt-4 space-y-3 text-sm text-nt-slate-300">
-              <li>{t("global.contact.loan")}</li>
-              <li>{t("global.contact.partnership")}</li>
-              <li>{t("global.contact.support")}</li>
-              <li>{t("global.contact.careers")}</li>
-              <li>{t("global.contact.press")}</li>
+              <li>
+                <a href={`mailto:${t("global.contact.loan")}`}>Loan Enquiry</a>
+              </li>
+              <li>
+                <a href={`mailto:${t("global.contact.partnership")}`}>Partnership Enquiry</a>
+              </li>
+              <li>
+                <a href={`mailto:${t("global.contact.outreach")}`}>Talk to Us</a>
+              </li>
+              <li>
+                <a href={`mailto:${t("global.contact.support")}`}>Support</a>
+              </li>
+              <li>
+                <a href={`mailto:${t("global.contact.careers")}`}>Careers</a>
+              </li>
+              <li>
+                <a href={`mailto:${t("global.contact.press")}`}>Press</a>
+              </li>
             </ul>
           </div>
 
@@ -96,9 +109,7 @@ export async function Footer({ locale }: FooterProps) {
         <div className="mt-12 border-t border-nt-slate-800 pt-8 text-xs leading-relaxed text-nt-slate-400">
           <p>{company}</p>
           <p className="mt-1">{address}</p>
-          <p className="mt-4 font-medium text-nt-slate-300">
-            {t("global.footer.badges")}
-          </p>
+          <p className="mt-4 font-medium text-nt-slate-300">{t("global.footer.badges")}</p>
         </div>
       </Container>
     </footer>

@@ -1,8 +1,8 @@
 const messages = {
   meta: {
-    title: "NavDhan — Fast Business Loans for India's MSMEs",
+    title: "NavDhan: Fast Business Loans for India's MSMEs",
     description:
-      "Get matched with trusted lenders. One application, multiple offers, zero platform fee.",
+      "Get matched with loan options. One application, multiple offers, zero platform fee.",
   },
   global: {
     announcement: {
@@ -12,7 +12,7 @@ const messages = {
     },
     nav: {
       loanProducts: "Loan Products",
-      whyNavdhan: "Why NavDhan",
+      whyNavDhan: "Why NavDhan",
       emiCalculator: "EMI Calculator",
       customerStories: "Customer Stories",
       team: "Team",
@@ -31,7 +31,7 @@ const messages = {
     },
     alt: {
       navdhanLogo: "NavDhan logo",
-      kubarLabsLogo: "Kubar Labs logo",
+      kubarLabsLogo: "Kubar logo",
       face: "FACE registered member",
       startupMahakumbh: "Startup Mahakumbh",
       stpiFinglobe: "STPI FinGlobe",
@@ -42,39 +42,40 @@ const messages = {
       teamPhoto: "Photo of {name}",
     },
     footer: {
-      tagline: "Fair loans for India's MSMEs. Built by Kubar Labs.",
+      tagline: "One stop-solution for all your working capital needs",
       company: "Kubar Protocol Private Limited (CIN: U70200WB2024PTC274850)",
-      address: "156 Tarvakere, BTM Layout 1st Stage, Bengaluru, Karnataka, India",
-      copyright: "© 2026 Kubar Protocol Private Limited. NavDhan is a product of Kubar Labs.",
+      address: "156, Tarvakere, BTM Layout 1st Stage, Bengaluru, Karnataka",
+      copyright: "© 2026 Kubar Protocol Private Limited. NavDhan is powered by Kubar.",
       contactHeading: "Contact",
       companyHeading: "Company",
       legalHeading: "Legal",
-      badges: "RBI Aligned · FACE Registered · 10+ Lender Partners",
+      badges: "RBI Aligned · FACE Registered · Powered by Kubar",
     },
     contact: {
-      loan: "Loan Enquiry",
-      partnership: "Partnership Enquiry",
-      support: "Support",
-      careers: "Careers",
-      press: "Press",
+      loan: "loan@kubar.tech",
+      partnership: "partnerships@kubar.tech",
+      support: "support@kubar.tech",
+      careers: "careers@kubar.tech",
+      press: "press@kubar.tech",
+      outreach: "outreach@kubar.tech",
     },
   },
   home: {
     meta: {
-      title: "NavDhan — Fast Business Loans for India's MSMEs",
+      title: "NavDhan: Fast Business Loans for India's MSMEs",
       description:
-        "Get matched with trusted lenders. One application, multiple offers, zero platform fee.",
+        "Get matched with loan options. One application, multiple offers, zero platform fee.",
     },
     hero: {
       eyebrow: "Fast business loans for India's MSMEs",
       headline: "Get the right business loan, without chasing banks.",
-      body: "NavDhan helps small and growing businesses find fair, fast loans from trusted lenders. One application. Multiple offers. Zero platform fee.",
+      body: "NavDhan helps small and growing businesses get fair, fast loans. One application. Multiple options. Zero platform fee.",
       primaryCta: "Check Eligibility",
       secondaryCta: "Talk to Us",
       stat1value: "₹5L – ₹1Cr",
       stat1label: "loan range",
-      stat2value: "10+",
-      stat2label: "active lending partners",
+      stat2value: "12-24%",
+      stat2label: "interest rate p.a.",
       stat3value: "3–12 month",
       stat3label: "tenures",
     },
@@ -82,12 +83,12 @@ const messages = {
       eyebrow: "Recognised by",
     },
     ecosystem: {
-      eyebrow: "Powered by a strong tech ecosystem",
+      eyebrow: "Powered by Kubar",
     },
     loanProducts: {
       eyebrow: "Loan products",
-      heading: "A loan for the real things your business needs.",
-      body: "From buying stock and machinery to managing daily expenses — choose the loan that fits your plan, not the other way around.",
+      heading: "A loan that fits what your business actually needs.",
+      body: "From buying stock and machinery to managing daily expenses, choose the loan that fits your plan, not the other way around.",
       cta: "Compare Loan Options",
     },
     whyNavDhan: {
@@ -98,7 +99,7 @@ const messages = {
     },
     recognition: {
       eyebrow: "Recognition",
-      heading: "Trusted by lenders. Recognised by the industry.",
+      heading: "Built to earn your trust. Recognised along the way.",
     },
     customerStories: {
       eyebrow: "Customer stories",
@@ -121,21 +122,21 @@ const messages = {
     },
     finalCta: {
       heading: "The right loan for your business is a few clicks away.",
-      subtext: "Zero platform fee · Multiple lender offers · Quick, transparent process",
+      subtext: "Zero platform fee · Multiple loan offers · Quick, transparent process",
       primaryCta: "Apply Online",
       secondaryCta: "Talk to Us",
     },
   },
   team: {
     meta: {
-      title: "Team — NavDhan",
+      title: "Team: NavDhan",
       description: "Meet the people building fair, fast credit for India's MSMEs.",
     },
     hero: {
       heading: "Built by people who believe in small business.",
       subtext:
-        "We are lenders, engineers, designers, and operators working to make MSME credit calm, clear, and honest.",
-      mission: "Fair loans for India's MSMEs.",
+        "We are builders, engineers, designers, and operators working to make MSME credit calm, clear, and honest.",
+      mission: "One stop-solution for all your working capital needs.",
     },
     members: {
       eyebrow: "Leadership",
@@ -154,7 +155,7 @@ const messages = {
   },
   legal: {
     meta: {
-      title: "{title} — NavDhan",
+      title: "{title}: NavDhan",
       description: "Legal and regulatory information for NavDhan users.",
     },
     lastUpdated: "Last updated: {date}",

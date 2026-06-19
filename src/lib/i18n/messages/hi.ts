@@ -2,8 +2,8 @@ import type { Messages } from "./en";
 
 const messages: Messages = {
   meta: {
-    title: "NavDhan — भारत की MSMEs के लिए तेज़ बिज़नेस लोन",
-    description: "भरोसेमंद लेंडर्स से मैच करें। एक आवेदन, कई ऑफ़र, ज़ीरो प्लेटफ़ॉर्म फीस।",
+    title: "NavDhan: भारत की MSMEs के लिए तेज़ बिज़नेस लोन",
+    description: "लोन विकल्पों से मैच करें। एक आवेदन, कई ऑप्शंस, ज़ीरो प्लेटफ़ॉर्म फीस।",
   },
   global: {
     announcement: {
@@ -13,7 +13,7 @@ const messages: Messages = {
     },
     nav: {
       loanProducts: "लोन उत्पाद",
-      whyNavdhan: "NavDhan क्यों",
+      whyNavDhan: "NavDhan क्यों",
       emiCalculator: "EMI कैलकुलेटर",
       customerStories: "ग्राहकों की कहानियाँ",
       team: "टीम",
@@ -43,51 +43,52 @@ const messages: Messages = {
       teamPhoto: "{name} की फोटो",
     },
     footer: {
-      tagline: "भारत की MSMEs के लिए निष्पक्ष लोन। Kubar Labs द्वारा निर्मित।",
+      tagline: "आपकी सभी working capital ज़रूरतों के लिए one-stop समाधान।",
       company: "Kubar Protocol Private Limited (CIN: U70200WB2024PTC274850)",
-      address: "156 Tarvakere, BTM Layout 1st Stage, Bengaluru, Karnataka, India",
-      copyright: "© 2026 Kubar Protocol Private Limited. NavDhan Kubar Labs का उत्पाद है।",
+      address: "156, तारावकेरे, बीटीएम लेआउट पहला चरण, बेंगलुरु, कर्नाटक",
+      copyright: "© 2026 Kubar Protocol Private Limited. NavDhan Kubar द्वारा संचालित है।",
       contactHeading: "संपर्क",
       companyHeading: "कंपनी",
       legalHeading: "कानूनी",
-      badges: "RBI Aligned · FACE Registered · 10+ Lender Partners",
+      badges: "RBI अनुरूप · FACE पंजीकृत · Kubar द्वारा संचालित",
     },
     contact: {
-      loan: "लोन पूछताछ",
-      partnership: "साझेदारी पूछताछ",
-      support: "सहायता",
-      careers: "करियर",
-      press: "प्रेस",
+      loan: "loan@kubar.tech",
+      partnership: "partnerships@kubar.tech",
+      support: "support@kubar.tech",
+      careers: "careers@kubar.tech",
+      press: "press@kubar.tech",
+      outreach: "outreach@kubar.tech",
     },
   },
   home: {
     meta: {
-      title: "NavDhan — भारत की MSMEs के लिए तेज़ बिज़नेस लोन",
-      description: "भरोसेमंद लेंडर्स से मैच करें। एक आवेदन, कई ऑफ़र, ज़ीरो प्लेटफ़ॉर्म फीस।",
+      title: "NavDhan: भारत की MSMEs के लिए तेज़ बिज़नेस लोन",
+      description: "लोन विकल्पों से मैच करें। एक आवेदन, कई ऑप्शंस, ज़ीरो प्लेटफ़ॉर्म फीस।",
     },
     hero: {
       eyebrow: "भारत की MSMEs के लिए तेज़ बिज़नेस लोन",
       headline: "सही बिज़नेस लोन पाएँ, बैंकों के पीछे न भागें।",
-      body: "NavDhan छोटे और बढ़ते व्यवसायों को भरोसेमंद लेंडर्स से तेज़ और निष्पक्ष लोन दिलाने में मदद करता है। एक आवेदन। कई ऑफ़र। ज़ीरो प्लेटफ़ॉर्म फीस।",
+      body: "NavDhan छोटे और बढ़ते व्यवसायों को तेज़ और निष्पक्ष लोन विकल्प दिलाने में मदद करता है। एक आवेदन। कई ऑप्शंस। ज़ीरो प्लेटफ़ॉर्म फीस।",
       primaryCta: "पात्रता जाँचें",
       secondaryCta: "हमसे बात करें",
       stat1value: "₹5L – ₹1Cr",
       stat1label: "लोन रेंज",
       stat2value: "10+",
-      stat2label: "सक्रिय लेंडिंग पार्टनर्स",
-      stat3value: "3–12 महीने",
+      stat2label: "भरोसेमंद लेंडिंग नेटवर्क",
+      stat3value: "3-12 महीने",
       stat3label: "अवधि",
     },
     association: {
       eyebrow: "मान्यता प्राप्त",
     },
     ecosystem: {
-      eyebrow: "मज़बूत टेक इकोसिस्टम द्वारा समर्थित",
+      eyebrow: "Kubar द्वारा संचालित",
     },
     loanProducts: {
       eyebrow: "लोन उत्पाद",
       heading: "वास्तविक ज़रूरतों के लिए एक लोन।",
-      body: "स्टॉक और मशीनरी खरीदने से लेकर दैनिक खर्चों को संभालने तक — अपनी योजना के अनुरूप लोन चुनें।",
+      body: "स्टॉक और मशीनरी खरीदने से लेकर दैनिक खर्चों को संभालने तक, अपनी योजना के अनुरूप लोन चुनें।",
       cta: "लोन विकल्प तुलना करें",
     },
     whyNavDhan: {
@@ -98,7 +99,7 @@ const messages: Messages = {
     },
     recognition: {
       eyebrow: "मान्यता",
-      heading: "लेंडर्स द्वारा भरोसेमंद। उद्योग द्वारा मान्य।",
+      heading: "आपका भरोसा जीतने के लिए बना। साथ ही मिली मान्यता।",
     },
     customerStories: {
       eyebrow: "ग्राहकों की कहानियाँ",
@@ -128,14 +129,14 @@ const messages: Messages = {
   },
   team: {
     meta: {
-      title: "टीम — NavDhan",
+      title: "टीम: NavDhan",
       description: "भारत की MSMEs के लिए निष्पक्ष और तेज़ क्रेडिट बनाने वाले लोगों से मिलें।",
     },
     hero: {
       heading: "छोटे व्यवसाय में यकीन रखने वाले लोगों द्वारा निर्मित।",
       subtext:
-        "हम लेंडर्स, इंजीनियर, डिज़ाइनर और ऑपरेटर हैं जो MSME क्रेडिट को शांत, स्पष्ट और ईमानदार बनाने में लगे हैं।",
-      mission: "भारत की MSMEs के लिए निष्पक्ष लोन।",
+        "हम बिल्डर्स, इंजीनियर, डिज़ाइनर और ऑपरेटर हैं जो MSME क्रेडिट को शांत, स्पष्ट और ईमानदार बनाने में लगे हैं।",
+      mission: "आपकी सभी working capital ज़रूरतों के लिए one-stop समाधान।",
     },
     members: {
       eyebrow: "लीडरशिप",
@@ -154,7 +155,7 @@ const messages: Messages = {
   },
   legal: {
     meta: {
-      title: "{title} — NavDhan",
+      title: "{title}: NavDhan",
       description: "NavDhan उपयोगकर्ताओं के लिए कानूनी और नियामक जानकारी।",
     },
     lastUpdated: "अंतिम अद्यतन: {date}",

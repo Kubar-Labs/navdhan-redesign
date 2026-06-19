@@ -1,0 +1,9 @@
+{
+  "status": "success",
+  "role": "frontend",
+  "exit_code": 0,
+  "stdout": ".opencode/factory/subagent-status/marketing-site-polish.out.log",
+  "stderr": ".opencode/factory/subagent-status/marketing-site-polish.err.log",
+  "started_at": "2026-06-19T06:12:42+05:30",
+  "finished_at": "2026-06-19T06:16:02+05:30"
+}
