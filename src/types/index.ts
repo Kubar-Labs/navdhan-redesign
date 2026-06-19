@@ -34,7 +34,9 @@ export interface RecognitionItem {
   id: string;
   titleKey: string;
   descriptionKey: string;
-  imageAsset?: string;
+  writeUp: string;
+  imageAsset: string;
+  galleryAssets: string[];
   date?: string;
 }
 

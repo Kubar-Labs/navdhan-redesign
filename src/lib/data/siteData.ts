@@ -162,67 +162,105 @@ export const whyReasons: ReasonBlock[] = [
 
 export const recognitionItems: RecognitionItem[] = [
   {
-    id: "finvision",
-    titleKey: "FinVision 2026, NIBM",
-    descriptionKey: "Showcased NavDhan's work in building simpler credit access for India's MSMEs.",
-    imageAsset: "/assets/recognition/finvision-2026.jpg",
+    id: "ai-summit",
+    titleKey: "AI Impact Summit, India 2026",
+    descriptionKey:
+      "Discussed inclusive finance for Indian MSMEs with policymakers, builders and investors.",
+    writeUp:
+      "At the AI Impact Summit Bharat 2026, we shared how NavDhan is using calm, responsible technology to bring working capital closer to small business owners. The room was full of founders, regulators and researchers working on welfare for all, and it reminded us why borrower-first design matters.",
+    imageAsset: "/assets/recognition/ai-summit/01.jpeg",
+    galleryAssets: [
+      "/assets/recognition/ai-summit/02.jpeg",
+      "/assets/recognition/ai-summit/03.jpeg",
+    ],
     date: "2026",
   },
   {
-    id: "india-ai",
-    titleKey: "India AI Summit",
+    id: "nibm",
+    titleKey: "FinTech Edge Winner, NIBM",
     descriptionKey:
-      "Shared NavDhan's vision for simple, fair business loans with policymakers and investors.",
-    imageAsset: "/assets/recognition/india-ai-summit.jpg",
+      "Won the FinTech Edge award for practical credit tools built for small businesses.",
+    writeUp:
+      "NIBM’s FinTech Edge competition brought together early-stage teams solving real problems in banking and credit. We walked away a winner, judged on clarity of problem, strength of execution and potential impact on India’s MSMEs.",
+    imageAsset: "/assets/recognition/nibm/01.jpeg",
+    galleryAssets: ["/assets/recognition/nibm/02.jpeg", "/assets/recognition/nibm/03.jpeg"],
     date: "2026",
   },
   {
     id: "startup-mahakumbh",
     titleKey: "Startup Mahakumbh",
     descriptionKey:
-      "Chosen by India's largest startup gathering for making finance more accessible to small businesses.",
-    imageAsset: "/assets/recognition/startup-mahakumbh.jpg",
-    date: "2026",
+      "Selected at India’s largest startup gathering for making business loans simpler.",
+    writeUp:
+      "Startup Mahakumbh is where India’s startup ecosystem shows up. NavDhan was chosen to present to a packed audience of founders, operators and investors, and the conversations reinforced how badly small businesses need a calm, transparent loan experience.",
+    imageAsset: "/assets/recognition/startup-mahakumbh/01.jpeg",
+    galleryAssets: [
+      "/assets/recognition/startup-mahakumbh/02.jpeg",
+      "/assets/recognition/startup-mahakumbh/03.jpeg",
+    ],
+    date: "2024",
   },
   {
-    id: "bengaluru-tech",
-    titleKey: "Bengaluru Tech Summit",
-    descriptionKey:
-      "Introduced NavDhan as a calm, simple way for Karnataka businesses to access working capital.",
-    imageAsset: "/assets/recognition/bengaluru-tech-summit.jpg",
-    date: "2026",
+    id: "iima",
+    titleKey: "IIM Ahmedabad",
+    descriptionKey: "Shared NavDhan’s story with the IIM Ahmedabad entrepreneurship community.",
+    writeUp:
+      "At IIM Ahmedabad, we met founders, professors and alumni who have spent decades building and backing Indian enterprises. Presenting NavDhan there was a chance to stress-test our assumptions and come back sharper about what borrowers truly need.",
+    imageAsset: "/assets/recognition/iima/01.jpg",
+    galleryAssets: ["/assets/recognition/iima/02.jpg", "/assets/recognition/iima/03.jpg"],
+    date: "2024",
   },
   {
-    id: "stpi-imc",
-    titleKey: "STPI IMC",
+    id: "iit-kharagpur-grandx",
+    titleKey: "IIT Kharagpur - Campus Fund GrandX",
     descriptionKey:
-      "Recognised by STPI's India Accelerator for innovation in small business finance.",
-    imageAsset: "/assets/recognition/stpi-imc.jpg",
-    date: "2026",
+      "Pitched at IIT Kharagpur’s GrandX, connecting with student builders and investors.",
+    writeUp:
+      "Campus Fund GrandX at IIT Kharagpur brings together some of the most ambitious student founders and early investors. We pitched NavDhan’s mission of fair, fast MSME credit and left with thoughtful feedback and new champions for the cause.",
+    imageAsset: "/assets/recognition/iit-kharagpur-grandx/01.jpg",
+    galleryAssets: [
+      "/assets/recognition/iit-kharagpur-grandx/02.jpg",
+      "/assets/recognition/iit-kharagpur-grandx/03.jpg",
+    ],
+    date: "2025",
   },
   {
-    id: "kotak-bizlabs",
-    titleKey: "Kotak BizLabs Demo Day",
+    id: "jindal-2024",
+    titleKey: "Jindal 2024",
     descriptionKey:
-      "Featured by Kotak's enterprise startup network for practical financial tools for MSMEs.",
-    imageAsset: "/assets/recognition/kotak-bizlabs.jpg",
-    date: "2026",
+      "Showcased NavDhan at Jindal 2024, exploring credit access for local entrepreneurs.",
+    writeUp:
+      "Jindal 2024 gave us a stage to talk directly to young entrepreneurs and ecosystem enablers. The theme kept returning to one idea: financial products should be explained in plain language and built around the borrower’s real cash flow.",
+    imageAsset: "/assets/recognition/jindal-2024/01.jpeg",
+    galleryAssets: [
+      "/assets/recognition/jindal-2024/02.jpeg",
+      "/assets/recognition/jindal-2024/03.jpeg",
+    ],
+    date: "2024",
   },
   {
-    id: "bharat-innovation",
-    titleKey: "Bharat Innovation Conclave",
+    id: "pba-2024",
+    titleKey: "PBA 2024",
     descriptionKey:
-      "Showcased at a national forum for inclusive finance solutions that support real businesses.",
-    imageAsset: "/assets/recognition/bharat-innovation-conclave.jpg",
-    date: "2026",
+      "Participated in PBA 2024, demonstrating NavDhan’s borrower-first loan experience.",
+    writeUp:
+      "PBA 2024 was a deep dive into product, distribution and customer trust. We demonstrated NavDhan’s end-to-end experience and collected candid reactions from operators who see credit from both sides of the table.",
+    imageAsset: "/assets/recognition/pba-2024/01.jpeg",
+    galleryAssets: [
+      "/assets/recognition/pba-2024/03.jpg",
+    ],
+    date: "2024",
   },
   {
-    id: "rubrix-t-hub",
-    titleKey: "Rubrix, T-Hub",
+    id: "simi-event",
+    titleKey: "SI Event",
     descriptionKey:
-      "Selected by T-Hub's Rubrix program for building high-impact solutions for Indian businesses.",
-    imageAsset: "/assets/recognition/rubrix-t-hub.jpg",
-    date: "2026",
+      "Engaged with the SI community to learn from small business owners about working capital needs.",
+    writeUp:
+      "At the SI event, we stepped out of the builder bubble and listened to shop owners, traders and service providers describe their cash-flow pressures. Their stories now sit at the centre of how we design NavDhan’s product.",
+    imageAsset: "/assets/recognition/simi-event/01.jpg",
+    galleryAssets: ["/assets/recognition/simi-event/02.jpg"],
+    date: "2024",
   },
 ];
 
