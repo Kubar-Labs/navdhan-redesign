@@ -38,38 +38,18 @@ export const associationBadges: BadgeItem[] = [
 
 export const techPartners: PartnerItem[] = [
   {
+    name: "Amplitude",
+    logoAsset: "/assets/partners/amplitude.png",
+    altKey: "global.alt.partnerLogo",
+  },
+  {
+    name: "ElevenLabs",
+    logoAsset: "/assets/partners/eleven.png",
+    altKey: "global.alt.partnerLogo",
+  },
+  {
     name: "Google",
     logoAsset: "/assets/partners/google.png",
-    altKey: "global.alt.partnerLogo",
-  },
-  {
-    name: "NVIDIA",
-    logoAsset: "/assets/partners/nvidia.png",
-    altKey: "global.alt.partnerLogo",
-  },
-  {
-    name: "Microsoft",
-    logoAsset: "/assets/partners/microsoft.png",
-    altKey: "global.alt.partnerLogo",
-  },
-  {
-    name: "Polkadot Blockchain Academy",
-    logoAsset: "/assets/partners/pba.png",
-    altKey: "global.alt.partnerLogo",
-  },
-  {
-    name: "Perplexity",
-    logoAsset: "/assets/partners/perplexity.png",
-    altKey: "global.alt.partnerLogo",
-  },
-  {
-    name: "OpenAI",
-    logoAsset: "/assets/partners/openai.png",
-    altKey: "global.alt.partnerLogo",
-  },
-  {
-    name: "Uniswap",
-    logoAsset: "/assets/partners/uniswap.png",
     altKey: "global.alt.partnerLogo",
   },
   {
@@ -78,13 +58,23 @@ export const techPartners: PartnerItem[] = [
     altKey: "global.alt.partnerLogo",
   },
   {
-    name: "Amplitude",
-    logoAsset: "/assets/partners/amplitude.png",
+    name: "Microsoft",
+    logoAsset: "/assets/partners/microsoft.png",
     altKey: "global.alt.partnerLogo",
   },
   {
-    name: "ElevenLabs",
-    logoAsset: "/assets/partners/eleven.png",
+    name: "NVIDIA",
+    logoAsset: "/assets/partners/nvidia.png",
+    altKey: "global.alt.partnerLogo",
+  },
+  {
+    name: "OpenAI",
+    logoAsset: "/assets/partners/openai.png",
+    altKey: "global.alt.partnerLogo",
+  },
+  {
+    name: "Perplexity",
+    logoAsset: "/assets/partners/perplexity.png",
     altKey: "global.alt.partnerLogo",
   },
 ];

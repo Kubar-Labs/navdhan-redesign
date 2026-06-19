@@ -2,6 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Container } from "@/src/components/layout/Container";
 import { Section } from "@/src/components/layout/Section";
+import { FadeIn } from "@/src/components/motion/FadeIn";
+import { StaggerContainer } from "@/src/components/motion/StaggerContainer";
 import teamData from "@/src/lib/data/team.json";
 import { getTranslator } from "@/src/lib/i18n/translations";
 
@@ -26,12 +28,12 @@ export default async function TeamPage({ params }: TeamPageProps) {
     <>
       <Section background="cream">
         <Container>
-          <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-nt-slate-900 md:text-5xl">
-            {teamData.pageHeadingKey}
-          </h1>
-          <p className="mt-6 max-w-2xl text-lg text-nt-slate-600">
-            {teamData.pageSubtextKey}
-          </p>
+          <FadeIn>
+            <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-nt-slate-900 md:text-5xl">
+              {teamData.pageHeadingKey}
+            </h1>
+            <p className="mt-6 max-w-2xl text-lg text-nt-slate-600">{teamData.pageSubtextKey}</p>
+          </FadeIn>
         </Container>
       </Section>
 
@@ -60,15 +62,9 @@ export default async function TeamPage({ params }: TeamPageProps) {
                     />
                   ) : null}
                 </div>
-                <h3 className="mt-4 text-lg font-semibold text-nt-slate-900">
-                  {member.name}
-                </h3>
-                <p className="text-sm font-medium text-nt-orange-600">
-                  {member.roleKey}
-                </p>
-                <p className="mt-3 text-sm leading-relaxed text-nt-slate-600">
-                  {member.bioKey}
-                </p>
+                <h3 className="mt-4 text-lg font-semibold text-nt-slate-900">{member.name}</h3>
+                <p className="text-sm font-medium text-nt-orange-600">{member.roleKey}</p>
+                <p className="mt-3 text-sm leading-relaxed text-nt-slate-600">{member.bioKey}</p>
                 {member.linkedIn ? (
                   <a
                     href={member.linkedIn}
@@ -111,12 +107,8 @@ export default async function TeamPage({ params }: TeamPageProps) {
                   ) : null}
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-nt-slate-900">
-                    {advisor.name}
-                  </h3>
-                  <p className="text-sm font-medium text-nt-orange-600">
-                    {advisor.domainKey}
-                  </p>
+                  <h3 className="text-lg font-semibold text-nt-slate-900">{advisor.name}</h3>
+                  <p className="text-sm font-medium text-nt-orange-600">{advisor.domainKey}</p>
                   <p className="mt-2 text-sm leading-relaxed text-nt-slate-600">
                     {advisor.contributionKey}
                   </p>
@@ -133,8 +125,7 @@ export default async function TeamPage({ params }: TeamPageProps) {
             Interested in joining our mission?
           </h2>
           <p className="mx-auto mt-4 max-w-xl text-nt-slate-600">
-            We are always looking for talented builders who want to reshape MSME
-            credit.
+            We are always looking for talented builders who want to reshape MSME credit.
           </p>
           <Link
             href={teamData.joinHref}

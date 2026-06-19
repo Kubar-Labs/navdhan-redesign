@@ -92,6 +92,27 @@ input[type="range"]::-moz-range-thumb {
   cursor: pointer;
 }
 
+/* Partner logo marquee */
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee-scroll 30s linear infinite;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-marquee {
+    animation: none;
+  }
+}
+
 .skip-link {
   position: absolute;
   top: -40px;
