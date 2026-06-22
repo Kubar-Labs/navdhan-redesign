@@ -1,7 +1,7 @@
 {
   "run_id": "navdhan-redesign-20250618",
   "branch_prefix": "factory/navdhan-redesign",
-  "status": "e2e-audit-and-fixes",
+  "status": "frontend-mvp-merged-to-main",
   "lock": {
     "locked": false
   },
@@ -12,7 +12,8 @@
     "2026-06-19: Contracts updated to v1.1.0 (Idempotency-Key, DECIMAL(19,4) money, idempotency_keys table, pii_key_id). All CDDs revised, reviewed, and approved.",
     "2026-06-19: Permissions patched. Stage 5 completion agents produced uncommitted foundation. Consolidated into factory/navdhan-redesign/stage-5-foundation and stage-5-progress.",
     "2026-06-19: With user authorization (Option 1), orchestrator wrote missing integration wiring on factory/navdhan-redesign/integration. `npm run build` passes and generates 85 static pages. MVP deployed to https://navdhan-redesign-2026.vercel.app.",
-    "2026-06-19: User requested exhaustive E2E audit and 'boil the ocean' pass across functionality, design, literary, branding, security, plus 24 specific fixes from original redesign brief."
+    "2026-06-19: User requested exhaustive E2E audit and 'boil the ocean' pass across functionality, design, literary, branding, security, plus 24 specific fixes from original redesign brief.",
+    "2026-06-22: Frontend MVP frozen and merged into main. Next run should read HANDOFF.md and continue with UI/UX refinement using Stitch + chrome-devtools MCP integration."
   ],
   "linear": {
     "project_name": "NavDhan Redesign 2026",
