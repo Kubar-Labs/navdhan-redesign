@@ -11,27 +11,27 @@ import type {
 
 export const associationBadges: BadgeItem[] = [
   {
-    name: "FACE",
-    logoAsset: "/assets/badges/face.png",
-    altKey: "global.alt.face",
-    href: "#",
-  },
-  {
-    name: "STPI FinGlobe",
-    logoAsset: "/assets/badges/finglobe.png",
-    altKey: "global.alt.stpiFinglobe",
-    href: "#",
-  },
-  {
     name: "FinVision",
     logoAsset: "/assets/badges/finvision.png",
     altKey: "global.alt.finvision",
     href: "#",
   },
   {
-    name: "RBI Aligned",
-    logoAsset: "/assets/badges/rbi.png",
-    altKey: "global.alt.rbi",
+    name: "FACE",
+    logoAsset: "/assets/badges/face.png",
+    altKey: "global.alt.face",
+    href: "#",
+  },
+  {
+    name: "Startup Mahakumbh",
+    logoAsset: "/assets/badges/mahakumbh.png",
+    altKey: "global.alt.partnerLogo",
+    href: "#",
+  },
+  {
+    name: "STPI FinGlobe",
+    logoAsset: "/assets/badges/finglobe.png",
+    altKey: "global.alt.stpiFinglobe",
     href: "#",
   },
 ];

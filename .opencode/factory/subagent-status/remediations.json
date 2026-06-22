@@ -1,0 +1,8 @@
+{
+  "status": "success",
+  "role": "frontend",
+  "stdout": "/home/yash/opencode-workspace/navdhan-redesign-2026/.opencode/factory/subagent-status/remediations.out.log",
+  "stderr": "/home/yash/opencode-workspace/navdhan-redesign-2026/.opencode/factory/subagent-status/remediations.err.log",
+  "started_at": "2026-06-22T10:45:10+05:30",
+  "completed_at": "2026-06-22T10:52:15+05:30"
+}

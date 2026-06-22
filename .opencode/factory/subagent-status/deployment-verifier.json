@@ -1,0 +1,7 @@
+{
+  "status": "running",
+  "role": "deployment-verifier",
+  "stdout": "/home/yash/opencode-workspace/navdhan-redesign-2026/.opencode/factory/subagent-status/deployment-verifier.out.log",
+  "stderr": "/home/yash/opencode-workspace/navdhan-redesign-2026/.opencode/factory/subagent-status/deployment-verifier.err.log",
+  "started_at": "2026-06-22T15:38:09+05:30"
+}

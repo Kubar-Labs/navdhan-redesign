@@ -1,0 +1,52 @@
+{
+  "agent": "deployment-verifier",
+  "url": "http://localhost:3001",
+  "timestamp": "2026-06-22",
+  "verdict": "PASS_WITH_OBSERVATIONS",
+  "areas": [
+    {
+      "name": "Multi-Step Apply Wizard (/en/apply)",
+      "status": "PARTIAL",
+      "notes": "Step 1 and Step 2 render. fullName and email match criteria; mobile and loanAmount do not (actual names are phone and requestedAmount)."
+    },
+    {
+      "name": "Multi-Step Apply Wizard (/hi/apply)",
+      "status": "PASS",
+      "notes": "Step 1 and Step 2 fully localized in Hindi."
+    },
+    {
+      "name": "Legal Pages (/en/legal/*)",
+      "status": "PASS",
+      "notes": "Terms of Use loads custom content without 404."
+    },
+    {
+      "name": "Legal Pages (/hi/legal/*)",
+      "status": "PASS",
+      "notes": "All 7 pages contain real Hindi body content."
+    },
+    {
+      "name": "Team Page (/en/team)",
+      "status": "PASS",
+      "notes": "Alok present with name/title/bio; Divyesh Reddy role is Borrower Onboarding."
+    },
+    {
+      "name": "Team Page (/hi/team)",
+      "status": "PARTIAL",
+      "notes": "Mission banner and Core Values headings/bodies translated; individual team member names/titles/bios remain in English."
+    }
+  ],
+  "screenshots": [
+    ".opencode/factory/apply-wizard-step1-en.png",
+    ".opencode/factory/apply-wizard-step2-fixed-en.png",
+    ".opencode/factory/apply-wizard-step1-hi.png",
+    ".opencode/factory/apply-wizard-step2-fixed-hi.png",
+    ".opencode/factory/legal-terms-of-service-en.png",
+    ".opencode/factory/legal-terms-of-service-fixed-hi.png",
+    ".opencode/factory/legal-privacy-policy-fixed-hi.png",
+    ".opencode/factory/team-desktop-fixed-en.png",
+    ".opencode/factory/team-desktop-fixed-hi.png"
+  ],
+  "blocking_issues": [
+    "Apply wizard Step 2 uses input names 'phone' and 'requestedAmount' instead of required 'mobile' and 'loanAmount'."
+  ]
+}

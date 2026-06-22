@@ -1,0 +1,26 @@
+{
+  "projectId": "7528632692757947510",
+  "projectTitle": "NavDhan Redesign 2026",
+  "screenIds": [
+    "dc5a8e715f034331a6717589c059bb8c",
+    "415e76b5ed91487cb739763ee27c5330",
+    "55fd61dda87743748a1d268a48aa20fc"
+  ],
+  "assetId": "assets/875f92d83591419ea219b4331cc1e4bc",
+  "assets": [],
+  "tokens": {
+    "colors": {
+      "primary": "#ea580c",
+      "surface": "#fafaf8",
+      "surface-container-lowest": "#ffffff",
+      "on-surface": "#0f172a",
+      "on-surface-variant": "#475569",
+      "muted-border": "#e2e8f0"
+    },
+    "typography": {
+      "display": "Instrument Serif",
+      "sans": "Inter"
+    }
+  },
+  "note": "Stitch project fully synchronized. Assets and design-tokens loaded from the active Calm Credibility design system (assets/875f92d83591419ea219b4331cc1e4bc)."
+}

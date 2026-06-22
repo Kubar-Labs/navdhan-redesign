@@ -1,4 +1,3 @@
-import "server-only";
 import { notFound } from "next/navigation";
 import { legalPageSchema, type LegalPageSchema } from "@/src/lib/legal/schemas";
 import { defaultLocale, isValidLocale } from "@/src/lib/i18n/config";
@@ -15,7 +14,8 @@ export const legalSlugs = [
 
 export type LegalSlug = (typeof legalSlugs)[number];
 
-export function isValidLegalSlug(value: string): value is LegalSlug {
+export function isValidLegalSlug(value: string): boolean {
+  if (value === "terms-of-service") return true;
   return (legalSlugs as readonly string[]).includes(value);
 }
 
@@ -28,6 +28,10 @@ export function isValidLegalSlug(value: string): value is LegalSlug {
 export async function loadLegalPage(locale: string, slug: string): Promise<LegalPageSchema> {
   if (!isValidLegalSlug(slug)) {
     notFound();
+  }
+
+  if (slug === "terms-of-service") {
+    slug = "terms-of-use";
   }
 
   const candidates = isValidLocale(locale) ? [locale, defaultLocale] : [defaultLocale];

@@ -1,5 +1,3 @@
-import "./globals.css";
-
 export const metadata = {
   title: "NavDhan: Business Loans for India's MSMEs",
   description:
@@ -7,9 +5,5 @@ export const metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="en">
-      <body className="bg-nt-cream text-nt-slate-900 antialiased">{children}</body>
-    </html>
-  );
+  return children;
 }

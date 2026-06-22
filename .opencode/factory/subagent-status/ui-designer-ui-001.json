@@ -1,0 +1,9 @@
+{
+  "status": "success",
+  "role": "ui-designer",
+  "exit_code": 0,
+  "stdout": "/home/yash/opencode-workspace/navdhan-redesign-2026/.opencode/factory/subagent-status/ui-designer-ui-001.out.log",
+  "stderr": "/home/yash/opencode-workspace/navdhan-redesign-2026/.opencode/factory/subagent-status/ui-designer-ui-001.err.log",
+  "started_at": "2026-06-22T07:54:39+05:30",
+  "finished_at": "2026-06-22T07:56:28+05:30"
+}

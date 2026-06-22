@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "RBI DLG Disclosure",
-    "description": "Regulatory disclosure about NavDhan, lenders, and loan products."
+    "title": "RBI DLG Disclosure (മലയാളം)",
+    "description": "മലയാളം - Regulatory disclosure about NavDhan, lenders, and loan products."
   },
   "lastUpdated": "2026-06-18",
   "company": {
@@ -14,7 +14,7 @@
     "website": "https://navdhan.app"
   },
   "intro": {
-    "heading": "RBI DLG Disclosure",
+    "heading": "RBI DLG Disclosure (മലയാളം)",
     "body": "This page provides the regulatory disclosures required under Reserve Bank of India guidelines for digital lending, including our role, lender relationships, and product terms."
   },
   "sections": [

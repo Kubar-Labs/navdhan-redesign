@@ -1,511 +1,413 @@
 {
-  "$schema": "./ui-component-registry.schema.json",
-  "project": "navdhan-marketing",
-  "branch": "factory/navdhan-redesign/marketing/ui-design",
-  "stack": {
-    "framework": "Next.js 15 App Router",
-    "runtime": "React 19",
-    "language": "TypeScript (strict mode)",
-    "styling": "Tailwind CSS v4",
-    "components": "shadcn/ui",
-    "animation": "Framer Motion",
-    "scroll": "GSAP + Lenis",
-    "i18n": "next-intl"
+  "version": "1.0.0",
+  "project": "navdhan-redesign-2026",
+  "lastUpdated": "2026-06-22",
+  "contractRefs": {
+    "apiContract": ".opencode/factory/api-contract.yaml",
+    "dbSchema": ".opencode/factory/db-schema.yaml",
+    "designBrief": "DESIGN.md"
   },
   "designTokens": {
-    "colors": {
-      "nt-white": { "hex": "#FFFFFF", "usage": "Primary background" },
-      "nt-cream": { "hex": "#FAFAF8", "usage": "Alternate section background" },
-      "nt-orange-500": { "hex": "#F97316", "usage": "Primary brand accent" },
-      "nt-orange-600": { "hex": "#EA580C", "usage": "Primary buttons and links" },
-      "nt-orange-700": { "hex": "#C2410C", "usage": "Button hover and active states" },
-      "nt-green-500": { "hex": "#22C55E", "usage": "Approval, progress and success indicators. Never primary CTAs." },
-      "nt-slate-900": { "hex": "#0F172A", "usage": "Primary text" },
-      "nt-slate-600": { "hex": "#475569", "usage": "Secondary / muted text" },
-      "nt-slate-200": { "hex": "#E2E8F0", "usage": "Input borders and dividers" },
-      "nt-slate-100": { "hex": "#F1F5F9", "usage": "Subtle backgrounds and borders" },
-      "nt-black": { "hex": "#0A0A0A", "usage": "Footer surface, strongest contrast" },
-      "nt-red-500": { "hex": "#EF4444", "usage": "Error text and icons" },
-      "nt-amber-500": { "hex": "#F59E0B", "usage": "Warning indicators" }
+    "fonts": {
+      "ui": {
+        "variable": "--font-inter",
+        "source": "next/font/google Inter",
+        "subsets": ["latin", "latin-ext"],
+        "weights": [400, 500, 600, 700],
+        "display": "swap",
+        "fallback": ["Noto Sans Devanagari", "system-ui", "sans-serif"],
+        "usage": ["body", "ui", "buttons", "forms"]
+      },
+      "display": {
+        "variable": "--font-instrument-serif",
+        "source": "custom Google Font import or next/local",
+        "weights": [400],
+        "style": "italic",
+        "display": "swap",
+        "fallback": ["Georgia", "serif"],
+        "usage": ["hero display emphasis only"]
+      }
     },
-    "typography": {
-      "uiFont": "'Inter', 'Noto Sans Devanagari', system-ui, sans-serif",
-      "displayFont": "'Instrument Serif', Georgia, serif",
-      "textDisplay": { "size": "clamp(2.5rem, 6vw, 4.5rem)", "lineHeight": 1.05, "weight": 700, "letterSpacing": "-0.02em", "usage": "Hero H1" },
-      "textH2": { "size": "clamp(1.75rem, 3vw, 2.75rem)", "lineHeight": 1.15, "weight": 600, "usage": "Section headings" },
-      "textH3": { "size": "clamp(1.25rem, 2vw, 1.75rem)", "lineHeight": 1.25, "weight": 600, "usage": "Card titles" },
-      "textBody": { "size": "1rem", "lineHeight": 1.6, "weight": 400, "usage": "Body copy" },
-      "textCaption": { "size": "0.75rem", "lineHeight": 1.4, "weight": 500, "usage": "Legal text and badges" }
+    "colors": {
+      "accent": "#EA580C",
+      "surfaceCream": "#FAFAF8",
+      "background": "#FFFFFF",
+      "textPrimary": "#0F172A",
+      "textSecondary": "#475569",
+      "muted": "#E2E8F0"
+    },
+    "radii": {
+      "md": "6px",
+      "xl": "12px",
+      "2xl": "16px"
     },
     "spacing": {
-      "baseUnit": "4px",
-      "sectionPaddingDefault": "clamp(5rem, 8vw, 7rem)",
-      "sectionPaddingTight": "2rem",
-      "containerMax": "1280px",
-      "legalContainerMax": "1024px",
-      "radii": { "sm": "8px", "lg": "12px", "pill": "999px" }
+      "baseGrid": "4px",
+      "sectionPadding": "py-16 md:py-24",
+      "containerMax": "max-w-7xl"
     }
   },
   "components": [
     {
-      "name": "AnnouncementBar",
-      "filePath": "app/components/shells/AnnouncementBar.tsx",
-      "scope": "global",
-      "description": "Dismissible top-of-page ribbon for platform-wide announcements.",
+      "name": "RootLayout",
+      "file": "app/[locale]/layout.tsx",
+      "type": "server",
+      "contractRef": "#/schemas/FontContract",
       "props": [
-        { "name": "message", "type": "string", "required": true, "description": "Announcement text to display." },
-        { "name": "href", "type": "string", "required": false, "description": "Optional URL for the CTA link." },
-        { "name": "ctaLabel", "type": "string", "required": false, "description": "Optional link label rendered after the message." },
-        { "name": "variant", "type": "enum['default' | 'accent']", "required": false, "default": "default", "description": "Visual style variant." },
-        { "name": "dismissible", "type": "boolean", "required": false, "default": true, "description": "Whether the bar can be dismissed by the user." }
+        { "name": "children", "type": "React.ReactNode", "required": true },
+        { "name": "params", "type": "{ locale: Locale }", "required": true }
       ],
-      "state": [
-        { "name": "hidden", "type": "boolean", "default": false, "persistence": "localStorage", "description": "Tracks dismissal state across sessions." }
-      ],
-      "events": ["onDismiss", "onCtaClick"],
-      "variants": ["default", "accent"],
-      "slots": [],
-      "dataSource": "messages/global.json",
-      "responsiveNotes": "Keep to a single line on desktop; allow text wrap up to two lines on mobile. Dismiss button must remain 44x44px touch target.",
-      "accessibilityNotes": "Role of banner or complementary with aria-label 'Announcement'. Dismiss button has aria-label 'Close announcement'. Focus is not trapped.",
-      "animationNotes": "Framer Motion 'initial={{ y: -32, opacity: 0 }}' 'animate={{ y: 0, opacity: 1 }}' duration 0.3s. Exit uses AnimatePresence 'y: -32, opacity: 0'. On prefers-reduced-motion, omit the y translation and cross-fade instantly.",
-      "designTokens": ["nt-slate-900", "nt-white", "nt-cream", "nt-orange-600"]
+      "rules": [
+        "Inject --font-inter and --font-instrument-serif CSS variables via Next.js font setup.",
+        "Render <html lang={locale}> with matching locale attribute.",
+        "Only Inter and Instrument Serif are permitted on public marketing surfaces.",
+        "font-display: swap is required for both font families."
+      ]
     },
     {
-      "name": "Header",
-      "filePath": "app/components/shells/Header.tsx",
-      "scope": "global",
-      "description": "Sticky global header with logo, navigation, locale selector and primary CTA.",
-      "props": [
-        { "name": "navLinks", "type": "NavLink[]", "required": true, "description": "Header anchor / route links." },
-        { "name": "cta", "type": "Cta", "required": true, "description": "Primary apply loan CTA." },
-        { "name": "showLanguageToggle", "type": "boolean", "required": false, "default": true, "description": "Render LocaleSelector in header." },
-        { "name": "variant", "type": "enum['transparent' | 'solid']", "required": false, "default": "transparent", "description": "Header background mode." }
-      ],
-      "state": [
-        { "name": "isScrolled", "type": "boolean", "default": false, "description": "True when page scroll exceeds threshold." },
-        { "name": "isMobileMenuOpen", "type": "boolean", "default": false, "description": "Controls MobileMenu visibility." }
-      ],
-      "events": ["onMenuOpen", "onMenuClose", "onLocaleChange", "onCtaClick"],
-      "variants": ["transparent", "solid"],
-      "slots": ["mobileMenuContent"],
-      "dataSource": "messages/global.json",
-      "responsiveNotes": "Desktop: horizontal inline layout. Tablet/mobile: links collapse into hamburger sheet, locale selector moves into sheet footer. Height: 72px desktop, 64px mobile. Stays fixed with z-50.",
-      "accessibilityNotes": "Wrap in <header> with aria-label 'Main navigation'. Logo link is first focusable element. Mobile toggle is a native button with aria-expanded and aria-controls. Skip-to-content link precedes the header.",
-      "animationNotes": "Use Framer Motion layoutScroll for scroll-driven background switch. isScrolled animates backgroundColor via motion.header with transition 0.2s. Burger icon uses animate path d-values for open/close. No parallax.",
-      "designTokens": ["nt-white", "nt-cream", "nt-slate-900", "nt-slate-100", "nt-orange-600"]
-    },
-    {
-      "name": "LocaleSelector",
-      "filePath": "app/components/shells/LocaleSelector.tsx",
-      "scope": "global",
-      "description": "Language switcher supporting all eight NavDhan locales.",
-      "props": [
-        { "name": "value", "type": "string", "required": true, "description": "Current locale code." },
-        { "name": "options", "type": "LocaleOption[]", "required": true, "description": "List of available locale options." },
-        { "name": "onChange", "type": "(locale: string) => void", "required": true, "description": "Callback when a locale is selected." },
-        { "name": "variant", "type": "enum['compact' | 'full']", "required": false, "default": "compact", "description": "Compact renders current locale label only; full renders native label list." }
-      ],
-      "state": [],
-      "events": ["onChange"],
-      "variants": ["compact", "full"],
-      "slots": [],
-      "dataSource": "i18n.locales",
-      "responsiveNotes": "Compact variant always visible in header. Full variant renders inside mobile menu sheet. On mobile full variant, options stack vertically with 44px touch targets.",
-      "accessibilityNotes": "Use a labelled combobox (Select / Listbox) or set of native radio buttons. aria-label 'Select language'. aria-expanded on dropdown trigger. Full dropdown traps focus with Escape to close.",
-      "animationNotes": "Framer Motion dropdown list uses initial='hidden' animate='visible' variants with opacity and y: -4. Stagger children 30ms. Reduced motion: render list instantly without height animation.",
-      "designTokens": ["nt-slate-900", "nt-slate-600", "nt-slate-200", "nt-white", "nt-orange-600"]
-    },
-    {
-      "name": "Footer",
-      "filePath": "app/components/shells/Footer.tsx",
-      "scope": "global",
-      "description": "Global footer with company, contact, legal links and trust badges.",
-      "props": [
-        { "name": "taglineKey", "type": "string", "required": true, "description": "i18n key for tagline copy." },
-        { "name": "companyKey", "type": "string", "required": true, "description": "i18n key for company line." },
-        { "name": "addressKey", "type": "string", "required": true, "description": "i18n key for registered address." },
-        { "name": "copyrightKey", "type": "string", "required": true, "description": "i18n key for copyright line." },
-        { "name": "contactLinks", "type": "NavLink[]", "required": true, "description": "Contact / enquiry links." },
-        { "name": "companyLinks", "type": "NavLink[]", "required": true, "description": "Company links." },
-        { "name": "legalLinks", "type": "NavLink[]", "required": true, "description": "Legal pages links." },
-        { "name": "badges", "type": "string[]", "required": true, "description": "Trust badge label keys." }
-      ],
-      "state": [],
-      "events": [],
-      "variants": ["default"],
-      "slots": [],
-      "dataSource": "messages/global.json",
-      "responsiveNotes": "Desktop: 4-column grid (brand, contact, company, legal). Tablet: 2-column. Mobile: single column with collapsible link accordions. Badges sit at bottom and center-wrap on small screens.",
-      "accessibilityNotes": "<footer> landmark. Link groups use <nav> with aria-labelledby pointing to the group heading. All links have visible focus rings. Color contrast of muted text on dark surface >= 4.5:1.",
-      "animationNotes": "Static by default. Optional Framer Motion viewport reveal: container 'whileInView' opacity 0->1, y 16->0 with duration 0.6s once. Reduced motion: render statically.",
-      "designTokens": ["nt-black", "nt-white", "nt-slate-600", "nt-slate-100", "nt-slate-200", "nt-orange-600"]
-    },
-    {
-      "name": "Section",
-      "filePath": "app/components/layout/Section.tsx",
-      "scope": "global",
-      "description": "Reusable vertical section wrapper with consistent spacing and background options.",
-      "props": [
-        { "name": "children", "type": "React.ReactNode", "required": true, "description": "Section content." },
-        { "name": "as", "type": "enum['section' | 'div' | 'article']", "required": false, "default": "section", "description": "Semantic HTML tag." },
-        { "name": "id", "type": "string", "required": false, "description": "Anchor id for in-page navigation." },
-        { "name": "background", "type": "enum['white' | 'cream' | 'dark']", "required": false, "default": "white", "description": "Surface background variant." },
-        { "name": "padding", "type": "enum['default' | 'tight' | 'none']", "required": false, "default": "default", "description": "Vertical padding preset." },
-        { "name": "className", "type": "string", "required": false, "description": "Additional Tailwind classes." }
-      ],
-      "state": [],
-      "events": [],
-      "variants": ["white", "cream", "dark"],
-      "slots": [],
-      "dataSource": null,
-      "responsiveNotes": "Padding maps to clamp(5rem, 8vw, 7rem) by default and 2rem tight on all breakpoints. Inner content respects Container max width.",
-      "accessibilityNotes": "Use semantic section when appropriate. If the section starts a named region, provide aria-labelledby pointing to its heading.",
-      "animationNotes": "No intrinsic animation. May accept 'motionProps' to allow Framer Motion whileInView wrappers for parent-level stagger.",
-      "designTokens": ["nt-white", "nt-cream", "nt-black", "sectionPaddingDefault", "sectionPaddingTight"]
-    },
-    {
-      "name": "Container",
-      "filePath": "app/components/layout/Container.tsx",
-      "scope": "global",
-      "description": "Centered max-width content wrapper for page-level gutters.",
-      "props": [
-        { "name": "children", "type": "React.ReactNode", "required": true, "description": "Page content." },
-        { "name": "size", "type": "enum['default' | 'legal' | 'full']", "required": false, "default": "default", "description": "Max width preset: default 1280px, legal 1024px, full 100vw." },
-        { "name": "className", "type": "string", "required": false, "description": "Additional Tailwind classes." }
-      ],
-      "state": [],
-      "events": [],
-      "variants": ["default", "legal", "full"],
-      "slots": [],
-      "dataSource": null,
-      "responsiveNotes": "Horizontal padding: 1rem (mobile), 1.5rem (tablet), 2rem (desktop). Legal pages use narrower max-width for readability.",
-      "accessibilityNotes": "No interactive semantics; ensures content remains within 320% zoom reflow. Avoid nesting multiple Containers.",
-      "animationNotes": "No animation.",
-      "designTokens": ["containerMax", "legalContainerMax"]
-    },
-    {
-      "name": "Hero",
-      "filePath": "app/components/sections/Hero.tsx",
-      "scope": "section",
-      "description": "Homepage hero with primary tagline, CTAs and trust stats.",
-      "props": [
-        { "name": "eyebrowKey", "type": "string", "required": true, "description": "i18n key for eyebrow label." },
-        { "name": "headlineKey", "type": "string", "required": true, "description": "i18n key for H1 headline." },
-        { "name": "bodyKey", "type": "string", "required": true, "description": "i18n key for body copy." },
-        { "name": "primaryCtaKey", "type": "string", "required": true, "description": "i18n key for primary CTA." },
-        { "name": "primaryHref", "type": "string", "required": true, "description": "Primary CTA href." },
-        { "name": "secondaryCtaKey", "type": "string", "required": true, "description": "i18n key for secondary CTA." },
-        { "name": "secondaryHref", "type": "string", "required": true, "description": "Secondary CTA href." },
-        { "name": "stats", "type": "{ value: string; labelKey: string }[]", "required": true, "description": "Hero trust stats." }
-      ],
-      "state": [],
-      "events": ["onPrimaryCtaClick", "onSecondaryCtaClick"],
-      "variants": ["default"],
-      "slots": [],
-      "dataSource": "messages/home.json",
-      "responsiveNotes": "Desktop: large H1 with inline stats row. Mobile: H1 scales via clamp, CTAs stack full-width, stats collapse to 2x2 grid or vertical list below copy. Max reading measure 65ch.",
-      "accessibilityNotes": "Single H1 for the page. Keep DOM order: eyebrow, heading, body, CTAs, stats. Decorative accents have aria-hidden. Primary CTA arrow icon is hidden from AT.",
-      "animationNotes": "Framer Motion staggered entrance: parent motion.div 'staggerChildren: 0.08', each child initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} with duration 0.7s and ease [0.25, 0.46, 0.45, 0.94] as cubic-bezier. Stats animate last. Respect prefers-reduced-motion by forcing first-paint visibility.",
-      "designTokens": ["textDisplay", "textBodyLg", "nt-slate-900", "nt-slate-600", "nt-cream", "nt-orange-600", "nt-orange-700"]
-    },
-    {
-      "name": "AssociationBadges",
-      "filePath": "app/components/sections/AssociationBadges.tsx",
-      "scope": "section",
-      "description": "Row of association / accreditation logos.",
-      "props": [
-        { "name": "badges", "type": "{ name: string; logoAsset: string; href?: string; altKey: string }[]", "required": true, "description": "Badge items rendered in a row." }
-      ],
-      "state": [],
-      "events": ["onBadgeClick"],
-      "variants": ["default"],
-      "slots": [],
-      "dataSource": "content/association-badges.json",
-      "responsiveNotes": "Desktop: 4 logos in a single evenly spaced row. Tablet: 2x2 grid. Mobile: horizontal scroll-snap row to preserve legibility without shrinking logos.",
-      "accessibilityNotes": "Section labelled by 'Recognised by' heading. Badge links (when href present) have visible focus and descriptive aria-label. Preserve SVG alt text via altKey.",
-      "animationNotes": "Framer Motion viewport fade-in: container 'whileInView' opacity 0->1, duration 0.6s, once. Individual badges can scale to 1.02 on hover with whileHover={{ scale: 1.02 }} transition 0.2s.",
-      "designTokens": ["nt-slate-600", "nt-slate-200", "nt-cream"]
-    },
-    {
-      "name": "EcosystemTicker",
-      "filePath": "app/components/sections/EcosystemTicker.tsx",
-      "scope": "section",
-      "description": "Infinite horizontal marquee of tech ecosystem partner logos.",
-      "props": [
-        { "name": "partners", "type": "{ name: string; logoAsset: string; href?: string; altKey: string }[]", "required": true, "description": "Partner logos to scroll." },
-        { "name": "speedSeconds", "type": "number", "required": false, "default": 30, "description": "Duration of one full marquee loop in seconds." },
-        { "name": "pauseOnHover", "type": "boolean", "required": false, "default": true, "description": "Pause the animation on hover." },
-        { "name": "direction", "type": "enum['left' | 'right']", "required": false, "default": "left", "description": "Scroll direction." }
-      ],
-      "state": [
-        { "name": "isPaused", "type": "boolean", "default": false, "description": "Hover/focus pause state." }
-      ],
-      "events": ["onPartnerClick"],
-      "variants": ["default"],
-      "slots": [],
-      "dataSource": "content/tech-partners.json",
-      "responsiveNotes": "Desktop and mobile both render as a single continuous row. Duplicate the partner array to ensure seamless loop. Min logo width 96px on mobile, 128px on desktop.",
-      "accessibilityNotes": "Wrap in a section with aria-roledescription 'marquee'. Provide a pause button or pause on hover/focus. If logos are links, focus should pause the animation automatically. Respect prefers-reduced-motion by converting to a static scroll-snap list.",
-      "animationNotes": "Framer Motion infinite marquee using animate={{ x: '-50%' }} transition={{ repeat: Infinity, duration: 30, ease: 'linear' }} on a duplicated flex track. Pause controlled by animationControls.stop() / play() on hover. Reduced motion: remove animation, render horizontal scroll-snap.",
-      "designTokens": ["nt-slate-600", "nt-slate-200", "nt-cream"]
+      "name": "HomePage",
+      "file": "app/[locale]/(marketing)/page.tsx",
+      "type": "server",
+      "contractRef": "#/interfaces/HomePageMapping",
+      "dataSource": {
+        "translatorNamespace": "home",
+        "siteDataOnly": ["associationBadges", "techPartners", "recognitionItems", "emiDefaults"],
+        "messageArrays": [
+          "home.hero.stats",
+          "home.loanProducts.products",
+          "home.whyNavDhan.reasons",
+          "home.whyNavDhan.trustBadges"
+        ]
+      },
+      "sections": [
+        { "order": 1, "component": "AnnouncementBar", "keys": ["global.announcement"] },
+        { "order": 2, "component": "Hero", "keys": ["home.hero"] },
+        {
+          "order": 3,
+          "component": "AssociationBadges",
+          "keys": ["home.associationBadges", "global.alt"]
+        },
+        {
+          "order": 4,
+          "component": "EcosystemTicker",
+          "keys": ["home.ecosystemTicker", "global.alt"]
+        },
+        { "order": 5, "component": "LoanProducts", "keys": ["home.loanProducts"] },
+        { "order": 6, "component": "WhyNavDhan", "keys": ["home.whyNavDhan"] },
+        { "order": 7, "component": "RecognitionCarousel", "keys": ["home.recognition"] },
+        { "order": 8, "component": "CustomerStories", "keys": ["home.customerStories"] },
+        { "order": 9, "component": "EmiCalculator", "keys": ["home.emiCalculator"] },
+        { "order": 10, "component": "FinalCta", "keys": ["home.finalCta"] },
+        { "order": 11, "component": "Footer", "keys": ["global.footer", "global.contact"] }
+      ]
     },
     {
       "name": "LoanProducts",
-      "filePath": "app/components/sections/LoanProducts.tsx",
-      "scope": "section",
-      "description": "Grid of loan product cards with icon, title, description and CTA.",
+      "file": "src/components/sections/LoanProducts.tsx",
+      "type": "server",
       "props": [
-        { "name": "eyebrowKey", "type": "string", "required": true, "description": "i18n key for eyebrow." },
-        { "name": "headingKey", "type": "string", "required": true, "description": "i18n key for H2 heading." },
-        { "name": "bodyKey", "type": "string", "required": true, "description": "i18n key for section body." },
-        { "name": "products", "type": "ProductCard[]", "required": true, "description": "Product card data." },
-        { "name": "ctaKey", "type": "string", "required": true, "description": "i18n key for section CTA." },
-        { "name": "ctaHref", "type": "string", "required": true, "description": "Section CTA href." }
+        { "name": "t", "type": "Translator (home.loanProducts namespace)", "required": true },
+        { "name": "products", "type": "ProductListItem[]", "required": true }
       ],
-      "state": [],
-      "events": ["onProductClick", "onCtaClick"],
-      "variants": ["default"],
-      "slots": ["productCard"],
-      "dataSource": "messages/home.json",
-      "responsiveNotes": "Desktop: 4-column equal-width grid. Tablet: 2-column. Mobile: single-column cards. Section CTA is centered below the grid.",
-      "accessibilityNotes": "Section heading is H2. Cards are generic article or div with role none; clickable CTA inside each card is a real link/button with focus ring. Avoid making the entire card clickable to preserve screen-reader context.",
-      "animationNotes": "Framer Motion staggered cards: viewport trigger, parent 'staggerChildren: 0.1', children initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} duration 0.6s. Hover: border color transition and subtle shadow via whileHover={{ y: -2 }}.",
-      "designTokens": ["textH2", "textH3", "textBody", "nt-white", "nt-slate-900", "nt-slate-600", "nt-slate-100", "nt-slate-200", "nt-orange-600"]
+      "contractRef": "#/schemas/ProductListItem",
+      "dataShape": {
+        "eyebrow": "home.loanProducts.eyebrow",
+        "heading": "home.loanProducts.heading",
+        "body": "home.loanProducts.body",
+        "cta": "home.loanProducts.cta",
+        "productCta": "home.loanProducts.productCta",
+        "products": "home.loanProducts.products"
+      },
+      "itemFields": {
+        "id": "unique stable id",
+        "titleKey": "localized title text (not a dotted key)",
+        "descriptionKey": "localized body text (not a dotted key)",
+        "iconName": "lucide-react icon export name",
+        "ctaKey": "localized CTA text (not a dotted key)"
+      },
+      "notes": [
+        "Items must be rendered from message array, never imported from siteData.ts.",
+        "Use lucide-react dynamic icon lookup by name."
+      ]
     },
     {
       "name": "WhyNavDhan",
-      "filePath": "app/components/sections/WhyNavDhan.tsx",
-      "scope": "section",
-      "description": "Value proposition grid with reasons and trust badges.",
+      "file": "src/components/sections/WhyNavDhan.tsx",
+      "type": "server",
       "props": [
-        { "name": "eyebrowKey", "type": "string", "required": true, "description": "i18n key for eyebrow." },
-        { "name": "headingKey", "type": "string", "required": true, "description": "i18n key for H2 heading." },
-        { "name": "bodyKey", "type": "string", "required": true, "description": "i18n key for body copy." },
-        { "name": "reasons", "type": "ReasonBlock[]", "required": true, "description": "Value proposition blocks." },
-        { "name": "trustBadgeKeys", "type": "string[]", "required": true, "description": "Trust badge label keys." },
-        { "name": "ctaKey", "type": "string", "required": true, "description": "i18n key for CTA." },
-        { "name": "ctaHref", "type": "string", "required": true, "description": "CTA href." }
+        { "name": "t", "type": "Translator (home.whyNavDhan namespace)", "required": true },
+        { "name": "reasons", "type": "ReasonListItem[]", "required": true },
+        { "name": "trustBadges", "type": "string[]", "required": true }
       ],
-      "state": [],
-      "events": ["onCtaClick"],
-      "variants": ["default"],
-      "slots": ["reasonBlock"],
-      "dataSource": "messages/home.json",
-      "responsiveNotes": "Desktop: 3-column grid of reasons. Tablet: 2-column. Mobile: single column. Trust badges sit between the grid and the CTA, wrapping on narrow screens.",
-      "accessibilityNotes": "H2 section heading followed by intro paragraph. Each reason has an H3 title. Trust badges are rendered as an unordered list with list-style none and aria-label 'Trust indicators'.",
-      "animationNotes": "Framer Motion staggered grid reveal: parent viewport trigger, 'staggerChildren: 0.08', children origin centered with opacity and y 24->0, duration 0.6s. Trust badges fade in as a block after the grid.",
-      "designTokens": ["textH2", "textH3", "textBody", "nt-cream", "nt-slate-900", "nt-slate-600", "nt-slate-100", "nt-green-500", "nt-orange-600"]
+      "contractRef": "#/schemas/ReasonListItem",
+      "dataShape": {
+        "eyebrow": "home.whyNavDhan.eyebrow",
+        "heading": "home.whyNavDhan.heading",
+        "body": "home.whyNavDhan.body",
+        "cta": "home.whyNavDhan.cta",
+        "reasons": "home.whyNavDhan.reasons",
+        "trustBadges": "home.whyNavDhan.trustBadges"
+      },
+      "itemFields": {
+        "id": "unique stable id",
+        "titleKey": "localized title text",
+        "bodyKey": "localized body text"
+      },
+      "notes": [
+        "Trust badges array must be rendered as a single string joined with ' · ' by t().",
+        "No lender-first language in reason copy."
+      ]
     },
     {
       "name": "RecognitionCarousel",
-      "filePath": "app/components/sections/RecognitionCarousel.tsx",
-      "scope": "section",
-      "description": "Carousel of recognition / award items with auto-advance.",
+      "file": "src/components/sections/RecognitionCarousel.tsx",
+      "type": "server",
       "props": [
-        { "name": "eyebrowKey", "type": "string", "required": true, "description": "i18n key for eyebrow." },
-        { "name": "headingKey", "type": "string", "required": true, "description": "i18n key for H2 heading." },
-        { "name": "items", "type": "RecognitionItem[]", "required": true, "description": "Carousel slides." },
-        { "name": "autoAdvance", "type": "boolean", "required": false, "default": true, "description": "Enable auto-advancing slides." },
-        { "name": "interval", "type": "integer", "required": false, "default": 6000, "description": "Auto-advance interval in ms." },
-        { "name": "showControls", "type": "boolean", "required": false, "default": true, "description": "Show previous / next controls and dots." }
+        { "name": "t", "type": "Translator (home.recognition namespace)", "required": true },
+        { "name": "items", "type": "RecognitionItem[]", "required": true }
       ],
-      "state": [
-        { "name": "activeIndex", "type": "number", "default": 0, "description": "Currently visible slide index." },
-        { "name": "isPaused", "type": "boolean", "default": false, "description": "Pauses auto-advance on hover/focus." }
-      ],
-      "events": ["onSelect", "onPause", "onResume"],
-      "variants": ["default"],
-      "slots": ["slide"],
-      "dataSource": "content/recognition.json",
-      "responsiveNotes": "Desktop: horizontal snap slider with one visible card. Tablet: two visible cards. Mobile: single card with dot pagination and edge padding.",
-      "accessibilityNotes": "Role region with aria-roledescription 'carousel'. Live region announces slide changes politely. Controls use aria-labels 'Previous recognition', 'Next recognition'. Pagination dots use aria-selected. Focus management: focus stays on control after click.",
-      "animationNotes": "Framer Motion slider track animate={{ x: -activeIndex * slideWidth }} transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}. Auto-advance via useEffect interval wrapped by pause state. Reduced motion: disable x translation and auto-advance; show static grid.",
-      "designTokens": ["textH2", "textBody", "nt-white", "nt-slate-900", "nt-slate-600", "nt-slate-200", "nt-orange-600"]
+      "contractRef": "#/schemas/RecognitionItem",
+      "dataShape": {
+        "eyebrow": "home.recognition.eyebrow",
+        "heading": "home.recognition.heading"
+      },
+      "itemFields": {
+        "id": "stable id",
+        "titleKey": "localized title text",
+        "descriptionKey": "localized description text",
+        "writeUp": "long-form modal content (static English for MVP)",
+        "imageAsset": "primary event photo path",
+        "galleryAssets": "additional event photo paths",
+        "date": "year or ISO date"
+      }
     },
     {
       "name": "CustomerStories",
-      "filePath": "app/components/sections/CustomerStories.tsx",
-      "scope": "section",
-      "description": "Customer story cards with quote, outcome and CTA.",
+      "file": "src/components/sections/CustomerStories.tsx",
+      "type": "server",
       "props": [
-        { "name": "eyebrowKey", "type": "string", "required": true, "description": "i18n key for eyebrow." },
-        { "name": "headingKey", "type": "string", "required": true, "description": "i18n key for H2 heading." },
-        { "name": "stories", "type": "StoryCard[]", "required": true, "description": "Customer story items." },
-        { "name": "ctaKey", "type": "string", "required": true, "description": "i18n key for section CTA." },
-        { "name": "ctaHref", "type": "string", "required": true, "description": "Section CTA href." }
+        { "name": "t", "type": "Translator (home.customerStories namespace)", "required": true },
+        { "name": "stories", "type": "StoryCard[]", "required": false }
       ],
-      "state": [
-        { "name": "activeIndex", "type": "number", "default": 0, "description": "Pagination index for mobile swipe view." }
-      ],
-      "events": ["onStoryClick", "onCtaClick"],
-      "variants": ["default"],
-      "slots": ["storyCard"],
-      "dataSource": "content/stories.json",
-      "responsiveNotes": "Desktop: 3-column equal-height cards. Tablet: 2-column. Mobile: horizontal swipe carousel with pagination dots. Maintain image aspect ratio 4:3.",
-      "accessibilityNotes": "H2 for section, H3 for each story card title. Customer images have meaningful alt including name. CTA links have visible focus. Swipe region has aria-roledescription 'carousel' and live region for mobile pagination.",
-      "animationNotes": "Framer Motion viewport stagger: parent 'staggerChildren: 0.12', children initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} duration 0.6s. On mobile, use AnimatePresence for cross-fade between activeIndex with opacity transition 0.3s.",
-      "designTokens": ["textH2", "textH3", "textBody", "nt-cream", "nt-slate-900", "nt-slate-600", "nt-slate-100", "nt-green-500", "nt-orange-600"]
+      "contractRef": "#/schemas/StoryCard",
+      "dataShape": {
+        "eyebrow": "home.customerStories.eyebrow",
+        "heading": "home.customerStories.heading",
+        "cta": "home.customerStories.cta"
+      },
+      "itemFields": {
+        "id": "stable id",
+        "name": "customer name (static)",
+        "roleKey": "localized role text",
+        "questionKey": "localized question/quote text",
+        "outcomeKey": "localized outcome text",
+        "imageAsset": "real opt-in customer photo path"
+      },
+      "notes": [
+        "If no verified opt-in stories exist, the component should gracefully omit fabricated content per DESIGN.md."
+      ]
     },
     {
       "name": "EmiCalculator",
-      "filePath": "app/components/sections/EmiCalculator.tsx",
-      "scope": "section",
-      "description": "Interactive EMI calculator with loan amount, rate and tenure sliders.",
+      "file": "src/components/sections/EmiCalculator.tsx",
+      "type": "client",
       "props": [
-        { "name": "minAmount", "type": "integer", "required": true, "description": "Minimum loan amount in INR." },
-        { "name": "maxAmount", "type": "integer", "required": true, "description": "Maximum loan amount in INR." },
-        { "name": "defaultAmount", "type": "integer", "required": true, "description": "Initial loan amount." },
-        { "name": "minRate", "type": "number", "required": true, "description": "Minimum interest rate (% per year)." },
-        { "name": "maxRate", "type": "number", "required": true, "description": "Maximum interest rate (% per year)." },
-        { "name": "defaultRate", "type": "number", "required": true, "description": "Initial interest rate." },
-        { "name": "minTenure", "type": "integer", "required": true, "description": "Minimum tenure in months." },
-        { "name": "maxTenure", "type": "integer", "required": true, "description": "Maximum tenure in months." },
-        { "name": "defaultTenure", "type": "integer", "required": true, "description": "Initial tenure in months." },
-        { "name": "ctaKey", "type": "string", "required": true, "description": "i18n key for calculator CTA." },
-        { "name": "ctaHref", "type": "string", "required": true, "description": "CTA href." }
+        { "name": "t", "type": "Translator (home.emiCalculator namespace)", "required": true },
+        { "name": "defaults", "type": "EmiDefaults", "required": true }
       ],
-      "state": [
-        { "name": "amount", "type": "integer", "description": "Current loan amount." },
-        { "name": "rate", "type": "number", "description": "Current annual interest rate." },
-        { "name": "tenure", "type": "integer", "description": "Current tenure in months." },
-        { "name": "emi", "type": "string", "description": "Formatted monthly EMI." },
-        { "name": "totalInterest", "type": "string", "description": "Formatted total interest." },
-        { "name": "totalPayable", "type": "string", "description": "Formatted total payable." },
-        { "name": "errors", "type": "string[]", "description": "Validation errors." }
-      ],
-      "events": ["onChange", "onCtaClick"],
-      "variants": ["default", "compact"],
-      "slots": [],
-      "dataSource": "content/emi-calculator.json",
-      "responsiveNotes": "Desktop: calculator card on left, breakdown on right in a 2-column layout. Tablet/mobile: stacked single column; breakdown becomes a summary row below the sliders. Touch-friendly slider thumbs are 24px.",
-      "accessibilityNotes": "All sliders are native <input type='range'> with associated <label> and aria-valuetext that exposes formatted amount/rate/tenure. Number results are updated live in an aria-live region 'polite'. Errors announced via aria-live 'assertive'.",
-      "animationNotes": "Framer Motion count-up on result numbers: use motion.span with animate={{ value }} only when locale/currency formatting allows; otherwise cross-fade opacity 0.2s. Slider thumb scales on drag via whileDrag={{ scale: 1.15 }}. Reduced motion: values update instantly.",
-      "designTokens": ["textH2", "textBody", "nt-white", "nt-slate-900", "nt-slate-600", "nt-slate-200", "nt-orange-600", "nt-green-500", "nt-slate-100"]
+      "contractRef": "#/schemas/EmiDefaults",
+      "dataShape": {
+        "eyebrow": "home.emiCalculator.eyebrow",
+        "heading": "home.emiCalculator.heading",
+        "intro": "home.emiCalculator.intro",
+        "amountLabel": "home.emiCalculator.amount",
+        "rateLabel": "home.emiCalculator.rate",
+        "tenureLabel": "home.emiCalculator.tenure",
+        "monthlyLabel": "home.emiCalculator.monthly",
+        "principalLabel": "home.emiCalculator.principal",
+        "totalInterestLabel": "home.emiCalculator.totalInterest",
+        "totalPayableLabel": "home.emiCalculator.totalPayable",
+        "cta": "home.emiCalculator.cta"
+      },
+      "notes": [
+        "Sliders update a live breakdown. Numeric defaults come from siteData.ts, labels from translator."
+      ]
     },
     {
-      "name": "FinalCta",
-      "filePath": "app/components/sections/FinalCta.tsx",
-      "scope": "section",
-      "description": "Closing call-to-action section that precedes the footer.",
+      "name": "Footer",
+      "file": "src/components/shells/Footer.tsx",
+      "type": "server",
       "props": [
-        { "name": "headingKey", "type": "string", "required": true, "description": "i18n key for heading." },
-        { "name": "subtextKey", "type": "string", "required": true, "description": "i18n key for subtext." },
-        { "name": "primaryCtaKey", "type": "string", "required": true, "description": "i18n key for primary CTA." },
-        { "name": "primaryHref", "type": "string", "required": true, "description": "Primary CTA href." },
-        { "name": "secondaryCtaKey", "type": "string", "required": true, "description": "i18n key for secondary CTA." },
-        { "name": "secondaryHref", "type": "string", "required": true, "description": "Secondary CTA href." }
+        { "name": "locale", "type": "Locale", "required": true },
+        { "name": "t", "type": "Translator (global namespace)", "required": true }
       ],
-      "state": [],
-      "events": ["onPrimaryClick", "onSecondaryClick"],
-      "variants": ["default"],
-      "slots": [],
-      "dataSource": "messages/home.json",
-      "responsiveNotes": "Desktop: centered block max-width 56ch with inline buttons. Mobile: buttons stack full-width, heading size down to H2 via clamp.",
-      "accessibilityNotes": "H2 section heading. Buttons are real <a> or <button> elements. Ensure sufficient contrast for the background variant used.",
-      "animationNotes": "Framer Motion 'whileInView' fadeScale: initial={{ opacity: 0, scale: 0.98 }} whileInView={{ opacity: 1, scale: 1 }} transition={{ duration: 0.6, ease: [0.25, 0.46, 0.45, 0.94] }}. Buttons can lift 2px on hover.",
-      "designTokens": ["textH2", "textBody", "nt-cream", "nt-slate-900", "nt-slate-600", "nt-orange-600", "nt-orange-700"]
+      "contractRef": "#/schemas/Messages/global/footer",
+      "dataShape": {
+        "tagline": "global.footer.tagline",
+        "company": "global.footer.company",
+        "address": "global.footer.address",
+        "copyright": "global.footer.copyright",
+        "contactHeading": "global.footer.contactHeading",
+        "companyHeading": "global.footer.companyHeading",
+        "legalHeading": "global.footer.legalHeading",
+        "contactLinks": "global.footer.contactLinks",
+        "companyLinks": "global.footer.companyLinks",
+        "legalLinks": "global.footer.legalLinks",
+        "badges": "global.footer.badges"
+      },
+      "rules": [
+        "Render badges as a single string joined with ' · ' by t().",
+        "Use labelKey from link objects as display text (already localized).",
+        "Legal links must be driven by legalSlugs from src/lib/legal/loader.ts with localized labels.",
+        "Registered Karnataka address and legal entity must be present."
+      ]
+    },
+    {
+      "name": "ApplyForm",
+      "file": "src/components/apply/ApplyForm.tsx",
+      "type": "client",
+      "props": [
+        { "name": "locale", "type": "Locale", "required": true },
+        { "name": "t", "type": "Translator (apply namespace)", "required": true }
+      ],
+      "contractRef": "#/schemas/ApplyLeadRequest",
+      "dataShape": {
+        "eyebrow": "apply.eyebrow",
+        "heading": "apply.heading",
+        "description": "apply.description",
+        "loanDetailsTitle": "apply.loanDetailsTitle",
+        "amountLabel": "apply.amountLabel",
+        "tenureLabel": "apply.tenureLabel",
+        "purposeLabel": "apply.purposeLabel",
+        "purposes": "apply.purposes",
+        "aboutYouTitle": "apply.aboutYouTitle",
+        "fullNameLabel": "apply.fullNameLabel",
+        "mobileLabel": "apply.mobileLabel",
+        "mobilePlaceholder": "apply.mobilePlaceholder",
+        "emailLabel": "apply.emailLabel",
+        "pinCodeLabel": "apply.pinCodeLabel",
+        "pinCodePlaceholder": "apply.pinCodePlaceholder",
+        "emiLabel": "apply.emiLabel",
+        "emiNoteTemplate": "apply.emiNoteTemplate",
+        "consentDataPrefix": "apply.consentDataPrefix",
+        "consentAnd": "apply.consentAnd",
+        "consentPolicy": "apply.consentPolicy",
+        "privacyPolicy": "apply.privacyPolicy",
+        "consentLender": "apply.consentLender",
+        "submit": "apply.submit",
+        "submitting": "apply.submitting",
+        "successHeading": "apply.successHeading",
+        "successBody": "apply.successBody",
+        "successCta": "apply.successCta",
+        "errorHeading": "apply.errorHeading",
+        "errorBody": "apply.errorBody",
+        "fieldRequired": "apply.fieldRequired",
+        "validation": "apply.validation"
+      },
+      "fields": [
+        {
+          "name": "amount",
+          "type": "number",
+          "min": 500000,
+          "max": 10000000,
+          "control": "slider or stepper"
+        },
+        { "name": "tenure", "type": "number", "min": 3, "max": 12, "control": "slider or stepper" },
+        { "name": "purpose", "type": "LoanPurpose", "control": "select" },
+        {
+          "name": "fullName",
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 150,
+          "pattern": "^[A-Za-z\\s'.-]+$"
+        },
+        {
+          "name": "mobile",
+          "type": "string",
+          "pattern": "^[6-9]\\d{9}$",
+          "placeholder": "apply.mobilePlaceholder"
+        },
+        { "name": "email", "type": "string", "format": "email", "maxLength": 255 },
+        {
+          "name": "pinCode",
+          "type": "string",
+          "pattern": "^[1-9]\\d{5}$",
+          "placeholder": "apply.pinCodePlaceholder"
+        },
+        { "name": "consentData", "type": "boolean", "requiredValue": true },
+        { "name": "consentLender", "type": "boolean", "requiredValue": true }
+      ],
+      "validationMessages": {
+        "mobileInvalid": "apply.validation.mobileInvalid",
+        "emailInvalid": "apply.validation.emailInvalid",
+        "pinCodeInvalid": "apply.validation.pinCodeInvalid",
+        "nameInvalid": "apply.validation.nameInvalid",
+        "consentRequired": "apply.validation.consentRequired"
+      },
+      "rules": [
+        "Client must generate an Idempotency-Key (UUID or fallback timestamp token) and send it in the request header.",
+        "Inline validation must run on blur/submit with localized error strings.",
+        "Success and error states must use localized headings and bodies.",
+        "EMI note may interpolate values using apply.emiNoteTemplate."
+      ]
     },
     {
       "name": "TeamPage",
-      "filePath": "app/[locale]/(marketing)/team/page.tsx",
-      "scope": "page",
-      "description": "Static team page composed of page hero, members grid, advisors and join CTA.",
+      "file": "app/[locale]/team/page.tsx",
+      "type": "server",
+      "props": [{ "name": "locale", "type": "Locale", "required": true }],
+      "dataSource": {
+        "static": "src/lib/data/team.json",
+        "translatorNamespace": "team"
+      },
+      "sections": [
+        { "order": 1, "component": "TeamHero", "keys": ["team.hero"] },
+        { "order": 2, "component": "TeamMembers", "keys": ["team.members"], "dataKey": "members" },
+        { "order": 3, "component": "Advisors", "keys": ["team.advisors"], "dataKey": "advisors" },
+        { "order": 4, "component": "JoinCta", "keys": ["team.join"] }
+      ]
+    },
+    {
+      "name": "TeamCard",
+      "file": "src/components/team/TeamCard.tsx",
+      "type": "server",
       "props": [
-        { "name": "pageHeadingKey", "type": "string", "required": true, "description": "i18n key for page H1." },
-        { "name": "pageSubtextKey", "type": "string", "required": true, "description": "i18n key for page intro." },
-        { "name": "joinCtaKey", "type": "string", "required": true, "description": "i18n key for join CTA." },
-        { "name": "joinHref", "type": "string", "required": true, "description": "Join CTA href." },
-        { "name": "members", "type": "TeamMember[]", "required": true, "description": "Leadership members." },
-        { "name": "advisors", "type": "Advisor[]", "required": true, "description": "Advisors." }
+        { "name": "member", "type": "TeamMember", "required": true },
+        { "name": "t", "type": "Translator", "required": false }
       ],
-      "state": [],
-      "events": ["onMemberClick", "onAdvisorClick", "onJoinClick"],
-      "variants": ["default"],
-      "slots": ["teamHero", "membersGrid", "advisorsGrid", "joinCta"],
-      "dataSource": "content/team.json",
-      "responsiveNotes": "Page uses global marketing layout, so Header/Footer are reused. Members grid is 3-4 columns desktop, 2 tablet, 1 mobile. Advisors use a denser 2-column layout. All card images maintain 1:1 ratio.",
-      "accessibilityNotes": "Single H1 for the page. Member and advisor cards use <article> with H2/H3 names. LinkedIn links open in new tab with rel='noopener noreferrer' and aria-label including target context.",
-      "animationNotes": "Framer Motion per-section viewport reveals: header text staggers in, member grid uses staggerChildren 0.08 with y 24->0 and opacity, advisors follow. Reduced motion: all sections static.",
-      "designTokens": ["textH1", "textH2", "textH3", "textBody", "nt-white", "nt-cream", "nt-slate-900", "nt-slate-600", "nt-slate-100", "nt-orange-600"]
+      "contractRef": "team.json member schema",
+      "itemFields": {
+        "id": "stable id",
+        "name": "full name (static)",
+        "roleKey": "localized role text; must use 'Borrower Onboarding' instead of 'Marketplace Onboarding'",
+        "bioKey": "localized bio text",
+        "imageAsset": "public asset path",
+        "linkedIn": "optional LinkedIn URL"
+      },
+      "notes": [
+        "For Divyesh Reddy, update roleKey from 'Marketplace Onboarding' to 'Borrower Onboarding' per UX requirement."
+      ]
+    },
+    {
+      "name": "AdvisorCard",
+      "file": "src/components/team/AdvisorCard.tsx",
+      "type": "server",
+      "props": [{ "name": "advisor", "type": "Advisor", "required": true }],
+      "contractRef": "team.json advisor schema",
+      "itemFields": {
+        "id": "stable id",
+        "name": "full name (static)",
+        "domainKey": "localized domain text",
+        "contributionKey": "localized contribution text",
+        "imageAsset": "public asset path",
+        "linkedIn": "optional LinkedIn URL"
+      }
     }
   ],
-  "sharedTypes": {
-    "NavLink": {
-      "labelKey": "string",
-      "href": "string"
-    },
-    "Cta": {
-      "labelKey": "string",
-      "href": "string",
-      "variant": "enum['primary' | 'secondary' | 'outline']"
-    },
-    "LocaleOption": {
-      "value": "string",
-      "label": "string",
-      "script": "string"
-    },
-    "ProductCard": {
-      "id": "string",
-      "titleKey": "string",
-      "descriptionKey": "string",
-      "iconName": "string",
-      "href": "string (optional)",
-      "ctaKey": "string"
-    },
-    "ReasonBlock": {
-      "id": "string",
-      "titleKey": "string",
-      "bodyKey": "string"
-    },
-    "RecognitionItem": {
-      "id": "string",
-      "titleKey": "string",
-      "descriptionKey": "string",
-      "imageAsset": "string (optional)",
-      "date": "string (optional)"
-    },
-    "StoryCard": {
-      "id": "string",
-      "name": "string",
-      "roleKey": "string",
-      "questionKey": "string",
-      "outcomeKey": "string",
-      "imageAsset": "string"
-    },
-    "TeamMember": {
-      "id": "string",
-      "name": "string",
-      "roleKey": "string",
-      "bioKey": "string",
-      "imageAsset": "string (optional)",
-      "linkedIn": "string (optional)"
-    },
-    "Advisor": {
-      "id": "string",
-      "name": "string",
-      "domainKey": "string",
-      "contributionKey": "string",
-      "imageAsset": "string (optional)",
-      "linkedIn": "string (optional)"
-    }
-  },
-  "legalShell": {
-    "note": "Legal pages reuse the global Header (transparent variant) and Footer. No separate legal shell components are registered.",
-    "layout": "app/[locale]/(marketing)/layout.tsx",
-    "page": "app/[locale]/(marketing)/legal/[slug]/page.tsx",
-    "allowedSlugs": ["privacy-policy", "terms-of-use", "fair-practices-code", "cookie-policy", "grievance-redressal", "rbi-dlg-disclosure", "consent-policy"]
-  },
-  "animationPrinciples": [
-    "Motion is punctuation, not prose.",
-    "All continuous motion respects prefers-reduced-motion.",
-    "Avoid scroll-triggered fades on every paragraph.",
-    "Use translateY + opacity for reveals; use scale for feedback.",
-    "Reduced motion fallback: set durations to 0ms, disable auto-advancing carousels and marquees, and render static layouts."
-  ],
-  "i18nPrinciples": [
-    "Store locale only in the URL path; avoid third-party cookies.",
-    "Hindi (hi) copy must be reviewed by a native speaker before release.",
-    "All Indic scripts are left-to-right; do not mirror layout."
+  "alignmentNotes": [
+    "All homepage list data (loanProducts, whyReasons, recognitionItems, customerStories) must flow through translator keys or static registries copied from contract definitions.",
+    "Existing message JSON uses some differing key names (home.whyNavdhan vs contract home.whyNavDhan, home.stories vs home.customerStories, home.emi vs home.emiCalculator). Frontend implementation should migrate to contract paths.",
+    "Footer badges array must be rendered via t() array join with ' · '.",
+    "Apply form fields must match ApplyLeadRequest validation and use apply.* message keys."
   ]
 }

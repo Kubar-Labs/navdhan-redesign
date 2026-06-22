@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Privacy Policy",
-    "description": "How NavDhan collects, uses, and protects your personal information."
+    "title": "गोपनीयता नीति",
+    "description": "NavDhan आपकी व्यक्तिगत जानकारी कैसे एकत्र, उपयोग और सुरक्षित करता है।"
   },
   "lastUpdated": "2026-06-18",
   "company": {
@@ -14,138 +14,132 @@
     "website": "https://navdhan.app"
   },
   "intro": {
-    "heading": "Privacy Policy",
-    "body": "This Privacy Policy explains how Kubar Protocol Private Limited (\"NavDhan\", \"we\", \"us\") collects, uses, stores, and protects personal information when you use our website and services. We are committed to protecting your privacy and handling your data responsibly."
+    "heading": "गोपनीयता नीति",
+    "body": "यह गोपनीयता नीति बताती है कि Kubar Protocol Private Limited (\"NavDhan\", \"हम\") आपकी वेबसाइट और सेवाओं के उपयोग के दौरान व्यक्तिगत जानकारी कैसे एकत्र, उपयोग, संग्रहीत और सुरक्षित करती है। हम आपकी गोपनीयता की सुरक्षा और जिम्मेदारी से डेटा संभालने के प्रति प्रतिबद्ध हैं।"
   },
   "sections": [
     {
-      "id": "hi-placeholder",
-      "title": "हिन्दी",
-      "content_type": "prose",
-      "body": "हिंदी अनुवाद जल्द ही उपलब्ध होगा। यह फ़ाइल सामग्री की हिंदी स्थानीयकरण के लिए एक प्लेसहोल्डर है।"
-    },
-    {
       "id": "scope",
-      "title": "Scope and applicability",
+      "title": "दायरा और लागूता",
       "content_type": "prose",
-      "body": "This policy applies to all visitors, registered users, applicants, and partners who access NavDhan websites, mobile applications, APIs, or services. By using our services, you agree to the practices described in this policy."
+      "body": "यह नीति NavDhan वेबसाइट, मोबाइल एप्लिकेशन, API या सेवाओं तक पहुँचने वाले सभी आगंतुकों, पंजीकृत उपयोगकर्ताओं, आवेदकों और साझेदारों पर लागू होती है। हमारी सेवाओं का उपयोग करके, आप इस नीति में वर्णित प्रथाओं से सहमत होते हैं।"
     },
     {
       "id": "data-collected",
-      "title": "Data we collect",
+      "title": "हम जो डेटा एकत्र करते हैं",
       "content_type": "list",
       "items": [
         {
-          "heading": "Identity and contact data",
-          "body": "Name, email, phone number, PAN, Aadhaar (voluntary and regulated), and business address."
+          "heading": "पहचान और संपर्क डेटा",
+          "body": "नाम, ईमेल, फोन नंबर, PAN, Aadhaar (स्वैच्छिक और विनियमित), और व्यवसाय का पता।"
         },
         {
-          "heading": "Business data",
-          "body": "GSTIN, business type, years in operation, turnover, and bank statements."
+          "heading": "व्यवसाय डेटा",
+          "body": "GSTIN, व्यवसाय का प्रकार, संचालन के वर्ष, टर्नओवर, और बैंक स्टेटमेंट।"
         },
         {
-          "heading": "Device and usage data",
-          "body": "IP address, browser type, operating system, and pages visited."
+          "heading": "डिवाइस और उपयोग डेटा",
+          "body": "IP पता, ब्राउज़र प्रकार, ऑपरेटिंग सिस्टम, और देखे गए पेज।"
         },
         {
-          "heading": "Communication data",
-          "body": "Emails, chat logs, and call recordings made for quality and compliance."
+          "heading": "संचार डेटा",
+          "body": "गुणवत्ता और अनुपालन के लिए किए गए ईमेल, चैट लॉग और कॉल रिकॉर्डिंग।"
         }
       ]
     },
     {
       "id": "sources",
-      "title": "Sources of data",
+      "title": "डेटा के स्रोत",
       "content_type": "list",
       "items": [
         {
-          "heading": "Directly from you",
-          "body": "Information entered in application forms or shared with our team."
+          "heading": "सीधे आपसे",
+          "body": "आवेदन फॉर्म में दी गई जानकारी या हमारी टीम के साथ साझा की गई जानकारी।"
         },
         {
-          "heading": "From third parties",
-          "body": "Credit bureaus, GST platforms, bank statement providers, and publicly available sources with your consent."
+          "heading": "तृतीय पक्षों से",
+          "body": "क्रेडिट ब्यूरो, GST प्लेटफॉर्म, बैंक स्टेटमेंट प्रदाता, और आपकी सहमति से सार्वजनिक रूप से उपलब्ध स्रोत।"
         },
         {
-          "heading": "Automatically",
-          "body": "Cookies and analytics tools when you browse our website."
+          "heading": "स्वचालित रूप से",
+          "body": "जब आप हमारी वेबसाइट ब्राउज़ करते हैं तो कुकीज़ और विश्लेषिकी उपकरण।"
         }
       ]
     },
     {
       "id": "purposes",
-      "title": "Purpose and legal basis",
+      "title": "उद्देश्य और कानूनी आधार",
       "content_type": "list",
       "items": [
         {
-          "heading": "Loan matching",
-          "body": "To assess eligibility and present offers from partner lenders."
+          "heading": "लोन मिलान",
+          "body": "पात्रता का आकलन करने और साझेदार ऋणदाताओं से ऑफ़र प्रस्तुत करने के लिए।"
         },
         {
-          "heading": "Verification",
-          "body": "To verify identity, business existence, and financial standing."
+          "heading": "सत्यापन",
+          "body": "पहचान, व्यवसाय के अस्तित्व और वित्तीय स्थिति का सत्यापन करने के लिए।"
         },
         {
-          "heading": "Communication",
-          "body": "To share application status, offers, and support responses."
+          "heading": "संचार",
+          "body": "आवेदन स्थिति, ऑफ़र और सहायता प्रतिक्रियाएँ साझा करने के लिए।"
         },
         {
-          "heading": "Compliance",
-          "body": "To meet legal, regulatory, and audit requirements."
+          "heading": "अनुपालन",
+          "body": "कानूनी, विनियामक और ऑडिट आवश्यकताओं को पूरा करने के लिए।"
         }
       ]
     },
     {
       "id": "sharing",
-      "title": "How we share your data",
+      "title": "हम आपका डेटा कैसे साझा करते हैं",
       "content_type": "list",
       "items": [
         {
-          "heading": "Lender partners",
-          "body": "Only when you choose to proceed with an offer and provide explicit consent."
+          "heading": "ऋणदाता साझेदार",
+          "body": "तभी जब आप किसी ऑफ़र के साथ आगे बढ़ना चुनते हैं और स्पष्ट सहमति देते हैं।"
         },
         {
-          "heading": "Service providers",
-          "body": "Verification, cloud hosting, analytics, and communication providers under strict contracts."
+          "heading": "सेवा प्रदाता",
+          "body": "सत्यापन, क्लाउड होस्टिंग, विश्लेषिकी और संचार प्रदाता कड़े अनुबंधों के तहत।"
         },
         {
-          "heading": "Regulators",
-          "body": "When required by RBI, courts, or other competent authorities."
+          "heading": "विनियामक",
+          "body": "जब RBI, अदालतों या अन्य सक्षम प्राधिकारियों द्वारा आवश्यक हो।"
         }
       ]
     },
     {
       "id": "retention",
-      "title": "Retention and security",
+      "title": "प्रतिधारण और सुरक्षा",
       "content_type": "prose",
-      "body": "We retain personal information only as long as needed for the purposes above or as required by law, typically up to five years after the end of our relationship. We use encryption, access controls, and regular security reviews to protect your data."
+      "body": "हम व्यक्तिगत जानकारी को केवल तब तक बनाए रखते हैं जब तक यह ऊपर बताए गए उद्देश्यों के लिए आवश्यक हो या कानून द्वारा आवश्यक हो, आमतौर पर संबंध समाप्त होने के बाद पाँच वर्षों तक। हम आपके डेटा की सुरक्षा के लिए एन्क्रिप्शन, एक्सेस नियंत्रण और नियमित सुरक्षा समीक्षाओं का उपयोग करते हैं।"
     },
     {
       "id": "rights",
-      "title": "Your rights",
+      "title": "आपके अधिकार",
       "content_type": "list",
       "items": [
         {
-          "heading": "Access",
-          "body": "Request a copy of the data we hold about you."
+          "heading": "पहुँच",
+          "body": "हमारे पास मौजूद डेटा की एक प्रति का अनुरोध करें।"
         },
         {
-          "heading": "Correction",
-          "body": "Request correction of inaccurate or incomplete data."
+          "heading": "सुधार",
+          "body": "गलत या अधूरे डेटा के सुधार का अनुरोध करें।"
         },
         {
-          "heading": "Deletion",
-          "body": "Request deletion subject to legal retention requirements."
+          "heading": "हटाना",
+          "body": "कानूनी प्रतिधारण आवश्यकताओं के अधीन हटाने का अनुरोध करें।"
         },
         {
-          "heading": "Withdraw consent",
-          "body": "You can withdraw consent for optional data processing at any time."
+          "heading": "सहमति वापस लें",
+          "body": "आप किसी भी समय वैकल्पिक डेटा प्रोसेसिंग के लिए सहमति वापस ले सकते हैं।"
         }
       ]
     },
     {
       "id": "contact",
-      "title": "Grievance officer and contact",
+      "title": "शिकायत अधिकारी और संपर्क",
       "content_type": "contact_card",
       "contact": {
         "name": "NavDhan Support",
@@ -156,20 +150,19 @@
     },
     {
       "id": "updates",
-      "title": "Updates to this policy",
+      "title": "इस नीति में अपडेट",
       "content_type": "prose",
-      "body": "We may update this Privacy Policy from time to time. The updated version will be posted on this page with a revised \"Last Updated\" date. We encourage you to review it periodically."
+      "body": "हम समय-समय पर इस गोपनीयता नीति को अपडेट कर सकते हैं। अपडेट किया गया संस्करण इस पेज पर संशोधित \"Last Updated\" तिथि के साथ पोस्ट किया जाएगा। हम आपसे इसे समय-समय पर देखने की सलाह देते हैं।"
     },
     {
       "id": "cookies",
-      "title": "Cookies",
+      "title": "कुकीज़",
       "content_type": "prose",
-      "body": "We use cookies and similar technologies. Please see our Cookie Policy for details.",
+      "body": "हम कुकीज़ और समान तकनीकों का उपयोग करते हैं। विवरण के लिए कृपया हमारी Cookie Policy देखें।",
       "cross_link": {
-        "label": "Read Cookie Policy",
+        "label": "Cookie Policy पढ़ें",
         "slug": "cookie-policy"
       }
     }
-  ],
-  "localeNote": "हिंदी अनुवाद जल्द ही उपलब्ध होगा। यह फ़ाइल सामग्री की हिंदी स्थानीयकरण के लिए एक प्लेसहोल्डर है।"
+  ]
 }

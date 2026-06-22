@@ -1,0 +1,9 @@
+{
+  "status": "success",
+  "role": "test-engineer",
+  "exit_code": 0,
+  "stdout": "/home/yash/opencode-workspace/navdhan-redesign-2026/.opencode/factory/subagent-status/test-engineer-test-001.out.log",
+  "stderr": "/home/yash/opencode-workspace/navdhan-redesign-2026/.opencode/factory/subagent-status/test-engineer-test-001.err.log",
+  "started_at": "2026-06-22T07:54:38+05:30",
+  "finished_at": "2026-06-22T07:58:45+05:30"
+}

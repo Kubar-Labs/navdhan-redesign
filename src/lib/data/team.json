@@ -55,7 +55,7 @@
     {
       "id": "divyesh-reddy",
       "name": "Divyesh Reddy",
-      "roleKey": "Marketplace Onboarding",
+      "roleKey": "Borrower Onboarding",
       "bioKey": "Buyer-Risk Intelligence | MSME Credit Analytics",
       "imageAsset": "/assets/team/divyesh.png",
       "linkedIn": "https://www.linkedin.com/in/divyesh-reddy/"
@@ -82,6 +82,14 @@
       "roleKey": "Junior Engineer/Developer",
       "bioKey": "Ashoka University CS | Full-Stack & Systems Dev",
       "imageAsset": "/assets/team/parth.png",
+      "linkedIn": "https://linkedin.com"
+    },
+    {
+      "id": "alok",
+      "name": "Alok",
+      "roleKey": "Technology Operations",
+      "bioKey": "Ensuring high availability, scale, and reliable digital systems for MSME credit.",
+      "imageAsset": "/assets/team/alok.png",
       "linkedIn": "https://linkedin.com"
     }
   ],

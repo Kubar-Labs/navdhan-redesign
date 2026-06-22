@@ -1,13 +1,19 @@
 {
   "global": {
     "announcement": {
-      "message": "One stop-solution for all your working capital needs.",
-      "ctaLabel": "Apply now",
+      "message": "🎉 Launch Special: Apply now and get zero processing fee on your first loan!",
+      "ctaLabel": "Claim Offer",
       "href": "/apply"
     },
     "alt": {
       "navdhanLogo": "NavDhan",
-      "kubarLabsLogo": "Kubar"
+      "kubarLabsLogo": "Kubar",
+      "partnerLogo": "{name} logo",
+      "customerPhoto": "{name} photo",
+      "face": "FACE",
+      "stpiFinglobe": "STPI FinGlobe",
+      "finvision": "FinVision",
+      "rbi": "RBI Aligned"
     },
     "nav": {
       "loanProducts": "Loan Products",
@@ -119,11 +125,8 @@
           "href": "/legal/consent-policy"
         }
       ],
-      "badges": [
-        "RBI Aligned",
-        "FACE Registered",
-        "Powered by Kubar"
-      ]
+      "badges": ["RBI Aligned", "FACE Registered", "Powered by Kubar"],
+      "emptyBadges": []
     }
   },
   "home": {
@@ -133,37 +136,82 @@
     },
     "hero": {
       "eyebrow": "Fast business loans for India's MSMEs",
-      "headline": "Get the right business loan, without chasing banks.",
-      "body": "NavDhan helps small and growing businesses get fair, fast loans. One application. Multiple options. Zero platform fee.",
+      "headline": "One stop-solution for all your working capital needs",
+      "body": "Aap business badhayein, hum funding sambhalte hain. Fast, transparent, and digital loans designed for MSMEs.",
       "primaryCta": "Check Eligibility",
-      "secondaryCta": "Talk to Us",
+      "secondaryCta": "View Products",
+      "approvalCard": {
+        "label": "Funding Approved",
+        "value": "\u20b915,00,000"
+      },
       "stats": [
         {
-          "value": "\u20b95L \u2013 \u20b91Cr",
-          "label": "loan range"
+          "value": "24Hr",
+          "label": "Disbursal"
         },
         {
-          "value": "12-24%",
-          "label": "interest rate p.a."
+          "value": "100%",
+          "label": "Digital"
         },
         {
-          "value": "3\u201312 month",
-          "label": "tenures"
+          "value": "500+",
+          "label": "SMEs Served"
         }
       ]
     },
     "associationBadges": {
-      "heading": "Recognised by"
+      "eyebrow": "Recognised By",
+      "FinVision": {
+        "title": "FinVision",
+        "description": "FinVision 2026 Award Winner at NIBM, Pune (RBI think-tank)"
+      },
+      "FACE": {
+        "title": "FACE Registered",
+        "description": "Member of Fintech Association for Consumer Empowerment"
+      },
+      "Startup Mahakumbh": {
+        "title": "Startup Mahakumbh",
+        "description": "Popular Choice Award winner"
+      },
+      "STPI FinGlobe": {
+        "title": "STPI FinGlobe",
+        "description": "Incubated at STPI FinGlobe"
+      }
     },
     "ecosystemTicker": {
-      "heading": "Technology Partnerships"
+      "eyebrow": "Technology Partnerships"
     },
     "loanProducts": {
       "eyebrow": "Loan products",
-      "heading": "A loan that fits what your business actually needs.",
-      "body": "From buying stock and machinery to managing daily expenses, choose the loan that fits your plan, not the other way around.",
+      "heading": "Tailored Business Financing",
+      "body": "Simple, transparent term loans designed to give your enterprise the runway it needs to scale.",
       "cta": "Compare Loan Options",
       "productCta": "Learn more",
+      "featured": {
+        "tag": "Most Popular",
+        "title": "Term Loans",
+        "description": "Flexible capital infusion for expansion, equipment purchase, or managing seasonal cash flow variations.",
+        "imageAlt": "Term loan visualisation",
+        "cta": "Apply for Term Loan",
+        "specs": [
+          {
+            "label": "Amount",
+            "value": "\u20b95L - \u20b91Cr"
+          },
+          {
+            "label": "Interest Rate",
+            "value": "12% - 24% p.a."
+          },
+          {
+            "label": "Tenure",
+            "value": "3 - 12 Months"
+          },
+          {
+            "label": "Processing",
+            "value": "Zero Hidden Fees"
+          }
+        ]
+      },
       "products": [
         {
           "id": "collateral-free",
@@ -195,46 +243,48 @@
         }
       ]
     },
-    "whyNavdhan": {
+    "whyNavDhan": {
       "eyebrow": "Why NavDhan",
-      "heading": "Built for business owners, not paperwork collectors.",
-      "body": "You are running a business, not a bank branch. We keep the process digital, transparent, and focused on getting you an offer that works.",
+      "heading": "Why Choose NavDhan?",
+      "body": "Built on trust, designed for speed. We remove the friction from business financing.",
       "cta": "Apply Now",
-      "trustBadges": [
-        "RBI Aligned",
-        "FACE Registered",
-        "Powered by Kubar"
-      ],
+      "trustBadges": ["RBI Aligned", "FACE Registered", "Powered by Kubar"],
       "reasons": [
         {
-          "id": "one-application",
-          "titleKey": "One application, matched offers.",
-          "bodyKey": "Apply once and see loan options worked out for your business."
+          "id": "instant-sanction",
+          "titleKey": "Instant Sanction",
+          "bodyKey": "Get in-principle approval within minutes using our AI-driven assessment engine.",
+          "iconName": "Zap"
         },
         {
-          "id": "loan-sizes",
-          "titleKey": "Loan sizes that fit.",
-          "bodyKey": "From \u20b95 Lakhs to \u20b91 Crore, borrow what your business actually needs."
+          "id": "secure",
+          "titleKey": "100% Secure",
+          "bodyKey": "Bank-grade encryption ensures your business data remains completely private and protected.",
+          "iconName": "Shield"
         },
         {
-          "id": "clear-rates",
-          "titleKey": "Clear interest rates.",
-          "bodyKey": "Rates from 12% to 24% p.a., with all costs explained upfront."
+          "id": "fair-pricing",
+          "titleKey": "Fair Pricing",
+          "bodyKey": "Transparent interest rates with absolutely zero hidden charges or surprise fees.",
+          "iconName": "Scale"
         },
         {
-          "id": "fast-decisions",
-          "titleKey": "Fast, honest decisions.",
-          "bodyKey": "Approvals typically within 24 hours to 7 days, depending on documents."
+          "id": "minimal-paperwork",
+          "titleKey": "Minimal Paperwork",
+          "bodyKey": "A completely digital journey. Upload basic documents and let our systems do the rest.",
+          "iconName": "FileText"
         },
         {
-          "id": "online-process",
-          "titleKey": "Fully online process.",
-          "bodyKey": "Submit documents and e-sign from your phone or laptop."
+          "id": "support",
+          "titleKey": "24/7 Support",
+          "bodyKey": "Dedicated relationship managers available round the clock to assist your queries.",
+          "iconName": "PhoneCall"
         },
         {
-          "id": "zero-fee",
-          "titleKey": "Zero platform fee.",
-          "bodyKey": "You only pay what your loan agreement says. Nothing extra to NavDhan."
+          "id": "flexible-tenure",
+          "titleKey": "Flexible Tenure",
+          "bodyKey": "Choose repayment schedules that align perfectly with your business cash flows.",
+          "iconName": "Calendar"
         }
       ]
     },
@@ -242,28 +292,28 @@
       "eyebrow": "Recognition",
       "heading": "Built to earn your trust. Recognised along the way."
     },
-    "stories": {
+    "customerStories": {
       "eyebrow": "Customer stories",
       "heading": "Real businesses. Real outcomes.",
       "cta": "Read more stories"
     },
-    "emi": {
+    "emiCalculator": {
       "eyebrow": "EMI Calculator",
-      "heading": "Plan your monthly outgo before you apply.",
-      "intro": "Move the sliders to see an estimate. Your final rate will depend on your business profile, lender, and tenure.",
-      "amount": "Loan amount",
-      "rate": "Interest rate",
+      "heading": "Plan Your Finances",
+      "intro": "Use our interactive calculator to estimate your monthly commitments. Adjust the sliders to find a plan that works for your cash flow.",
+      "amount": "Loan Amount",
+      "rate": "Interest Rate",
       "tenure": "Tenure",
       "monthly": "Monthly EMI",
       "principal": "Principal",
-      "totalInterest": "Total interest",
-      "totalPayable": "Total payable",
-      "cta": "Check Eligibility"
+      "totalInterest": "Total Interest",
+      "totalPayable": "Total Repayment",
+      "cta": "Apply with Details"
     },
     "finalCta": {
-      "heading": "The right loan for your business is a few clicks away.",
-      "subtext": "Zero platform fee \u00b7 Multiple loan offers \u00b7 Quick, transparent process",
-      "primaryCta": "Apply Online",
+      "heading": "Ready to grow your business?",
+      "subtext": "Join 500+ successful enterprises scaling with NavDhan's working capital solutions.",
+      "primaryCta": "Start Application Now",
       "secondaryCta": "Talk to Us"
     }
   },
@@ -273,21 +323,144 @@
       "description": "Meet the people building fair, fast business loans for India's MSMEs."
     },
     "hero": {
-      "heading": "Built by people who believe MSMEs deserve better credit.",
-      "subtext": "We are a team of operators, engineers, and bankers working to make business funding calm, clear, and accessible."
+      "heading": "Built by people who believe in small business.",
+      "subtext": "We are builders, engineers, designers, and operators working to make MSME credit calm, clear, and honest."
+    },
+    "mission": {
+      "eyebrow": "Our mission",
+      "heading": "Calm, credible credit for every small business.",
+      "body": "We believe MSMEs deserve a lending experience that is honest, respectful, and fast. NavDhan exists to make that the default."
+    },
+    "values": {
+      "eyebrow": "What guides us",
+      "heading": "Built on three simple values",
+      "items": [
+        {
+          "id": "empathy",
+          "title": "Empathy",
+          "body": "We design around real borrower worries, not lender convenience.",
+          "iconName": "Heart"
+        },
+        {
+          "id": "transparency",
+          "title": "Transparency",
+          "body": "No hidden fees, no jargon. Plain terms you can verify.",
+          "iconName": "Eye"
+        },
+        {
+          "id": "speed",
+          "title": "Speed",
+          "body": "Decisions move quickly because our systems do the heavy lifting.",
+          "iconName": "Zap"
+        }
+      ]
     },
     "members": {
-      "heading": "Leadership",
-      "eyebrow": "Leadership"
+      "eyebrow": "Leadership",
+      "heading": "Meet the team",
+      "items": {
+        "divyesh-reddy": {
+          "role": "Borrower Onboarding",
+          "bio": "Buyer-Risk Intelligence | MSME Credit Analytics"
+        }
+      }
     },
     "advisors": {
-      "heading": "Advisors",
-      "eyebrow": "Advisors"
+      "eyebrow": "Advisors",
+      "heading": "Guided by industry experts",
+      "items": {
+        "debayan-gupta": {
+          "domain": "Professor, CS - MIT, Ashoka University",
+          "contribution": "Advises on research-led technology choices and academic partnerships."
+        }
+      }
     },
     "join": {
       "heading": "Want to shape the future of MSME credit?",
-      "subtext": "We are always looking for thoughtful people who care about Indian businesses.",
+      "subtext": "We are always looking for thoughtful people who care about building fair financial products.",
       "cta": "Join the team"
+    }
+  },
+  "apply": {
+    "meta": {
+      "title": "Apply: NavDhan",
+      "description": "Check your business loan eligibility in under 5 minutes."
+    },
+    "eyebrow": "Business loan application",
+    "heading": "Get the right business loan, without chasing banks.",
+    "description": "Fill a few details to check your eligibility. It takes less than 5 minutes.",
+    "loanDetailsTitle": "Loan details",
+    "amountLabel": "Loan amount",
+    "tenureLabel": "Tenure (months)",
+    "purposeLabel": "Purpose",
+    "purposes": {
+      "working_capital": "Working capital",
+      "machinery": "Machinery / Equipment",
+      "inventory": "Inventory",
+      "business_expansion": "Business expansion",
+      "debt_refinancing": "Debt refinancing",
+      "other": "Other"
+    },
+    "aboutYouTitle": "About you",
+    "fullNameLabel": "Full name",
+    "mobileLabel": "Mobile number",
+    "mobilePlaceholder": "10-digit mobile",
+    "emailLabel": "Email",
+    "pinCodeLabel": "Business PIN code",
+    "pinCodePlaceholder": "6-digit PIN",
+    "emiLabel": "Estimated EMI",
+    "emiNoteTemplate": "Total payable {total} @ 18% p.a. This is only an estimate.",
+    "consentDataPrefix": "I agree to NavDhan's",
+    "consentAnd": "and",
+    "consentPolicy": "Consent Policy",
+    "privacyPolicy": "Privacy Policy",
+    "consentLender": "I consent to sharing my details so NavDhan can find a loan offer for my business.",
+    "submit": "Check Eligibility",
+    "submitting": "Checking...",
+    "successHeading": "Thank you",
+    "successBody": "We have received your application. A NavDhan advisor will reach out within 24 hours.",
+    "successCta": "Back to home",
+    "errorHeading": "Something went wrong",
+    "errorBody": "Please check your details and try again.",
+    "fieldRequired": "This field is required",
+    "validation": {
+      "mobileInvalid": "Please enter a valid 10-digit mobile number.",
+      "emailInvalid": "Please enter a valid email address.",
+      "pinCodeInvalid": "Please enter a valid 6-digit PIN code.",
+      "nameInvalid": "Please enter a valid full name.",
+      "amountInvalid": "Please enter a valid loan amount.",
+      "consentRequired": "You must agree to continue."
+    },
+    "wizard": {
+      "stepIndicator": ["Business details", "Contact & loan", "Review & submit"],
+      "back": "Back",
+      "next": "Continue",
+      "step1Title": "Business details",
+      "step1Body": "Tell us about your business so we can find the right loan options.",
+      "businessNameLabel": "Business name",
+      "businessNamePlaceholder": "Registered business name",
+      "entityTypeLabel": "Business type",
+      "entityTypes": {
+        "proprietorship": "Proprietorship",
+        "partnership": "Partnership",
+        "llp": "LLP",
+        "pvt_ltd": "Private Limited",
+        "others": "Others"
+      },
+      "annualTurnoverLabel": "Annual turnover",
+      "annualTurnoverPlaceholder": "Approximate annual turnover",
+      "turnoverRanges": {
+        "0_10": "Up to ₹10 Lakh",
+        "10_50": "₹10 - ₹50 Lakh",
+        "50_100": "₹50 Lakh - ₹1 Crore",
+        "100_500": "₹1 - ₹5 Crore",
+        "500_plus": "Above ₹5 Crore"
+      },
+      "securityNote": "Your information is encrypted and used only for eligibility assessment.",
+      "step2Title": "Contact & loan details",
+      "step2Body": "Share how we can reach you and the loan amount you need.",
+      "step3Title": "Review & submit",
+      "step3Body": "Confirm your details and consent to receive matched loan offers."
     }
   },
   "legal": {

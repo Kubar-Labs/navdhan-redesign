@@ -1,66 +1,28 @@
-import "server-only";
 import { notFound } from "next/navigation";
-import { defaultLocale, isValidLocale, type Locale } from "@/src/lib/i18n/config";
+import { getMessages, type Messages } from "@/src/lib/i18n/messages";
+import { isValidLocale } from "@/src/lib/i18n/config";
 
-const messageLoaders: Record<Locale, () => Promise<Record<string, unknown>>> = {
-  en: () =>
-    import("@/src/lib/i18n/messages/en.json").then((m) => m.default as Record<string, unknown>),
-  hi: () =>
-    import("@/src/lib/i18n/messages/hi.json").then((m) => m.default as Record<string, unknown>),
-  bn: () =>
-    import("@/src/lib/i18n/messages/bn.json").then((m) => m.default as Record<string, unknown>),
-  te: () =>
-    import("@/src/lib/i18n/messages/te.json").then((m) => m.default as Record<string, unknown>),
-  mr: () =>
-    import("@/src/lib/i18n/messages/mr.json").then((m) => m.default as Record<string, unknown>),
-  ta: () =>
-    import("@/src/lib/i18n/messages/ta.json").then((m) => m.default as Record<string, unknown>),
-  kn: () =>
-    import("@/src/lib/i18n/messages/kn.json").then((m) => m.default as Record<string, unknown>),
-  ml: () =>
-    import("@/src/lib/i18n/messages/ml.json").then((m) => m.default as Record<string, unknown>),
-};
+export type Translator = (key: string, variables?: Record<string, string | number>) => string;
 
-export type Messages = Record<string, unknown>;
-
-function isObject(value: unknown): value is Record<string, unknown> {
+function isRecord(value: unknown): value is Record<string, unknown> {
   return value !== null && typeof value === "object" && !Array.isArray(value);
-}
-
-function deepMerge(
-  target: Record<string, unknown>,
-  source: Record<string, unknown>,
-): Record<string, unknown> {
-  const result: Record<string, unknown> = { ...target };
-  for (const key of Object.keys(source)) {
-    if (isObject(source[key]) && isObject(result[key])) {
-      result[key] = deepMerge(
-        result[key] as Record<string, unknown>,
-        source[key] as Record<string, unknown>,
-      );
-    } else {
-      result[key] = source[key];
-    }
-  }
-  return result;
-}
-
-export async function getMessages(locale: string): Promise<Messages> {
-  if (!isValidLocale(locale)) notFound();
-  const base = await messageLoaders[defaultLocale]();
-  if (locale === defaultLocale) return base;
-  const override = await messageLoaders[locale]();
-  return deepMerge(base, override);
 }
 
 function getByPath(obj: unknown, path: string): unknown {
   const parts = path.split(".");
   let current: unknown = obj;
   for (const part of parts) {
-    if (current === null || typeof current !== "object") return undefined;
-    current = (current as Record<string, unknown>)[part];
+    if (!isRecord(current)) return undefined;
+    current = current[part];
   }
   return current;
+}
+
+function parentExists(obj: unknown, path: string): boolean {
+  const parts = path.split(".");
+  parts.pop();
+  if (parts.length === 0) return false;
+  return isRecord(getByPath(obj, parts.join(".")));
 }
 
 function interpolate(value: string, variables?: Record<string, string | number>): string {
@@ -71,22 +33,41 @@ function interpolate(value: string, variables?: Record<string, string | number>)
   });
 }
 
-export type Translator = (key: string, variables?: Record<string, string | number>) => string;
+function formatLeaf(raw: unknown, variables?: Record<string, string | number>): string {
+  if (typeof raw === "string") return interpolate(raw, variables);
+  if (Array.isArray(raw)) {
+    if (raw.length === 0) return "";
+    return raw.map((item) => String(item)).join(" · ");
+  }
+  return "";
+}
 
 export async function getTranslator(locale: string, namespace?: string): Promise<Translator> {
-  const messages = await getMessages(locale);
-  const root = namespace ? getByPath(messages, namespace) : messages;
+  if (!isValidLocale(locale)) notFound();
+  const messages = getMessages(locale);
 
-  return (key: string, variables?: Record<string, string | number>) => {
-    const fullPath = namespace ? `${namespace}.${key}` : key;
-    const raw = getByPath(messages, fullPath);
-    if (typeof raw !== "string") {
-      if (namespace && root && typeof root === "object") {
-        const namespacedRaw = getByPath(root, key);
-        if (typeof namespacedRaw === "string") return interpolate(namespacedRaw, variables);
+  return (key: string, variables?: Record<string, string | number>): string => {
+    if (namespace) {
+      const namespacedRoot = getByPath(messages, namespace);
+      if (isRecord(namespacedRoot)) {
+        const relativeValue = getByPath(namespacedRoot, key);
+        if (typeof relativeValue === "string" || Array.isArray(relativeValue)) {
+          return formatLeaf(relativeValue, variables);
+        }
+        if (parentExists(namespacedRoot, key)) {
+          return "";
+        }
       }
-      return key;
     }
-    return interpolate(raw, variables);
+
+    const absoluteValue = getByPath(messages, key);
+    if (typeof absoluteValue === "string" || Array.isArray(absoluteValue)) {
+      return formatLeaf(absoluteValue, variables);
+    }
+    if (parentExists(messages, key)) {
+      return "";
+    }
+
+    return key;
   };
 }

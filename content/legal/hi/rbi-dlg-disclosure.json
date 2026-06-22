@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "RBI DLG Disclosure",
-    "description": "Regulatory disclosure about NavDhan, lenders, and loan products."
+    "title": "RBI DLG खुलासा",
+    "description": "NavDhan, ऋणदाताओं और लोन उत्पादों के बारे में नियामक खुलासा।"
   },
   "lastUpdated": "2026-06-18",
   "company": {
@@ -14,113 +14,87 @@
     "website": "https://navdhan.app"
   },
   "intro": {
-    "heading": "RBI DLG Disclosure",
-    "body": "This page provides the regulatory disclosures required under Reserve Bank of India guidelines for digital lending, including our role, lender relationships, and product terms."
+    "heading": "RBI DLG खुलासा",
+    "body": "यह पेज डिजिटल उधार के लिए भारतीय रिज़र्व बैंक दिशानिर्देशों के तहत आवश्यक नियामक खुलासे प्रदान करता है, जिसमें हमारी भूमिका, ऋणदाता संबंध और उत्पाद शर्तें शामिल हैं।"
   },
   "sections": [
     {
-      "id": "hi-placeholder",
-      "title": "हिन्दी",
-      "content_type": "prose",
-      "body": "हिंदी अनुवाद जल्द ही उपलब्ध होगा। यह फ़ाइल सामग्री की हिंदी स्थानीयकरण के लिए एक प्लेसहोल्डर है।"
-    },
-    {
       "id": "regulatory",
-      "title": "Regulatory disclosure statement",
+      "title": "नियामक खुलासा वक्तव्य",
       "content_type": "prose",
-      "body": "NavDhan is an intermediary technology platform operated by Kubar Protocol Private Limited. We are not a bank, NBFC, or financial institution. All credit decisions, sanctions, and disbursements are made solely by our RBI-registered lending partners."
+      "body": "NavDhan, Kubar Protocol Private Limited द्वारा संचालित एक मध्यस्थ तकनीकी प्लेटफ़ॉर्म है। हम कोई बैंक, NBFC या वित्तीय संस्थान नहीं हैं। सभी क्रेडिट निर्णय, स्वीकृति और वितरण केवल हमारे RBI-पंजीकृत ऋणदाता साझेदारों द्वारा किए जाते हैं।"
     },
     {
       "id": "role",
-      "title": "Role of NavDhan",
+      "title": "NavDhan की भूमिका",
       "content_type": "prose",
-      "body": "We provide technology infrastructure for borrower onboarding, document collection, lender matching, and status tracking. We do not set interest rates, fees, or credit policy. We do not guarantee loan approval."
+      "body": "हम उधारकर्ता ऑनबोर्डिंग, दस्तावेज़ संग्रह, ऋणदाता मिलान और स्थिति ट्रैकिंग के लिए तकनीकी बुनियादी ढांचा प्रदान करते हैं। हम ब्याज दर, शुल्क या क्रेडिट नीति निर्धारित नहीं करते। हम लोन स्वीकृति की गारंटी नहीं देते।"
     },
     {
       "id": "lenders",
-      "title": "Lender details",
+      "title": "ऋणदाता विवरण",
       "content_type": "table",
       "table": {
-        "caption": "Representative lending partners",
-        "headers": [
-          "Partner type",
-          "Role",
-          "Example categories"
-        ],
+        "caption": "प्रतिनिधि ऋणदाता साझेदार",
+        "headers": ["साझेदार प्रकार", "भूमिका", "उदाहरण श्रेणियाँ"],
         "rows": [
           [
-            "Scheduled Commercial Banks",
-            "Originate loans directly",
-            "Private and public sector banks"
+            "अनुसूचित वाणिज्यिक बैंक",
+            "सीधे लोन उत्पन्न करते हैं",
+            "निजी और सार्वजनिक क्षेत्र के बैंक"
           ],
           [
-            "NBFCs",
-            "Originate loans directly or through co-lending",
-            "Systemically important and registered NBFCs"
+            "NBFC",
+            "सीधे या सह-उधार के माध्यम से लोन उत्पन्न करते हैं",
+            "प्रणालीगत रूप से महत्वपूर्ण और पंजीकृत NBFC"
           ],
           [
-            "Other regulated entities",
-            "Provide credit or guarantee products",
-            "As permitted by RBI"
+            "अन्य विनियमित इकाइयाँ",
+            "क्रेडिट या गारंटी उत्पाद प्रदान करते हैं",
+            "RBI द्वारा अनुमत अनुसार"
           ]
         ]
       }
     },
     {
       "id": "terms",
-      "title": "Key product terms",
+      "title": "मुख्य उत्पाद शर्तें",
       "content_type": "table",
       "table": {
-        "caption": "Illustrative loan terms",
-        "headers": [
-          "Parameter",
-          "Typical range",
-          "Notes"
-        ],
+        "caption": "नमूना लोन शर्तें",
+        "headers": ["पैरामीटर", "सामान्य सीमा", "टिप्पणियाँ"],
         "rows": [
           [
-            "Loan amount",
-            "₹5 lakh - ₹1 crore",
-            "Final amount depends on lender policy and profile."
+            "लोन राशि",
+            "₹5 लाख - ₹1 करोड़",
+            "अंतिम राशि ऋणदाता नीति और प्रोफाइल पर निर्भर करती है।"
           ],
           [
-            "Interest rate",
-            "12% - 24% per annum",
-            "Rates quoted are annualised and may vary by lender."
+            "ब्याज दर",
+            "12% - 24% प्रति वर्ष",
+            "दरें वार्षिकीकृत हैं और ऋणदाता के अनुसार भिन्न हो सकती हैं।"
           ],
-          [
-            "Tenure",
-            "3 - 12 months",
-            "Subject to lender approval."
-          ],
-          [
-            "Processing fee",
-            "As per lender",
-            "Disclosed in the Key Facts Statement."
-          ],
-          [
-            "Prepayment charges",
-            "As per lender",
-            "Disclosed before sanction."
-          ]
+          ["अवधि", "3 - 12 महीने", "ऋणदाता स्वीकृति के अधीन।"],
+          ["प्रोसेसिंग शुल्क", "ऋणदाता के अनुसार", "मुख्य तथ्य विवरण में बताया गया।"],
+          ["प्रीपेमेंट शुल्क", "ऋणदाता के अनुसार", "स्वीकृति से पहले बताया जाता है।"]
         ]
       }
     },
     {
       "id": "consent",
-      "title": "Consent and data use",
+      "title": "सहमति और डेटा उपयोग",
       "content_type": "prose",
-      "body": "We collect and share data only with your explicit, informed consent. You will be shown clear consent screens at each stage of the application. You may withdraw consent for optional processing at any time."
+      "body": "हम केवल आपकी स्पष्ट, सूचित सहमति के साथ डेटा एकत्र और साझा करते हैं। आवेदन के प्रत्येक चरण में आपको स्पष्ट सहमति स्क्रीन दिखाई जाएंगी। आप किसी भी समय वैकल्पिक प्रोसेसिंग के लिए सहमति वापस ले सकते हैं।"
     },
     {
       "id": "grievance",
-      "title": "Grievance redressal",
+      "title": "शिकायत निवारण",
       "content_type": "prose",
-      "body": "For complaints about platform service, contact our support team. For complaints about a specific lender, please also contact the lender directly."
+      "body": "प्लेटफ़ॉर्म सेवा से संबंधित शिकायतों के लिए हमारी सहायता टीम से संपर्क करें। किसी विशिष्ट ऋणदाता से संबंधित शिकायतों के लिए कृपया सीधे ऋणदाता से भी संपर्क करें।"
     },
     {
       "id": "grievance-contact",
-      "title": "Contact details",
+      "title": "संपर्क विवरण",
       "content_type": "contact_card",
       "contact": {
         "name": "NavDhan Support",
@@ -131,14 +105,13 @@
     },
     {
       "id": "grievance-link",
-      "title": "Detailed grievance process",
+      "title": "विस्तृत शिकायत प्रक्रिया",
       "content_type": "prose",
-      "body": "For step-by-step complaint handling and escalation timelines, please refer to our Grievance Redressal page.",
+      "body": "चरण-दर-चरण शिकायत संभाल और बढ़ती समयसीमा के लिए कृपया हमारी शिकायत निवारण पेज देखें।",
       "cross_link": {
-        "label": "View Grievance Redressal",
+        "label": "शिकायत निवारण देखें",
         "slug": "grievance-redressal"
       }
     }
-  ],
-  "localeNote": "हिंदी अनुवाद जल्द ही उपलब्ध होगा। यह फ़ाइल सामग्री की हिंदी स्थानीयकरण के लिए एक प्लेसहोल्डर है।"
+  ]
 }

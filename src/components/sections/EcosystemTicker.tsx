@@ -17,12 +17,12 @@ export function EcosystemTicker({ eyebrow, partners }: EcosystemTickerProps) {
 
   if (reduced) {
     return (
-      <section className="bg-nt-slate-900 py-12 md:py-16">
+      <section className="bg-nt-slate-900 py-1.5 sm:py-2">
         <Container>
           <p className="text-center text-sm font-semibold uppercase tracking-wide text-nt-slate-300">
             {eyebrow}
           </p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-8 md:gap-12">
+          <div className="mt-1.5 flex flex-wrap items-center justify-center gap-6 md:gap-10">
             {partners.map((partner) => (
               <TickerLogo key={`${partner.name}-static`} partner={partner} />
             ))}
@@ -33,7 +33,7 @@ export function EcosystemTicker({ eyebrow, partners }: EcosystemTickerProps) {
   }
 
   return (
-    <section className="bg-nt-slate-900 py-12 md:py-16">
+    <section className="bg-nt-slate-900 py-1.5 sm:py-2">
       <Container>
         <FadeIn className="text-center">
           <p className="text-sm font-semibold uppercase tracking-wide text-nt-slate-300">
@@ -43,7 +43,7 @@ export function EcosystemTicker({ eyebrow, partners }: EcosystemTickerProps) {
       </Container>
 
       <div
-        className="relative mt-8 overflow-hidden"
+        className="relative mt-1.5 overflow-hidden"
         style={{
           maskImage: "linear-gradient(to right, transparent, white 6%, white 94%, transparent)",
           WebkitMaskImage:
@@ -52,7 +52,7 @@ export function EcosystemTicker({ eyebrow, partners }: EcosystemTickerProps) {
         aria-roledescription="marquee"
         aria-label="Technology partner logos"
       >
-        <div className="animate-marquee flex w-max items-center gap-10 md:gap-16">
+        <div className="animate-marquee flex w-max items-center gap-8 md:gap-10">
           {duplicated.map((partner, index) => (
             <TickerLogo key={`${partner.name}-${index}`} partner={partner} />
           ))}
@@ -71,7 +71,7 @@ function TickerLogo({ partner }: TickerLogoProps) {
   return (
     <div
       aria-label={partner.name}
-      className="group inline-flex flex-shrink-0 items-center justify-center rounded-lg p-2"
+      className="group inline-flex flex-shrink-0 items-center justify-center rounded-lg p-0.5"
     >
       {partner.logoAsset ? (
         <Image
@@ -81,7 +81,7 @@ function TickerLogo({ partner }: TickerLogoProps) {
           height={44}
           loading="eager"
           decoding="async"
-          className="partner-logo h-8 w-auto max-w-[140px] object-contain md:h-10 md:max-w-[160px]"
+          className="h-5 w-auto object-contain opacity-80 transition-opacity duration-300 hover:opacity-100 sm:h-6"
         />
       ) : (
         <span className="text-sm font-semibold text-white/80 transition group-hover:text-white">

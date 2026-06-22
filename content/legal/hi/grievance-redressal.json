@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Grievance Redressal",
-    "description": "How to raise complaints and get support with NavDhan."
+    "title": "शिकायत निवारण",
+    "description": "NavDhan के साथ शिकायतें दर्ज करने और सहायता प्राप्त करने का तरीका।"
   },
   "lastUpdated": "2026-06-18",
   "company": {
@@ -14,86 +14,80 @@
     "website": "https://navdhan.app"
   },
   "intro": {
-    "heading": "Grievance Redressal",
-    "body": "We take every concern seriously. If you are unhappy with our service, a lender, or a partner, please follow the process below."
+    "heading": "शिकायत निवारण",
+    "body": "हम हर चिंता को गंभीरता से लेते हैं। यदि आप हमारी सेवा, किसी ऋणदाता, या साझेदार से असंतुष्ट हैं, तो कृपया नीचे दी गई प्रक्रिया का पालन करें।"
   },
   "sections": [
     {
-      "id": "hi-placeholder",
-      "title": "हिन्दी",
-      "content_type": "prose",
-      "body": "हिंदी अनुवाद जल्द ही उपलब्ध होगा। यह फ़ाइल सामग्री की हिंदी स्थानीयकरण के लिए एक प्लेसहोल्डर है।"
-    },
-    {
       "id": "raise",
-      "title": "How to raise a complaint",
+      "title": "शिकायत कैसे दर्ज करें",
       "content_type": "list",
       "items": [
         {
-          "heading": "Email us",
-          "body": "Send your complaint to support@kubar.tech with the subject line \"Complaint\"."
+          "heading": "हमें ईमेल करें",
+          "body": "अपनी शिकायत support@kubar.tech पर 'शिकायत' विषय के साथ भेजें।"
         },
         {
-          "heading": "Write to us",
-          "body": "Mail your complaint to our registered address."
+          "heading": "हमें लिखें",
+          "body": "अपनी शिकायत हमारे पंजीकृत पते पर डाक द्वारा भेजें।"
         },
         {
-          "heading": "Reference number",
-          "body": "Include your application or registered mobile number so we can locate your record."
+          "heading": "संदर्भ संख्या",
+          "body": "अपना आवेदन या पंजीकृत मोबाइल नंबर शामिल करें ताकि हम आपका रिकॉर्ड ढूंढ सकें।"
         }
       ]
     },
     {
       "id": "include",
-      "title": "What to include",
+      "title": "क्या शामिल करें",
       "content_type": "list",
       "items": [
         {
-          "heading": "Your details",
-          "body": "Full name, registered email, and phone number."
+          "heading": "आपका विवरण",
+          "body": "पूरा नाम, पंजीकृत ईमेल और फोन नंबर।"
         },
         {
-          "heading": "Issue description",
-          "body": "A clear description of what happened and when."
+          "heading": "मुद्दे का विवरण",
+          "body": "क्या हुआ और कब हुआ, इसकी एक स्पष्ट जानकारी।"
         },
         {
-          "heading": "Expected resolution",
-          "body": "What you would like us to do to resolve the matter."
+          "heading": "अपेक्षित निराकरण",
+          "body": "मामले को हल करने के लिए आप क्या चाहते हैं।"
         },
         {
-          "heading": "Supporting documents",
-          "body": "Screenshots, emails, or any other relevant evidence."
+          "heading": "सहायक दस्तावेज़",
+          "body": "स्क्रीनशॉट, ईमेल, या कोई अन्य संबंधित सबूत।"
         }
       ]
     },
     {
       "id": "timeline",
-      "title": "Resolution timeline",
+      "title": "निराकरण समयसीमा",
       "content_type": "list",
       "items": [
         {
-          "heading": "Acknowledgement",
-          "body": "Within 3 working days of receiving your complaint."
+          "heading": "पुष्टि",
+          "body": "आपकी शिकायत मिलने के 3 कार्यदिवसों के भीतर।"
         },
         {
-          "heading": "Initial response",
-          "body": "Within 7 working days with an update or resolution."
+          "heading": "प्रारंभिक प्रतिक्रिया",
+          "body": "7 कार्यदिवसों के भीतर अपडेट या निराकरण के साथ।"
         },
         {
-          "heading": "Final resolution",
-          "body": "Within 30 days for most complaints. Complex cases may take longer with a reasoned explanation."
+          "heading": "अंतिम निराकरण",
+          "body": "अधिकांश शिकायतों के लिए 30 दिनों के भीतर। जटिल मामलों में कारण सहित अधिक समय लग सकता है।"
         }
       ]
     },
     {
       "id": "nodal-officer",
-      "title": "Escalation to Nodal Officer",
+      "title": "नोडल अधिकारी को स्थानांतरण",
       "content_type": "prose",
-      "body": "If you are not satisfied with the resolution, you may escalate to our Nodal Grievance Officer. Please include your original complaint and our response."
+      "body": "यदि आप निराकरण से संतुष्ट नहीं हैं, तो आप हमारे नोडल शिकायत अधिकारी को स्थानांतरित कर सकते हैं। कृपया अपनी मूल शिकायत और हमारी प्रतिक्रिया शामिल करें।"
     },
     {
       "id": "nodal-contact",
-      "title": "Nodal Officer contact",
+      "title": "नोडल अधिकारी संपर्क",
       "content_type": "contact_card",
       "contact": {
         "name": "NavDhan Support",
@@ -104,16 +98,15 @@
     },
     {
       "id": "rbi",
-      "title": "RBI complaint",
+      "title": "RBI शिकायत",
       "content_type": "prose",
-      "body": "If your complaint relates to a lender and remains unresolved, you may approach the Reserve Bank of India Integrated Ombudsman Scheme or the lender's grievance mechanism, as applicable."
+      "body": "यदि आपकी शिकायत किसी ऋणदाता से संबंधित है और अनसुलझी रहती है, तो आप Reserve Bank of India Integrated Ombudsman Scheme या ऋणदाता की शिकायत प्रक्रिया के पास जा सकते हैं।"
     },
     {
       "id": "records",
-      "title": "Record keeping",
+      "title": "रिकॉर्ड रखरखाव",
       "content_type": "prose",
-      "body": "We maintain records of all complaints and resolutions to monitor quality and comply with regulatory requirements."
+      "body": "हम गुणवत्ता की निगरानी और नियामक आवश्यकताओं के अनुपालन के लिए सभी शिकायतों और निराकरण के रिकॉर्ड बनाए रखते हैं।"
     }
-  ],
-  "localeNote": "हिंदी अनुवाद जल्द ही उपलब्ध होगा। यह फ़ाइल सामग्री की हिंदी स्थानीयकरण के लिए एक प्लेसहोल्डर है।"
+  ]
 }

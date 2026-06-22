@@ -1,7 +1,7 @@
 {
   "meta": {
-    "title": "Consent Policy",
-    "description": "How NavDhan obtains and manages your consent."
+    "title": "सहमति नीति",
+    "description": "NavDhan आपकी सहमति कैसे प्राप्त और प्रबंधित करता है।"
   },
   "lastUpdated": "2026-06-18",
   "company": {
@@ -14,105 +14,99 @@
     "website": "https://navdhan.app"
   },
   "intro": {
-    "heading": "Consent Policy",
-    "body": "Consent is at the heart of how NavDhan operates. This policy explains how we obtain, use, and honour your consent when you use our services."
+    "heading": "सहमति नीति",
+    "body": "सहमति NavDhan के संचालन के केंद्र में है। यह नीति बताती है कि जब आप हमारी सेवाओं का उपयोग करते हैं तो हम आपकी सहमति कैसे प्राप्त, उपयोग और सम्मान करते हैं।"
   },
   "sections": [
     {
-      "id": "hi-placeholder",
-      "title": "हिन्दी",
-      "content_type": "prose",
-      "body": "हिंदी अनुवाद जल्द ही उपलब्ध होगा। यह फ़ाइल सामग्री की हिंदी स्थानीयकरण के लिए एक प्लेसहोल्डर है।"
-    },
-    {
       "id": "approach",
-      "title": "Consent-first approach",
+      "title": "सहमति-पहला दृष्टिकोण",
       "content_type": "prose",
-      "body": "We collect only the data we need, ask before we share it, and give you meaningful choices. Consent is always free, informed, specific, and revocable."
+      "body": "हम केवल वही डेटा एकत्र करते हैं जिसकी हमें आवश्यकता है, साझा करने से पहले पूछते हैं, और आपको सार्थक विकल्प देते हैं। सहमति हमेशा स्वैच्छिक, सूचित, विशिष्ट और वापस ली जा सकने योग्य होती है।"
     },
     {
       "id": "consent-to",
-      "title": "What you consent to",
+      "title": "जिसके लिए आप सहमति देते हैं",
       "content_type": "list",
       "items": [
         {
-          "heading": "Identity verification",
-          "body": "Consent to verify your identity using PAN, Aadhaar OTP, or other KYC documents."
+          "heading": "पहचान सत्यापन",
+          "body": "PAN, Aadhaar OTP या अन्य KYC दस्तावेज़ों का उपयोग करके आपकी पहचान सत्यापित करने की सहमति।"
         },
         {
-          "heading": "Business verification",
-          "body": "Consent to fetch GST returns, bank statements, and business records."
+          "heading": "व्यवसाय सत्यापन",
+          "body": "GST रिटर्न, बैंक स्टेटमेंट और व्यवसाय रिकॉर्ड प्राप्त करने की सहमति।"
         },
         {
-          "heading": "Lender sharing",
-          "body": "Consent to share your application with selected lender partners."
+          "heading": "ऋणदाता साझेदारी",
+          "body": "चयनित ऋणदाता साझेदारों के साथ आपका आवेदन साझा करने की सहमति।"
         },
         {
-          "heading": "Communication",
-          "body": "Consent to receive calls, emails, and messages related to your application."
+          "heading": "संचार",
+          "body": "आपके आवेदन से संबंधित कॉल, ईमेल और संदेश प्राप्त करने की सहमति।"
         }
       ]
     },
     {
       "id": "how",
-      "title": "How consent is collected",
+      "title": "सहमति कैसे प्राप्त की जाती है",
       "content_type": "list",
       "items": [
         {
-          "heading": "Clear language",
-          "body": "Each consent request tells you what data is collected and why."
+          "heading": "स्पष्ट भाषा",
+          "body": "प्रत्येक सहमति अनुरोध में यह बताया जाता है कि क्या डेटा एकत्र किया जा रहा है और क्यों।"
         },
         {
-          "heading": "Active action",
-          "body": "You must take an affirmative action, such as checking a box or tapping \"I agree\"."
+          "heading": "सक्रिय कदम",
+          "body": "आपको एक सकारात्मक कदम उठाना होगा, जैसे बॉक्स चेक करना या 'मैं सहमत हूँ' टैप करना।"
         },
         {
-          "heading": "Granular choice",
-          "body": "Where possible, you can choose which purposes and data sharing you accept."
+          "heading": "ठोस विकल्प",
+          "body": "जहाँ संभव हो, आप चुन सकते हैं कि किन उद्देश्यों और डेटा साझाकरण को आप स्वीकार करते हैं।"
         }
       ]
     },
     {
       "id": "withdraw",
-      "title": "Withdrawing consent",
+      "title": "सहमति वापस लेना",
       "content_type": "list",
       "items": [
         {
-          "heading": "How to withdraw",
-          "body": "Email support@kubar.tech or use controls in your account where available."
+          "heading": "वापसी का तरीका",
+          "body": "support@kubar.tech पर ईमेल करें या जहाँ उपलब्ध हो अपने खाते में नियंत्रण का उपयोग करें।"
         },
         {
-          "heading": "Effect of withdrawal",
-          "body": "Withdrawing optional consent may limit certain features but will not affect offers already sanctioned."
+          "heading": "वापसी का प्रभाव",
+          "body": "वैकल्पिक सहमति वापस लेने से कुछ सुविधाएँ सीमित हो सकती हैं, लेकिन पहले से स्वीकृत ऑफ़र प्रभावित नहीं होंगे।"
         },
         {
-          "heading": "Retention",
-          "body": "We may retain some data where required by law after you withdraw consent."
+          "heading": "प्रतिधारण",
+          "body": "कानून द्वारा आवश्यक होने पर सहमति वापस लेने के बाद भी कुछ डेटा बनाए रखा जा सकता है।"
         }
       ]
     },
     {
       "id": "recipients",
-      "title": "Data recipients",
+      "title": "डेटा प्राप्तकर्ता",
       "content_type": "list",
       "items": [
         {
-          "heading": "Lender partners",
-          "body": "Only the lender(s) you select or agree to evaluate your application."
+          "heading": "ऋणदाता साझेदार",
+          "body": "केवल वे ऋणदाता जिन्हें आप चुनते हैं या जिन्हें आप अपना आवेदन मूल्यांकित करने की अनुमति देते हैं।"
         },
         {
-          "heading": "Verification providers",
-          "body": "Credit bureaus, account aggregators, and analytics providers with your consent."
+          "heading": "सत्यापन प्रदाता",
+          "body": "आपकी सहमति के साथ क्रेडिट ब्यूरो, खाता एग्रीगेटर और विश्लेषिकी प्रदाता।"
         },
         {
-          "heading": "Regulators",
-          "body": "Government or regulatory bodies when required by law."
+          "heading": "विनियामक",
+          "body": "जब कानून द्वारा आवश्यक हो तो सरकारी या विनियामक निकाय।"
         }
       ]
     },
     {
       "id": "dpo",
-      "title": "Data protection officer",
+      "title": "डेटा संरक्षण अधिकारी",
       "content_type": "contact_card",
       "contact": {
         "name": "NavDhan Support",
@@ -123,14 +117,13 @@
     },
     {
       "id": "privacy-link",
-      "title": "Privacy Policy",
+      "title": "गोपनीयता नीति",
       "content_type": "prose",
-      "body": "For further details on data handling, please read our Privacy Policy.",
+      "body": "डेटा संभालने के बारे में अधिक जानकारी के लिए कृपया हमारी गोपनीयता नीति पढ़ें।",
       "cross_link": {
-        "label": "Read Privacy Policy",
+        "label": "गोपनीयता नीति पढ़ें",
         "slug": "privacy-policy"
       }
     }
-  ],
-  "localeNote": "हिंदी अनुवाद जल्द ही उपलब्ध होगा। यह फ़ाइल सामग्री की हिंदी स्थानीयकरण के लिए एक प्लेसहोल्डर है।"
+  ]
 }

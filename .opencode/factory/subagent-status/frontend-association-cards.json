@@ -1,0 +1,7 @@
+{
+  "status": "running",
+  "role": "frontend",
+  "stdout": "/home/yash/opencode-workspace/navdhan-redesign-2026/.opencode/factory/subagent-status/frontend-association-cards.out.log",
+  "stderr": "/home/yash/opencode-workspace/navdhan-redesign-2026/.opencode/factory/subagent-status/frontend-association-cards.err.log",
+  "started_at": "2026-06-22T16:03:52+05:30"
+}

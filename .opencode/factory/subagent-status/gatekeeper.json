@@ -1,0 +1,83 @@
+{
+  "status": "failed",
+  "project_dir": "/home/yash/opencode-workspace/navdhan-redesign-2026",
+  "changed_files": [
+    ".opencode/factory/api-contract.yaml",
+    ".opencode/factory/db-schema.yaml",
+    ".opencode/factory/stitch-state.json",
+    ".opencode/factory/subagent-status/architect-summary.md",
+    ".opencode/factory/subagent-status/frontend-summary.md",
+    ".opencode/factory/subagent-status/staff-engineer-summary.md",
+    ".opencode/factory/subagent-status/test-engineer-summary.md",
+    ".opencode/factory/subagent-status/ui-designer-summary.md",
+    ".opencode/factory/ui-component-registry.json",
+    "app/[locale]/(marketing)/page.tsx",
+    "app/[locale]/layout.tsx",
+    "app/apply/page.tsx",
+    "app/layout.tsx",
+    "scratchpads/cdd-review-report.md",
+    "scratchpads/frontend-cdd-approved.md",
+    "scratchpads/frontend-cdd.md",
+    "src/lib/i18n/messages.ts",
+    "src/lib/i18n/messages/en.json",
+    "src/lib/i18n/messages/hi.json",
+    "src/lib/i18n/translations.ts",
+    "src/lib/legal/loader.ts",
+    "subagent-status/frontend-summary.md",
+    "tests/i18n/apply-translations.test.ts",
+    "tests/i18n/font-variables.test.ts",
+    "tests/i18n/legal-localization.test.ts",
+    "tests/i18n/messages-loader.test.ts",
+    "tests/i18n/translations.test.ts"
+  ],
+  "auto_fix": false,
+  "checks": [
+    {
+      "name": "prettier",
+      "status": "failed",
+      "files": [
+        ".opencode/factory/api-contract.yaml",
+        ".opencode/factory/db-schema.yaml",
+        ".opencode/factory/stitch-state.json",
+        ".opencode/factory/subagent-status/architect-summary.md",
+        ".opencode/factory/subagent-status/frontend-summary.md",
+        ".opencode/factory/subagent-status/staff-engineer-summary.md",
+        ".opencode/factory/subagent-status/test-engineer-summary.md",
+        ".opencode/factory/subagent-status/ui-designer-summary.md",
+        ".opencode/factory/ui-component-registry.json",
+        "app/[locale]/(marketing)/page.tsx",
+        "app/[locale]/layout.tsx",
+        "app/apply/page.tsx",
+        "app/layout.tsx",
+        "scratchpads/cdd-review-report.md",
+        "scratchpads/frontend-cdd-approved.md",
+        "scratchpads/frontend-cdd.md",
+        "src/lib/i18n/messages.ts",
+        "src/lib/i18n/messages/en.json",
+        "src/lib/i18n/messages/hi.json",
+        "src/lib/i18n/translations.ts",
+        "src/lib/legal/loader.ts",
+        "subagent-status/frontend-summary.md",
+        "tests/i18n/apply-translations.test.ts",
+        "tests/i18n/font-variables.test.ts",
+        "tests/i18n/legal-localization.test.ts",
+        "tests/i18n/messages-loader.test.ts",
+        "tests/i18n/translations.test.ts"
+      ],
+      "output": "prettier not found on PATH."
+    },
+    {
+      "name": "tsc-typecheck",
+      "status": "failed",
+      "files": [],
+      "output": "tests/apply/apply-api.test.ts(20,8): error TS2307: Cannot find module '@/app/api/apply/documents/upload/route' or its corresponding type declarations.\ntests/apply/apply-api.test.ts(23,8): error TS2307: Cannot find module '@/app/api/apply/perfios/initiate/route' or its corresponding type declarations.\ntests/apply/apply-api.test.ts(26,8): error TS2307: Cannot find module '@/app/api/apply/perfios/callback/route' or its corresponding type declarations.\ntests/apply/apply-api.test.ts(29,8): error TS2307: Cannot find module '@/app/api/apply/perfios/status/route' or its corresponding type declarations.\ntests/apply/apply-api.test.ts(32,8): error TS2307: Cannot find module '@/app/api/apply/submit/route' or its corresponding type declarations.\ntests/apply/apply-api.test.ts(35,8): error TS2307: Cannot find module '@/app/api/apply/offers/route' or its corresponding type declarations.\ntests/apply/apply-api.test.ts(38,8): error TS2307: Cannot find module '@/app/api/apply/consent/route' or its corresponding type declarations.\ntests/apply/apply-api.test.ts(43,15): error TS2344: Type 'Promise<Response>' does not satisfy the constraint '(...args: any) => any'.\n  Type 'Promise<Response>' provides no match for the signature '(...args: any): any'.\ntests/apply/apply-api.test.ts(45,5): error TS2344: Type 'Promise<Response>' does not satisfy the constraint '(...args: any) => any'.\n  Type 'Promise<Response>' provides no match for the signature '(...args: any): any'.\ntests/apply/apply-wizard.test.tsx(3,18): error TS2305: Module '\"@testing-library/react\"' has no exported member 'screen'.\ntests/apply/apply-wizard.test.tsx(3,26): error TS2305: Module '\"@testing-library/react\"' has no exported member 'waitFor'.\ntests/apply/apply-wizard.test.tsx(5,29): error TS2307: Cannot find module '@/app/apply/_components/WizardShell' or its corresponding type declarations.\ntests/apply/apply-wizard.test.tsx(33,46): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion<any>'.\ntests/apply/apply-wizard.test.tsx(36,7): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion<any>'.\ntests/apply/apply-wizard.test.tsx(44,28): error TS2339: Property 'toBeDisabled' does not exist on type 'Assertion<any>'.\ntests/apply/apply-wizard.test.tsx(56,48): error TS2339: Property 'toBeEnabled' does not exist on type 'Assertion<any>'.\ntests/apply/apply-wizard.test.tsx(68,48): error TS2339: Property 'toBeEnabled' does not exist on type 'Assertion<any>'.\ntests/apply/apply-wizard.test.tsx(72,53): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion<any>'.\ntests/apply/apply-wizard.test.tsx(89,51): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion<any>'.\ntests/apply/apply-wizard.test.tsx(90,50): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion<any>'.\ntests/apply/apply-wizard.test.tsx(91,53): error TS2339: Property 'toBeInTheDocument' does not exist on type 'Assertion<any>'.\ntests/apply/apply-wiza\n... (2220 chars truncated)"
+    },
+    {
+      "name": "vitest",
+      "status": "failed",
+      "files": [],
+      "output": "\n RUN  v3.2.6 /home/yash/opencode-workspace/navdhan-redesign-2026\n\n \u2713 tests/i18n/messages-loader.test.ts (3 tests) 12ms\n \u2713 tests/i18n/font-variables.test.ts (3 tests) 9ms\n \u2713 tests/apply/apply-validation.test.ts (70 tests) 23ms\n \u2713 tests/i18n/translations.test.ts (7 tests) 12ms\n \u2713 tests/i18n/apply-translations.test.ts (9 tests) 31ms\n \u2713 tests/i18n/legal-localization.test.ts (7 tests) 439ms\n\n Test Files  2 failed | 6 passed (8)\n      Tests  99 passed (99)\n   Start at  09:07:59\n   Duration  2.09s (transform 561ms, setup 0ms, collect 870ms, tests 526ms, environment 5.16s, prepare 1.57s)\n\n\n\n\u23af\u23af\u23af\u23af\u23af\u23af Failed Suites 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af\n\n FAIL  tests/apply/apply-api.test.ts [ tests/apply/apply-api.test.ts ]\nError: Failed to resolve import \"@/app/api/apply/documents/upload/route\" from \"tests/apply/apply-api.test.ts\". Does the file exist?\n  Plugin: vite:import-analysis\n  File: /home/yash/opencode-workspace/navdhan-redesign-2026/tests/apply/apply-api.test.ts:20:7\n  15 |  import {\n  16 |    POST as postUploadDocument\n  17 |  } from \"@/app/api/apply/documents/upload/route\";\n     |          ^\n  18 |  import {\n  19 |    POST as postPerfiosInitiate\n \u276f TransformPluginContext._formatLog node_modules/vite/dist/node/chunks/config.js:29079:43\n \u276f TransformPluginContext.error node_modules/vite/dist/node/chunks/config.js:29076:14\n \u276f normalizeUrl node_modules/vite/dist/node/chunks/config.js:27199:18\n \u276f node_modules/vite/dist/node/chunks/config.js:27257:32\n \u276f TransformPluginContext.transform node_modules/vite/dist/node/chunks/config.js:27225:4\n \u276f EnvironmentPluginContainer.transform node_modules/vite/dist/node/chunks/config.js:28877:14\n \u276f loadAndTransform node_modules/vite/dist/node/chunks/config.js:22746:26\n\n\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[1/2]\u23af\n\n FAIL  tests/apply/apply-wizard.test.tsx [ tests/apply/apply-wizard.test.tsx ]\nError: Failed to resolve import \"@/app/apply/_components/WizardShell\" from \"tests/apply/apply-wizard.test.tsx\". Does the file exist?\n  Plugin: vite:import-analysis\n  File: /home/yash/opencode-workspace/navdhan-redesign-2026/tests/apply/apply-wizard.test.tsx:5:28\n  3  |  import { render, screen, waitFor } from \"@testing-library/react\";\n  4  |  import userEvent from \"@testing-library/user-event\";\n  5  |  import { WizardShell } from \"@/app/apply/_components/WizardShell\";\n     |                               ^\n  6  |  const defaultSteps = [\n  7  |    { id: \"loan_intent\", title: \"Loan intent\" },\n \u276f TransformPluginContext._formatLog node_modules/vite/dist/node/chunks/config.js:29079:43\n \u276f TransformPluginContext.error node_modules/vite/dist/node/chunks/config.js:29076:14\n \u276f normalizeUrl node_modules/vite/dist/node/chunks/config.js:27199:18\n \u276f node_modules/vite/dist/node/chunks/config.js:27257:32\n \u276f TransformPluginContext.transform node_modules/vite/dist/node/chunks/config.js:27225:4\n \u276f EnvironmentPluginContainer.transform node_modules/vite/dist/node/chunks/config.js:28877:14\n \u276f loadAndTransform node_modules/vite/dist/node/chunks/config.js:22746:26\n\n\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af\u23af[2/2]\u23af\n\n... (1 chars truncated)"
+    }
+  ],
+  "summary": "3 check(s) failed out of 3."
+}

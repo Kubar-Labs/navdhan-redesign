@@ -1,14 +1,39 @@
 import Image from "next/image";
 import Link from "next/link";
+import { Heart, Eye, Zap } from "lucide-react";
 import { Container } from "@/src/components/layout/Container";
 import { Section } from "@/src/components/layout/Section";
 import { FadeIn } from "@/src/components/motion/FadeIn";
 import { StaggerContainer } from "@/src/components/motion/StaggerContainer";
 import teamData from "@/src/lib/data/team.json";
 import { getTranslator } from "@/src/lib/i18n/translations";
+import { getMessages } from "@/src/lib/i18n/messages";
 
 interface TeamPageProps {
   params: Promise<{ locale: string }>;
+}
+
+const valueIconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+  Heart,
+  Eye,
+  Zap,
+};
+
+interface ValueItem {
+  id: string;
+  title: string;
+  body: string;
+  iconName: string;
+}
+
+function asRecord(value: unknown): Record<string, unknown> | undefined {
+  return value !== null && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : undefined;
+}
+
+function asArray<T>(value: unknown): T[] | undefined {
+  return Array.isArray(value) ? (value as T[]) : undefined;
 }
 
 export async function generateMetadata({ params }: TeamPageProps) {
@@ -23,17 +48,75 @@ export async function generateMetadata({ params }: TeamPageProps) {
 export default async function TeamPage({ params }: TeamPageProps) {
   const { locale } = await params;
   const t = await getTranslator(locale);
+  const messages = getMessages(locale);
+  const teamMessages = asRecord(messages.team) ?? {};
+  const valuesMessages = asRecord(teamMessages.values) ?? {};
+  const values = asArray<ValueItem>(valuesMessages.items) ?? [];
 
   return (
     <>
       <Section background="cream">
+        <Container className="max-w-4xl">
+          <FadeIn>
+            <p className="text-sm font-semibold uppercase tracking-wide text-nt-orange-600">
+              {t("team.members.eyebrow")}
+            </p>
+            <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-tight text-nt-slate-900 md:text-5xl">
+              {t("team.hero.heading")}
+            </h1>
+            <p className="mt-6 max-w-2xl text-lg leading-relaxed text-nt-slate-600">
+              {t("team.hero.subtext")}
+            </p>
+          </FadeIn>
+        </Container>
+      </Section>
+
+      <Section background="white">
+        <Container className="max-w-3xl text-center">
+          <FadeIn>
+            <p className="text-sm font-semibold uppercase tracking-wide text-nt-orange-600">
+              {t("team.mission.eyebrow")}
+            </p>
+            <h2 className="font-display mt-4 text-3xl italic tracking-tight text-nt-slate-900 md:text-4xl">
+              {t("team.mission.heading")}
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl leading-relaxed text-nt-slate-600">
+              {t("team.mission.body")}
+            </p>
+          </FadeIn>
+        </Container>
+      </Section>
+
+      <Section background="cream">
         <Container>
           <FadeIn>
-            <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-nt-slate-900 md:text-5xl">
-              {teamData.pageHeadingKey}
-            </h1>
-            <p className="mt-6 max-w-2xl text-lg text-nt-slate-600">{teamData.pageSubtextKey}</p>
+            <p className="text-sm font-semibold uppercase tracking-wide text-nt-orange-600">
+              {t("team.values.eyebrow")}
+            </p>
+            <h2 className="font-display mt-4 text-3xl italic tracking-tight text-nt-slate-900 md:text-4xl">
+              {t("team.values.heading")}
+            </h2>
           </FadeIn>
+          <StaggerContainer
+            className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            stagger={0.1}
+          >
+            {values.map((value) => {
+              const Icon = valueIconMap[value.iconName] ?? Zap;
+              return (
+                <div
+                  key={value.id}
+                  className="rounded-xl border border-nt-slate-200 bg-white p-6 shadow-[0px_4px_20px_rgba(15,23,42,0.05)]"
+                >
+                  <div className="inline-flex rounded-full bg-[#FFF7ED] p-3 text-nt-orange-600">
+                    <Icon className="h-6 w-6" />
+                  </div>
+                  <h3 className="mt-4 text-lg font-semibold text-nt-slate-900">{value.title}</h3>
+                  <p className="mt-2 text-sm leading-relaxed text-nt-slate-600">{value.body}</p>
+                </div>
+              );
+            })}
+          </StaggerContainer>
         </Container>
       </Section>
 
@@ -121,18 +204,18 @@ export default async function TeamPage({ params }: TeamPageProps) {
 
       <Section background="white">
         <Container className="text-center">
-          <h2 className="text-2xl font-semibold tracking-tight text-nt-slate-900 md:text-3xl">
-            Interested in joining our mission?
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-nt-slate-600">
-            We are always looking for talented builders who want to reshape MSME credit.
-          </p>
-          <Link
-            href={teamData.joinHref}
-            className="mt-6 inline-flex rounded-md bg-nt-orange-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-nt-orange-700"
-          >
-            {teamData.joinCtaKey}
-          </Link>
+          <FadeIn>
+            <h2 className="text-2xl font-semibold tracking-tight text-nt-slate-900 md:text-3xl">
+              {t("team.join.heading")}
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-nt-slate-600">{t("team.join.subtext")}</p>
+            <Link
+              href={teamData.joinHref}
+              className="mt-6 inline-flex rounded-md bg-nt-orange-600 px-5 py-2.5 text-sm font-semibold text-white hover:bg-nt-orange-700"
+            >
+              {t("team.join.cta")}
+            </Link>
+          </FadeIn>
         </Container>
       </Section>
     </>

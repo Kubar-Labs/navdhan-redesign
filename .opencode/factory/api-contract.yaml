@@ -1,0 +1,670 @@
+version: "1.0.0"
+service: navdhan-www
+localeScope:
+  supportedLocales: [en, hi, bn, te, mr, ta, kn, ml]
+  defaultLocale: en
+  fallbackPolicy: >-
+    Each non-default locale JSON is deep-merged over the default locale JSON.
+    Missing keys fall back to the default locale value. Unknown locales return
+    the Next.js not-found boundary.
+
+description: |
+  Contract for the `navdhan-redesign-2026` static, borrower-facing marketing and
+  application site. This spec is the single source of truth for:
+    * locale JSON schema (`messages/*.json`)
+    * custom Google font loading and CSS font variables
+    * `getTranslator` / `t()` contract
+    * homepage data-to-layout mapping replacing direct `siteData.ts` imports
+    * dynamic API contract for the localized `/apply` lead form
+
+schemas:
+  Locale:
+    type: string
+    enum: [en, hi, bn, te, mr, ta, kn, ml]
+    description: Active public locales.
+
+  # ---------------------------------------------------------------------------
+  # 1. Locale message schema
+  # ---------------------------------------------------------------------------
+  Messages:
+    description: |
+      Root namespace shared by all `src/lib/i18n/messages/<locale>.json`
+      documents. Values may be strings, numbers, or nested objects. Arrays MUST
+      only be used within the approved list schemas below; the generic
+      translator treats arrays as lists that are joined with " · ".
+    namespaces:
+      meta.title:
+        type: string
+        required: true
+        description: HTML `<title>` for the current page.
+      meta.description:
+        type: string
+        required: true
+        description: HTML meta description.
+
+      global:
+        type: object
+        required: true
+        properties:
+          announcement:
+            type: object
+            properties:
+              message: { type: string, required: true }
+              ctaLabel: { type: string, required: true }
+              href: { type: string, required: true, format: uri-relative }
+          alt: { type: object, additionalProperties: { type: string } }
+          nav:
+            type: object
+            properties:
+              loanProducts: { type: string, required: true }
+              whyNavDhan: { type: string, required: true }
+              emiCalculator: { type: string, required: true }
+              customerStories: { type: string, required: true }
+              team: { type: string, required: true }
+          cta:
+            type: object
+            properties:
+              apply:
+                type: object
+                properties:
+                  label: { type: string, required: true }
+                  href: { type: string, required: true, format: uri-relative }
+                  variant: { type: string, enum: [primary, secondary, outline] }
+              backToHome: { type: string, required: true }
+          localeSelector:
+            type: object
+            properties:
+              label: { type: string, required: true }
+              current: { type: string, required: true }
+          mobileMenu:
+            type: object
+            properties:
+              open: { type: string, required: true }
+              close: { type: string, required: true }
+              ariaLabel: { type: string, required: true }
+          contact:
+            type: object
+            properties:
+              loan: { type: string, required: true, format: email }
+              partnership: { type: string, required: true, format: email }
+              support: { type: string, required: true, format: email }
+              careers: { type: string, required: true, format: email }
+              press: { type: string, required: true, format: email }
+              outreach: { type: string, required: true, format: email }
+          footer:
+            type: object
+            required: true
+            properties:
+              tagline: { type: string, required: true }
+              company: { type: string, required: true }
+              address: { type: string, required: true }
+              copyright: { type: string, required: true }
+              contactHeading: { type: string, required: true }
+              companyHeading: { type: string, required: true }
+              legalHeading: { type: string, required: true }
+              badges:
+                type: array
+                itemType: string
+                required: true
+                description: Footer trust badges rendered inline.
+              contactLinks:
+                $ref: '#/schemas/LabelHrefList'
+              companyLinks:
+                $ref: '#/schemas/LabelHrefList'
+              legalLinks:
+                $ref: '#/schemas/LabelHrefList'
+
+      home:
+        type: object
+        required: true
+        properties:
+          hero:
+            type: object
+            required: true
+            properties:
+              eyebrow: { type: string, required: true }
+              headline: { type: string, required: true }
+              body: { type: string, required: true }
+              primaryCta: { type: string, required: true }
+              secondaryCta: { type: string, required: true }
+              stats:
+                type: array
+                itemType: object
+                required: true
+                items:
+                  properties:
+                    value: { type: string, required: true }
+                    label: { type: string, required: true }
+          associationBadges:
+            type: object
+            required: true
+            properties:
+              eyebrow: { type: string, required: true }
+          ecosystemTicker:
+            type: object
+            required: true
+            properties:
+              eyebrow: { type: string, required: true }
+          loanProducts:
+            type: object
+            required: true
+            properties:
+              eyebrow: { type: string, required: true }
+              heading: { type: string, required: true }
+              body: { type: string, required: true }
+              cta: { type: string, required: true }
+              productCta: { type: string, required: true }
+              products:
+                type: array
+                required: true
+                itemType: '#/schemas/ProductListItem'
+          whyNavDhan:
+            type: object
+            required: true
+            properties:
+              eyebrow: { type: string, required: true }
+              heading: { type: string, required: true }
+              body: { type: string, required: true }
+              cta: { type: string, required: true }
+              trustBadges:
+                type: array
+                itemType: string
+                required: true
+                description: Trust badges rendered after reason blocks.
+              reasons:
+                type: array
+                required: true
+                itemType: '#/schemas/ReasonListItem'
+          recognition:
+            type: object
+            required: true
+            properties:
+              eyebrow: { type: string, required: true }
+              heading: { type: string, required: true }
+          customerStories:
+            type: object
+            required: true
+            properties:
+              eyebrow: { type: string, required: true }
+              heading: { type: string, required: true }
+              cta: { type: string, required: true }
+          emiCalculator:
+            type: object
+            required: true
+            properties:
+              eyebrow: { type: string, required: true }
+              heading: { type: string, required: true }
+              intro: { type: string, required: true }
+              amount: { type: string, required: true }
+              rate: { type: string, required: true }
+              tenure: { type: string, required: true }
+              monthly: { type: string, required: true }
+              principal: { type: string, required: true }
+              totalInterest: { type: string, required: true }
+              totalPayable: { type: string, required: true }
+              cta: { type: string, required: true }
+          finalCta:
+            type: object
+            required: true
+            properties:
+              heading: { type: string, required: true }
+              subtext: { type: string, required: true }
+              primaryCta: { type: string, required: true }
+              secondaryCta: { type: string, required: true }
+
+      team:
+        type: object
+        required: true
+        properties:
+          meta:
+            type: object
+            required: true
+            properties:
+              title: { type: string, required: true }
+              description: { type: string, required: true }
+          hero:
+            type: object
+            required: true
+            properties:
+              heading: { type: string, required: true }
+              subtext: { type: string, required: true }
+          members:
+            type: object
+            required: true
+            properties:
+              heading: { type: string, required: true }
+              eyebrow: { type: string, required: true }
+          advisors:
+            type: object
+            required: true
+            properties:
+              heading: { type: string, required: true }
+              eyebrow: { type: string, required: true }
+          join:
+            type: object
+            required: true
+            properties:
+              heading: { type: string, required: true }
+              subtext: { type: string, required: true }
+              cta: { type: string, required: true }
+
+      apply:
+        type: object
+        required: true
+        properties:
+          meta:
+            type: object
+            required: true
+            properties:
+              title: { type: string, required: true }
+              description: { type: string, required: true }
+          eyebrow: { type: string, required: true }
+          heading: { type: string, required: true }
+          description: { type: string, required: true }
+          loanDetailsTitle: { type: string, required: true }
+          amountLabel: { type: string, required: true }
+          tenureLabel: { type: string, required: true }
+          purposeLabel: { type: string, required: true }
+          purposes:
+            type: object
+            required: true
+            description: Map of `LoanPurpose` enum value to localized label.
+            additionalProperties: { type: string }
+          aboutYouTitle: { type: string, required: true }
+          fullNameLabel: { type: string, required: true }
+          mobileLabel: { type: string, required: true }
+          mobilePlaceholder: { type: string, required: true }
+          emailLabel: { type: string, required: true }
+          pinCodeLabel: { type: string, required: true }
+          pinCodePlaceholder: { type: string, required: true }
+          emiLabel: { type: string, required: true }
+          emiNoteTemplate: { type: string, required: true }
+          consentDataPrefix: { type: string, required: true }
+          consentAnd: { type: string, required: true }
+          consentPolicy: { type: string, required: true }
+          privacyPolicy: { type: string, required: true }
+          consentLender: { type: string, required: true }
+          submit: { type: string, required: true }
+          submitting: { type: string, required: true }
+          successHeading: { type: string, required: true }
+          successBody: { type: string, required: true }
+          successCta: { type: string, required: true }
+          errorHeading: { type: string, required: true }
+          errorBody: { type: string, required: true }
+          fieldRequired: { type: string, required: true }
+          validation:
+            type: object
+            properties:
+              mobileInvalid: { type: string, required: true }
+              emailInvalid: { type: string, required: true }
+              pinCodeInvalid: { type: string, required: true }
+              nameInvalid: { type: string, required: true }
+              consentRequired: { type: string, required: true }
+
+      legal:
+        type: object
+        required: true
+        properties:
+          lastUpdated: { type: string, required: true }
+          contactCard:
+            type: object
+            required: true
+            properties:
+              role: { type: string, required: true }
+              emailLabel: { type: string, required: true }
+              addressLabel: { type: string, required: true }
+
+      errors:
+        type: object
+        required: true
+        properties:
+          notFound:
+            type: object
+            required: true
+            properties:
+              title: { type: string, required: true }
+              message: { type: string, required: true }
+              cta: { type: string, required: true }
+          boundary:
+            type: object
+            required: true
+            properties:
+              title: { type: string, required: true }
+              message: { type: string, required: true }
+              cta: { type: string, required: true }
+
+  LabelHrefList:
+    description: Ordered list of labelled links used in footer and nav.
+    type: array
+    itemType: object
+    items:
+      properties:
+        labelKey:
+          type: string
+          required: true
+          description: Localized label text.
+        href:
+          type: string
+          required: true
+          format: uri-reference
+
+  ProductListItem:
+    description: Localized loan product card rendered by `home.loanProducts.products`.
+    type: object
+    properties:
+      id:
+        type: string
+        required: true
+        enum: [collateral-free, working-capital, machinery, growth]
+      titleKey:
+        type: string
+        required: true
+      descriptionKey:
+        type: string
+        required: true
+      iconName:
+        type: string
+        required: true
+        description: Name of an exported icon component from `lucide-react`.
+      ctaKey:
+        type: string
+        required: true
+
+  ReasonListItem:
+    description: Localized reason block rendered by `home.whyNavDhan.reasons`.
+    type: object
+    properties:
+      id:
+        type: string
+        required: true
+      titleKey:
+        type: string
+        required: true
+      bodyKey:
+        type: string
+        required: true
+
+  # ---------------------------------------------------------------------------
+  # 2. Font contract
+  # ---------------------------------------------------------------------------
+  FontContract:
+    description: |
+      Google/next/font contract for `app/layout.tsx` and `app/globals.css`.
+      Custom font variables are injected into the root `<html>` element and
+      consumed by the Tailwind theme.
+    variables:
+      --font-inter:
+        source: next/font/google Inter
+        subsets: [latin, latin-ext]
+        weights: [400, 500, 600, 700]
+        display: swap
+        fallback: ["Noto Sans Devanagari", system-ui, sans-serif]
+        usage: body, UI, buttons, forms
+      --font-instrument-serif:
+        source: custom Google Font import or next/local
+        weights: [400]
+        style: italic
+        display: swap
+        fallback: [Georgia, serif]
+        usage: hero display emphasis only (optional, use sparingly)
+    rules:
+      - Only these two font families are permitted on public marketing surfaces.
+      - No external CSS font imports that bypass Next.js font optimization.
+      - The `font-display: swap` strategy is required.
+      - Devanagari fallback `Noto Sans Devanagari` must remain for Hindi content.
+      - The `<html lang={locale}>` attribute must match the active route locale.
+
+  # ---------------------------------------------------------------------------
+  # 3. Translator contract
+  # ---------------------------------------------------------------------------
+  Translator:
+    description: |
+      `getTranslator(locale, namespace?)` returns a synchronous closure `t()`
+      that resolves a dotted key against the deep-merged locale messages.
+    signatures:
+      getTranslator:
+        type: function
+        async: true
+        params:
+          - name: locale
+            type: Locale
+          - name: namespace
+            type: string
+            required: false
+            description: Dot-separated prefix for every key lookup.
+        returns: Translator
+
+      t:
+        type: function
+        params:
+          - name: key
+            type: string
+            description: Dotted key relative to namespace or root.
+          - name: variables
+            type: object
+            required: false
+            description: Plain object of string | number replacements.
+        returns: string
+    behavior:
+      - Resolves dotted paths such as `home.hero.headline`.
+      - If a `namespace` is provided, `t('headline')` resolves `namespace.headline`
+        AND still accepts absolute keys like `home.hero.headline`.
+      - Interpolates `{varName}` placeholders with `variables[varName]`.
+      - Leaves unmatched `{varName}` tokens unchanged.
+      - Falls back to the requested key string when a translation is missing.
+      - Arrays are joined with " · " (U+00B7 middle dot) when encountered at a
+        leaf path, e.g. `t('home.finalCta.subtext')` becomes a single string.
+      - Pure string leaves are returned unchanged (no automatic list join).
+      - Empty or null values fall back to the key string.
+      - Must be server-safe and sync after initial construction.
+    implementationNote: |
+      The existing `src/lib/i18n/translations.ts` already implements this
+      behavior. Implementers must preserve the array join with " · " and the
+      namespace fallback rules.
+
+  # ---------------------------------------------------------------------------
+  # 4. Homepage layout mapping contract
+  # ---------------------------------------------------------------------------
+  HomePageMapping:
+    description: |
+      The Homepage (`app/[locale]/(marketing)/page.tsx`) MUST stop importing
+      content arrays directly from `siteData.ts`. All rendering data lives in
+      locale messages except four asset registries that contain no copy.
+    rules:
+      - All heading/body/cta copy must be resolved via `t()` or `getTranslator`.
+      - The following domain data remains in static JSON/TS to avoid inflating
+        message files with non-copy metadata:
+          * associationBadges: asset registry (logo, altKey, href)
+          * techPartners: asset registry (logo, altKey)
+          * recognitionItems: rich content registry (`src/lib/data/recognition.json`)
+          * team.json: structured people data used by the `/team` page
+      - The following lists copy MUST move into `home.*` message arrays:
+          * hero.stats
+          * home.loanProducts.products
+          * home.whyNavDhan.reasons
+          * home.whyNavDhan.trustBadges
+          * home.customerStories stubs (or drop fabricated photos per DESIGN.md)
+    interfaces:
+      HomePageDataLoader:
+        type: function
+        async: true
+        params:
+          - name: locale
+            type: Locale
+        returns:
+          type: object
+          properties:
+            t: { type: Translator, required: true }
+            associationBadges: { $ref: '#/schemas/AssetRegistry' }
+            techPartners: { $ref: '#/schemas/AssetRegistry' }
+            recognitionItems: { type: array, itemType: RecognitionItem }
+            emiDefaults: { $ref: '#/schemas/EmiDefaults' }
+
+      AssetRegistry:
+        description: Read-only static asset metadata with no displayed copy.
+        type: array
+        itemType: object
+        items:
+          properties:
+            name:
+              type: string
+              required: true
+            logoAsset:
+              type: string
+              required: true
+              description: Public asset path.
+            href:
+              type: string
+              format: uri-reference
+            altKey:
+              type: string
+              required: true
+              description: Dotted key to a message string in `global.alt`.
+
+      RecognitionItem:
+        type: object
+        properties:
+          id: { type: string, required: true }
+          titleKey: { type: string, required: true }
+          descriptionKey: { type: string, required: true }
+          writeUp: { type: string, required: true }
+          imageAsset: { type: string }
+          galleryAssets:
+            type: array
+            itemType: string
+          date: { type: string }
+
+      EmiDefaults:
+        type: object
+        required: true
+        properties:
+          minAmount: { type: integer }
+          maxAmount: { type: integer }
+          defaultAmount: { type: integer }
+          minRate: { type: number }
+          maxRate: { type: number }
+          defaultRate: { type: number }
+          minTenure: { type: integer }
+          maxTenure: { type: integer }
+          defaultTenure: { type: integer }
+
+  # ---------------------------------------------------------------------------
+  # 5. Apply form API contract
+  # ---------------------------------------------------------------------------
+  LoanPurpose:
+    type: string
+    enum:
+      - working_capital
+      - machinery
+      - inventory
+      - business_expansion
+      - debt_refinancing
+      - other
+
+  ApplyLeadRequest:
+    description: POST body sent to `/api/apply/lead`.
+    type: object
+    required:
+      - amount
+      - tenure
+      - purpose
+      - fullName
+      - mobile
+      - email
+      - pinCode
+      - consentData
+      - consentLender
+    properties:
+      amount:
+        type: integer
+        minimum: 500_000
+        maximum: 10_000_000
+        description: Loan amount in INR.
+      tenure:
+        type: integer
+        minimum: 3
+        maximum: 12
+        description: Tenure in months.
+      purpose:
+        $ref: '#/schemas/LoanPurpose'
+      fullName:
+        type: string
+        minLength: 2
+        maxLength: 150
+        pattern: "^[A-Za-z\\s'.-]+$"
+      mobile:
+        type: string
+        pattern: "^[6-9]\\d{9}$"
+        description: 10-digit Indian mobile without country code.
+      email:
+        type: string
+        format: email
+        maxLength: 255
+      pinCode:
+        type: string
+        pattern: "^[1-9]\\d{5}$"
+      consentData:
+        type: boolean
+        enum: [true]
+      consentLender:
+        type: boolean
+        enum: [true]
+    headers:
+      Idempotency-Key:
+        type: string
+        required: true
+        pattern: "^[0-9a-fA-F-]{36}$|^[0-9]{13}-[A-Za-z0-9]+$"
+        description: UUID or fallback timestamp token generated by the client.
+
+  ApplyLeadResponse:
+    description: |
+      Response from `/api/apply/lead`. On success, `received_at` is an ISO 8601
+      timestamp. On failure, `errors` follows the field-level validation format.
+    oneOf:
+      - type: object
+        status: 200
+        properties:
+          success: { type: boolean, enum: [true] }
+          received_at: { type: string, format: date-time }
+      - type: object
+        status: 400
+        properties:
+          error: { type: string, enum: [BAD_REQUEST] }
+          message: { type: string }
+      - type: object
+        status: 422
+        properties:
+          error: { type: string, enum: [VALIDATION_ERROR] }
+          errors:
+            type: array
+            itemType: object
+            items:
+              properties:
+                field: { type: string, required: true }
+                message: { type: string, required: true }
+      - type: object
+        status: 429
+        properties:
+          error: { type: string, enum: [RATE_LIMITED] }
+          message: { type: string }
+
+customListSchema:
+  description: |
+    All ordered lists inside messages MUST be arrays. When the `t()` function
+    reaches an array it MUST return a single string joined by " · " (middle
+    dot). This applies to trust badges, stats, footer badges, and any future
+    list fields. Objects inside arrays MUST have deterministic `id` keys.
+  formatting:
+    separator: " · "
+    unicode: "U+00B7"
+    edgeCase: Empty array returns "".
+
+brandAlignment:
+  rules:
+    - No lender-first terms on public surfaces (lender, platform, partner only
+      where legally required in RBI-DLG copy).
+    - Borrower onboarding language: "Check Eligibility", "Apply Online",
+      "Talk to Us", "matched offers", "zero platform fee".
+    - Product name is NavDhan (capital N and D in body).
+    - Legal entity: Kubar Protocol Private Limited, CIN U70200WB2024PTC274850.
+    - Registered address in Karnataka must be present in footer/company JSON.

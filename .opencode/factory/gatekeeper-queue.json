@@ -1,0 +1,31 @@
+{
+  "version": 1,
+  "files": [
+    ".opencode/factory/.keep",
+    ".opencode/factory/subagent-status/.keep",
+    ".opencode/factory/subagent-status/deployment-verifier-summary.json",
+    ".opencode/factory/subagent-status/deployment-verifier-summary.md",
+    ".opencode/factory/subagent-status/frontend-summary.md",
+    ".opencode/factory/visual-verification-report.md",
+    "app/[locale]/(marketing)/page.tsx",
+    "app/[locale]/(marketing)/team/page.tsx",
+    "app/[locale]/apply/page.tsx",
+    "content/legal/hi/consent-policy.json",
+    "content/legal/hi/cookie-policy.json",
+    "content/legal/hi/fair-practices-code.json",
+    "content/legal/hi/grievance-redressal.json",
+    "content/legal/hi/privacy-policy.json",
+    "content/legal/hi/rbi-dlg-disclosure.json",
+    "content/legal/hi/terms-of-use.json",
+    "public/assets/badges/mahakumbh.svg",
+    "src/components/apply/ApplyWizard.tsx",
+    "src/components/sections/EcosystemTicker.tsx",
+    "src/components/sections/EmiCalculator.tsx",
+    "src/lib/data/siteData.ts",
+    "src/lib/data/team.json",
+    "src/lib/i18n/messages/en.json",
+    "src/lib/i18n/messages/hi.json",
+    "src/lib/legal/loader.ts",
+    "tests/i18n/translations.test.ts"
+  ]
+}

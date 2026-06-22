@@ -1,0 +1,9 @@
+{
+  "status": "success",
+  "role": "architect",
+  "exit_code": 0,
+  "stdout": "/home/yash/opencode-workspace/navdhan-redesign-2026/.opencode/factory/subagent-status/architect-arch-001.out.log",
+  "stderr": "/home/yash/opencode-workspace/navdhan-redesign-2026/.opencode/factory/subagent-status/architect-arch-001.err.log",
+  "started_at": "2026-06-22T07:48:01+05:30",
+  "finished_at": "2026-06-22T07:50:30+05:30"
+}
