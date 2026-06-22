@@ -1,0 +1,9 @@
+{
+  "status": "failed",
+  "role": "frontend",
+  "reason": "Process exited without updating status. Log shows the agent hit max-steps after the Write tool rejected every .ts/.tsx file with [FACTORY GATE] prettier format failed, despite Prettier being installed and the same snippet formatting cleanly via CLI.",
+  "stdout": ".opencode/factory/subagent-status/marketing-frontend-003b.out.log",
+  "stderr": ".opencode/factory/subagent-status/marketing-frontend-003b.err.log",
+  "started_at": "2026-06-19T03:09:50+05:30",
+  "finished_at": "2026-06-19T03:25:00+05:30"
+}

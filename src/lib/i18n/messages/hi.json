@@ -1,0 +1,78 @@
+{
+  "home": {
+    "meta": {
+      "title": "NavDhan : भारत की MSMEs के लिए बिज़नेस लोन",
+      "description": "विश्वसनीय लेंडर्स से ₹5 लाख से ₹1 करोड़ तक के बिज़नेस लोन पाएँ। एक आवेदन, कई ऑफ़र, कोई प्लेटफ़ॉर्म फीस नहीं।"
+    },
+    "hero": {
+      "eyebrow": "भारत की MSMEs के लिए तेज़ बिज़नेस लोन",
+      "headline": "बिना बैंकों के पीछे भागे, सही बिज़नेस लोन पाएँ।",
+      "body": "NavDhan छोटे और बढ़ते व्यवसायों को विश्वसनीय लेंडर्स से तेज़ और सही लोन दिलाने में मदद करता है। एक आवेदन। कई ऑफ़र। कोई प्लेटफ़ॉर्म फीस नहीं।",
+      "primaryCta": "पात्रता जाँचें",
+      "secondaryCta": "हमसे बात करें"
+    },
+    "loanProducts": {
+      "eyebrow": "लोन उत्पाद",
+      "heading": "आपके बिज़नेस की असली ज़रूरतों के लिए एक लोन।",
+      "body": "स्टॉक और मशीनरी खरीदने से लेकर रोज़मर्रा के खर्चों तक : वह लोन चुनें जो आपकी योजना के अनुकूल हो, न कि उल्टा।",
+      "cta": "लोन विकल्प तुलना करें"
+    },
+    "whyNavdhan": {
+      "eyebrow": "NavDhan क्यों",
+      "heading": "बिज़नेस मालिकों के लिए बना, कागज़ इकट्ठा करने वालों के लिए नहीं।",
+      "body": "आप एक बैंक शाखा नहीं चला रहे, बिज़नेस चला रहे हैं। हम प्रक्रिया को डिजिटल, पारदर्शी और आपके काम आने वाले ऑफ़र पर केंद्रित रखते हैं।",
+      "cta": "अभी आवेदन करें"
+    },
+    "emi": {
+      "heading": "आवेदन से पहले अपनी मासिक किस्त का अनुमान लगाएँ।",
+      "cta": "पात्रता जाँचें"
+    },
+    "finalCta": {
+      "heading": "आपके बिज़नेस के लिए सही लोन कुछ क्लिक दूर है।",
+      "primaryCta": "ऑनलाइन आवेदन करें",
+      "secondaryCta": "हमसे बात करें"
+    }
+  },
+  "team": {
+    "meta": {
+      "title": "हमारी टीम : NavDhan",
+      "description": "भारत की MSMEs के लिए निष्पक्ष और तेज़ बिज़नेस लोन बनाने वाले लोगों से मिलें।"
+    },
+    "members": {
+      "eyebrow": "Leadership"
+    },
+    "advisors": {
+      "eyebrow": "Advisors"
+    }
+  },
+  "global": {
+    "footer": {
+      "company": "Kubar Protocol Private Limited (CIN: U70200WB2024PTC274850)",
+      "copyright": "© 2026 Kubar Protocol Private Limited. NavDhan is powered by Kubar.",
+      "contactHeading": "Contact",
+      "companyHeading": "Company",
+      "legalHeading": "Legal",
+      "tagline": "आपकी सभी working capital ज़रूरतों के लिए one-stop समाधान।",
+      "address": "156, तारावकेरे, बीटीएम लेआउट पहला चरण, बेंगलुरु, कर्नाटक",
+      "badges": "RBI अनुरूप · FACE पंजीकृत · Kubar द्वारा संचालित"
+    },
+    "contact": {
+      "loan": "loan@kubar.tech",
+      "partnership": "partnerships@kubar.tech",
+      "support": "support@kubar.tech",
+      "careers": "careers@kubar.tech",
+      "press": "press@kubar.tech",
+      "outreach": "outreach@kubar.tech"
+    },
+    "cta": {
+      "backToHome": "होम पर वापस जाएँ"
+    },
+    "nav": {
+      "loanProducts": "लोन उत्पाद",
+      "whyNavDhan": "NavDhan क्यों",
+      "emiCalculator": "EMI कैलकुलेटर",
+      "customerStories": "ग्राहकों की कहानियाँ",
+      "team": "टीम"
+    }
+  }
+}

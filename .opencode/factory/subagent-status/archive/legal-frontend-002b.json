@@ -1,0 +1,9 @@
+{
+  "status": "failed",
+  "role": "frontend",
+  "reason": "Process exited without updating status. Log shows max-steps reached after Write tool rejected .ts/.tsx files with [FACTORY GATE] prettier format failed. Only .json files could be created.",
+  "stdout": ".opencode/factory/subagent-status/legal-frontend-002b.out.log",
+  "stderr": ".opencode/factory/subagent-status/legal-frontend-002b.err.log",
+  "started_at": "2026-06-19T03:10:08+05:30",
+  "finished_at": "2026-06-19T03:27:00+05:30"
+}

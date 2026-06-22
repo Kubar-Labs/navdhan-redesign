@@ -1,0 +1,9 @@
+{
+  "status": "failed",
+  "role": "database",
+  "reason": "Process exited without updating status. Expected to be blocked by [FACTORY GATE] prettier format failed on TypeScript/TSX file writes. stdout log should be inspected for exact stop reason.",
+  "stdout": ".opencode/factory/subagent-status/apply-database-006b.out.log",
+  "stderr": ".opencode/factory/subagent-status/apply-database-006b.err.log",
+  "started_at": "2026-06-19T03:10:03+05:30",
+  "finished_at": "2026-06-19T03:25:00+05:30"
+}

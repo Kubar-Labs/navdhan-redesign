@@ -1,0 +1,313 @@
+{
+  "global": {
+    "announcement": {
+      "message": "One stop-solution for all your working capital needs.",
+      "ctaLabel": "Apply now",
+      "href": "/apply"
+    },
+    "alt": {
+      "navdhanLogo": "NavDhan",
+      "kubarLabsLogo": "Kubar"
+    },
+    "nav": {
+      "loanProducts": "Loan Products",
+      "whyNavDhan": "Why NavDhan",
+      "emiCalculator": "EMI Calculator",
+      "customerStories": "Customer Stories",
+      "team": "Team"
+    },
+    "cta": {
+      "apply": {
+        "label": "Apply Loan",
+        "href": "/apply",
+        "variant": "primary"
+      },
+      "backToHome": "Back to home"
+    },
+    "localeSelector": {
+      "label": "Select language",
+      "current": "Language"
+    },
+    "mobileMenu": {
+      "open": "Open menu",
+      "close": "Close menu",
+      "ariaLabel": "Mobile navigation"
+    },
+    "contact": {
+      "loan": "loan@kubar.tech",
+      "partnership": "partnerships@kubar.tech",
+      "support": "support@kubar.tech",
+      "careers": "careers@kubar.tech",
+      "press": "press@kubar.tech",
+      "outreach": "outreach@kubar.tech"
+    },
+    "footer": {
+      "tagline": "One stop-solution for all your working capital needs",
+      "company": "Kubar Protocol Private Limited (CIN: U70200WB2024PTC274850)",
+      "address": "156, Tarvakere, BTM Layout 1st Stage, Bengaluru, Karnataka",
+      "copyright": "\u00a9 2026 Kubar Protocol Private Limited. NavDhan is powered by Kubar.",
+      "contactHeading": "Contact",
+      "companyHeading": "Company",
+      "legalHeading": "Legal",
+      "contactLinks": [
+        {
+          "labelKey": "Loan Enquiry",
+          "href": "mailto:loan@kubar.tech"
+        },
+        {
+          "labelKey": "Partnership Enquiry",
+          "href": "mailto:partnerships@kubar.tech"
+        },
+        {
+          "labelKey": "Talk to Us",
+          "href": "mailto:outreach@kubar.tech"
+        },
+        {
+          "labelKey": "Support",
+          "href": "mailto:support@kubar.tech"
+        },
+        {
+          "labelKey": "Careers",
+          "href": "mailto:careers@kubar.tech"
+        },
+        {
+          "labelKey": "Press",
+          "href": "mailto:press@kubar.tech"
+        }
+      ],
+      "companyLinks": [
+        {
+          "labelKey": "About us",
+          "href": "#"
+        },
+        {
+          "labelKey": "Team",
+          "href": "/team"
+        },
+        {
+          "labelKey": "Contact",
+          "href": "mailto:hello@kubar.tech"
+        }
+      ],
+      "legalLinks": [
+        {
+          "labelKey": "Privacy Policy",
+          "href": "/legal/privacy-policy"
+        },
+        {
+          "labelKey": "Terms of Use",
+          "href": "/legal/terms-of-use"
+        },
+        {
+          "labelKey": "Fair Practices Code",
+          "href": "/legal/fair-practices-code"
+        },
+        {
+          "labelKey": "Cookie Policy",
+          "href": "/legal/cookie-policy"
+        },
+        {
+          "labelKey": "Grievance Redressal",
+          "href": "/legal/grievance-redressal"
+        },
+        {
+          "labelKey": "RBI-DLG Disclosure",
+          "href": "/legal/rbi-dlg-disclosure"
+        },
+        {
+          "labelKey": "Consent Policy",
+          "href": "/legal/consent-policy"
+        }
+      ],
+      "badges": [
+        "RBI Aligned",
+        "FACE Registered",
+        "Powered by Kubar"
+      ]
+    }
+  },
+  "home": {
+    "meta": {
+      "title": "NavDhan: Business Loans for India's MSMEs",
+      "description": "Get \u20b95L to \u20b91Cr business loans. One application, multiple offers, zero platform fee."
+    },
+    "hero": {
+      "eyebrow": "Fast business loans for India's MSMEs",
+      "headline": "Get the right business loan, without chasing banks.",
+      "body": "NavDhan helps small and growing businesses get fair, fast loans. One application. Multiple options. Zero platform fee.",
+      "primaryCta": "Check Eligibility",
+      "secondaryCta": "Talk to Us",
+      "stats": [
+        {
+          "value": "\u20b95L \u2013 \u20b91Cr",
+          "label": "loan range"
+        },
+        {
+          "value": "12-24%",
+          "label": "interest rate p.a."
+        },
+        {
+          "value": "3\u201312 month",
+          "label": "tenures"
+        }
+      ]
+    },
+    "associationBadges": {
+      "heading": "Recognised by"
+    },
+    "ecosystemTicker": {
+      "heading": "Technology Partnerships"
+    },
+    "loanProducts": {
+      "eyebrow": "Loan products",
+      "heading": "A loan that fits what your business actually needs.",
+      "body": "From buying stock and machinery to managing daily expenses, choose the loan that fits your plan, not the other way around.",
+      "cta": "Compare Loan Options",
+      "productCta": "Learn more",
+      "products": [
+        {
+          "id": "collateral-free",
+          "titleKey": "Collateral-Free Business Loan",
+          "descriptionKey": "Unsecured funding up to \u20b91 Crore based on your business cash flow. No property or asset needed.",
+          "iconName": "ShieldCheck",
+          "ctaKey": "Learn more"
+        },
+        {
+          "id": "working-capital",
+          "titleKey": "Working Capital Loan",
+          "descriptionKey": "Cover salaries, stock, supplier payments, or everyday gaps with flexible repayment.",
+          "iconName": "Briefcase",
+          "ctaKey": "Learn more"
+        },
+        {
+          "id": "machinery",
+          "titleKey": "Asset / Machinery Finance",
+          "descriptionKey": "Buy equipment, vehicles, or tools with EMIs that match your cash cycle.",
+          "iconName": "Factory",
+          "ctaKey": "Learn more"
+        },
+        {
+          "id": "growth",
+          "titleKey": "Business Growth Loan",
+          "descriptionKey": "Larger-ticket capital to expand to a new city, add capacity, or take on bigger orders.",
+          "iconName": "TrendingUp",
+          "ctaKey": "Learn more"
+        }
+      ]
+    },
+    "whyNavdhan": {
+      "eyebrow": "Why NavDhan",
+      "heading": "Built for business owners, not paperwork collectors.",
+      "body": "You are running a business, not a bank branch. We keep the process digital, transparent, and focused on getting you an offer that works.",
+      "cta": "Apply Now",
+      "trustBadges": [
+        "RBI Aligned",
+        "FACE Registered",
+        "Powered by Kubar"
+      ],
+      "reasons": [
+        {
+          "id": "one-application",
+          "titleKey": "One application, matched offers.",
+          "bodyKey": "Apply once and see loan options worked out for your business."
+        },
+        {
+          "id": "loan-sizes",
+          "titleKey": "Loan sizes that fit.",
+          "bodyKey": "From \u20b95 Lakhs to \u20b91 Crore, borrow what your business actually needs."
+        },
+        {
+          "id": "clear-rates",
+          "titleKey": "Clear interest rates.",
+          "bodyKey": "Rates from 12% to 24% p.a., with all costs explained upfront."
+        },
+        {
+          "id": "fast-decisions",
+          "titleKey": "Fast, honest decisions.",
+          "bodyKey": "Approvals typically within 24 hours to 7 days, depending on documents."
+        },
+        {
+          "id": "online-process",
+          "titleKey": "Fully online process.",
+          "bodyKey": "Submit documents and e-sign from your phone or laptop."
+        },
+        {
+          "id": "zero-fee",
+          "titleKey": "Zero platform fee.",
+          "bodyKey": "You only pay what your loan agreement says. Nothing extra to NavDhan."
+        }
+      ]
+    },
+    "recognition": {
+      "eyebrow": "Recognition",
+      "heading": "Built to earn your trust. Recognised along the way."
+    },
+    "stories": {
+      "eyebrow": "Customer stories",
+      "heading": "Real businesses. Real outcomes.",
+      "cta": "Read more stories"
+    },
+    "emi": {
+      "eyebrow": "EMI Calculator",
+      "heading": "Plan your monthly outgo before you apply.",
+      "intro": "Move the sliders to see an estimate. Your final rate will depend on your business profile, lender, and tenure.",
+      "amount": "Loan amount",
+      "rate": "Interest rate",
+      "tenure": "Tenure",
+      "monthly": "Monthly EMI",
+      "principal": "Principal",
+      "totalInterest": "Total interest",
+      "totalPayable": "Total payable",
+      "cta": "Check Eligibility"
+    },
+    "finalCta": {
+      "heading": "The right loan for your business is a few clicks away.",
+      "subtext": "Zero platform fee \u00b7 Multiple loan offers \u00b7 Quick, transparent process",
+      "primaryCta": "Apply Online",
+      "secondaryCta": "Talk to Us"
+    }
+  },
+  "team": {
+    "meta": {
+      "title": "Our Team: NavDhan",
+      "description": "Meet the people building fair, fast business loans for India's MSMEs."
+    },
+    "hero": {
+      "heading": "Built by people who believe MSMEs deserve better credit.",
+      "subtext": "We are a team of operators, engineers, and bankers working to make business funding calm, clear, and accessible."
+    },
+    "members": {
+      "heading": "Leadership",
+      "eyebrow": "Leadership"
+    },
+    "advisors": {
+      "heading": "Advisors",
+      "eyebrow": "Advisors"
+    },
+    "join": {
+      "heading": "Want to shape the future of MSME credit?",
+      "subtext": "We are always looking for thoughtful people who care about Indian businesses.",
+      "cta": "Join the team"
+    }
+  },
+  "legal": {
+    "lastUpdated": "Last updated:",
+    "contactCard": {
+      "role": "Grievance / Data Protection Officer",
+      "emailLabel": "Email",
+      "addressLabel": "Address"
+    }
+  },
+  "errors": {
+    "notFound": {
+      "title": "Page not found",
+      "message": "Sorry, we could not find the page you were looking for.",
+      "cta": "Back to home"
+    },
+    "boundary": {
+      "title": "Something went wrong",
+      "message": "Please try again, or return to the home page.",
+      "cta": "Return home"
+    }
+  }
+}

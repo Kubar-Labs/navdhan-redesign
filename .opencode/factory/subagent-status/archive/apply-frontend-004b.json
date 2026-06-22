@@ -1,0 +1,9 @@
+{
+  "status": "failed",
+  "role": "frontend",
+  "reason": "Process exited without updating status. Expected to hit the same [FACTORY GATE] prettier format failed blocker on TypeScript/TSX writes. stdout log should be inspected for exact stop reason.",
+  "stdout": ".opencode/factory/subagent-status/apply-frontend-004b.out.log",
+  "stderr": ".opencode/factory/subagent-status/apply-frontend-004b.err.log",
+  "started_at": "2026-06-19T03:09:55+05:30",
+  "finished_at": "2026-06-19T03:25:00+05:30"
+}
