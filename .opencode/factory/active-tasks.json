@@ -1,291 +1,10 @@
 {
   "run_id": "navdhan-redesign-20250618",
   "branch_prefix": "factory/navdhan-redesign",
-  "project_root": "/home/yash/opencode-workspace/navdhan-redesign-2026",
   "status": "e2e-audit-and-fixes",
   "lock": {
     "locked": false
   },
-  "units": [
-    {
-      "unit_id": "unit-1-creative",
-      "name": "Discovery, Creative Direction & Design System",
-      "branch_prefix": "factory/navdhan-redesign/creative",
-      "stage": "completed",
-      "tasks": [
-        {
-          "id": "creative-001",
-          "agent": "design-agency (Creative Director + team)",
-          "description": "Run intake, synthesize taste, write approved Creative Brief and Design.md",
-          "status": "completed",
-          "branch": "factory/navdhan-redesign/creative/brief",
-          "inputs": ["user interview", "existing site clone", "assets", "gbrain context"],
-          "outputs": ["design/Design.md", "design/animation-system.md", "design/content-audit.md"],
-          "depends_on": []
-        }
-      ]
-    },
-    {
-      "unit_id": "unit-2-marketing",
-      "name": "Marketing Website Rebuild",
-      "branch_prefix": "factory/navdhan-redesign/marketing",
-      "stage": "completed",
-      "tasks": [
-        {
-          "id": "marketing-001",
-          "agent": "architect",
-          "description": "Design marketing site architecture, component contract, route schema, animation spec",
-          "status": "completed",
-          "branch": "factory/navdhan-redesign/marketing/architect",
-          "inputs": ["Design.md"],
-          "outputs": [".opencode/factory/marketing-contract.yaml"],
-          "depends_on": ["creative-001"]
-        },
-        {
-          "id": "marketing-002",
-          "agent": "ui-designer (general fallback)",
-          "description": "Design component interfaces, sections, design tokens for marketing site",
-          "status": "completed",
-          "branch": "factory/navdhan-redesign/marketing/ui-design",
-          "inputs": ["Design.md", "marketing-contract.yaml"],
-          "outputs": ["ui-component-registry.json"],
-          "depends_on": ["marketing-001"]
-        },
-        {
-          "id": "marketing-003-cdd",
-          "agent": "frontend",
-          "description": "Draft CDD for marketing site implementation",
-          "status": "completed",
-          "branch": "factory/navdhan-redesign/marketing/frontend",
-          "inputs": ["Design.md", "marketing-contract.yaml", "ui-component-registry.json"],
-          "outputs": ["scratchpads/marketing-frontend-cdd.md"],
-          "depends_on": ["marketing-002"]
-        },
-        {
-          "id": "marketing-003",
-          "agent": "frontend",
-          "description": "Implement marketing site pages, sections, animations, team page, footer/legal shell",
-          "status": "completed",
-          "branch": "factory/navdhan-redesign/integration",
-          "inputs": ["Design.md", "marketing-contract.yaml", "ui-component-registry.json", "scratchpads/marketing-frontend-cdd.md"],
-          "outputs": ["app/(marketing)/**", "components/sections/**"],
-          "depends_on": ["cdd-review"]
-        }
-      ]
-    },
-    {
-      "unit_id": "unit-3-apply",
-      "name": "Multi-Step Loan Application Portal",
-      "branch_prefix": "factory/navdhan-redesign/apply",
-      "stage": "in_progress",
-      "tasks": [
-        {
-          "id": "apply-001",
-          "agent": "architect",
-          "description": "Design apply portal API contract, state machine, step schema, Perfios integration surface",
-          "status": "completed",
-          "branch": "factory/navdhan-redesign/apply/architect",
-          "inputs": ["Design.md", "existing public/apply/ portal"],
-          "outputs": [".opencode/factory/apply-contract.yaml"],
-          "depends_on": ["creative-001"]
-        },
-        {
-          "id": "apply-002",
-          "agent": "test-engineer",
-          "description": "Write failing tests for apply API and form flow",
-          "status": "completed",
-          "branch": "factory/navdhan-redesign/apply/tests",
-          "inputs": ["apply-contract.yaml"],
-          "outputs": ["tests/apply/**"],
-          "depends_on": ["apply-001"]
-        },
-        {
-          "id": "apply-003",
-          "agent": "ui-designer (general fallback)",
-          "description": "Design multi-step form UI, consent screens, progress, states",
-          "status": "completed",
-          "branch": "factory/navdhan-redesign/apply/ui-design",
-          "inputs": ["Design.md", "apply-contract.yaml"],
-          "outputs": ["apply-ui-registry.json"],
-          "depends_on": ["apply-001"]
-        },
-        {
-          "id": "apply-004-cdd",
-          "agent": "frontend",
-          "description": "Draft CDD for /apply frontend implementation",
-          "status": "completed",
-          "branch": "factory/navdhan-redesign/apply/frontend",
-          "inputs": ["apply-contract.yaml", "apply-ui-registry.json", "tests/apply/**"],
-          "outputs": ["scratchpads/apply-frontend-cdd.md"],
-          "depends_on": ["apply-002", "apply-003"]
-        },
-        {
-          "id": "apply-004",
-          "agent": "frontend",
-          "description": "Implement simplified /apply loan-intent form page (MVP; full wizard deferred)",
-          "status": "completed",
-          "branch": "factory/navdhan-redesign/integration",
-          "inputs": ["apply-contract.yaml", "apply-ui-registry.json", "tests/apply/**", "scratchpads/apply-frontend-cdd.md"],
-          "outputs": ["app/apply/**"],
-          "depends_on": ["cdd-review"]
-        },
-        {
-          "id": "apply-005-cdd",
-          "agent": "backend",
-          "description": "Draft CDD for /apply backend implementation",
-          "status": "completed",
-          "branch": "factory/navdhan-redesign/apply/backend",
-          "inputs": ["apply-contract.yaml", "db-schema.yaml"],
-          "outputs": ["scratchpads/apply-backend-cdd.md"],
-          "depends_on": ["apply-002"]
-        },
-        {
-          "id": "apply-005",
-          "agent": "backend",
-          "description": "Implement API routes for apply flow, Perfios adapters, document storage",
-          "status": "pending",
-          "branch": "factory/navdhan-redesign/apply/backend",
-          "inputs": ["apply-contract.yaml", "db-schema.yaml", "scratchpads/apply-backend-cdd.md"],
-          "outputs": ["app/api/apply/**"],
-          "depends_on": ["cdd-review"]
-        },
-        {
-          "id": "apply-006-cdd",
-          "agent": "database",
-          "description": "Draft CDD for apply portal data model and migration",
-          "status": "completed",
-          "branch": "factory/navdhan-redesign/apply/database",
-          "inputs": ["apply-contract.yaml"],
-          "outputs": ["scratchpads/apply-database-cdd.md"],
-          "depends_on": ["apply-001"]
-        },
-        {
-          "id": "apply-006",
-          "agent": "database",
-          "description": "Implement application data model and migration",
-          "status": "pending",
-          "branch": "factory/navdhan-redesign/apply/database",
-          "inputs": ["apply-contract.yaml", "scratchpads/apply-database-cdd.md"],
-          "outputs": ["app/db/**", "migrations/**"],
-          "depends_on": ["cdd-review"]
-        }
-      ]
-    },
-    {
-      "unit_id": "unit-4-legal",
-      "name": "Legal, Compliance & Subpages",
-      "branch_prefix": "factory/navdhan-redesign/legal",
-      "stage": "completed",
-      "tasks": [
-        {
-          "id": "legal-001",
-          "agent": "architect",
-          "description": "Define legal subpage structure and content schema",
-          "status": "completed",
-          "branch": "factory/navdhan-redesign/legal/architect",
-          "inputs": ["Design.md"],
-          "outputs": [".opencode/factory/legal-contract.yaml"],
-          "depends_on": ["creative-001"]
-        },
-        {
-          "id": "legal-002-cdd",
-          "agent": "frontend",
-          "description": "Draft CDD for legal pages implementation",
-          "status": "completed",
-          "branch": "factory/navdhan-redesign/legal/frontend",
-          "inputs": ["legal-contract.yaml"],
-          "outputs": ["scratchpads/legal-frontend-cdd.md"],
-          "depends_on": ["legal-001"]
-        },
-        {
-          "id": "legal-002",
-          "agent": "frontend",
-          "description": "Implement legal pages: Privacy Policy, Terms, Fair Practices Code, Cookie Policy, Grievance, RBI-DLG, Consent Notice",
-          "status": "completed",
-          "branch": "factory/navdhan-redesign/integration",
-          "inputs": ["legal-contract.yaml", "scratchpads/legal-frontend-cdd.md"],
-          "outputs": ["app/legal/**"],
-          "depends_on": ["cdd-review"]
-        }
-      ]
-    },
-    {
-      "unit_id": "unit-5-cdd-review",
-      "name": "CDD Review",
-      "branch_prefix": "factory/navdhan-redesign/cdd-review",
-      "stage": "completed",
-      "tasks": [
-        {
-          "id": "cdd-review",
-          "agent": "staff-engineer",
-          "description": "Review all CDDs against contracts and approve or request changes",
-          "status": "completed",
-          "branch": "factory/navdhan-redesign/cdd-review/main",
-          "inputs": ["scratchpads/*-cdd.md", "*.yaml"],
-          "outputs": ["scratchpads/cdd-review-report.md"],
-          "depends_on": ["marketing-003-cdd", "apply-004-cdd", "apply-005-cdd", "apply-006-cdd", "legal-002-cdd"]
-        }
-      ]
-    },
-    {
-      "unit_id": "unit-6-integration",
-      "name": "Integration, QA, Security, E2E Visual Verification",
-      "branch_prefix": "factory/navdhan-redesign/integration",
-      "stage": "in_progress",
-      "tasks": [
-        {
-          "id": "integration-001",
-          "agent": "integrator",
-          "description": "Merge unit branches, wire layout, run integration tests",
-          "status": "completed",
-          "branch": "factory/navdhan-redesign/integration/merge",
-          "inputs": ["all unit outputs"],
-          "outputs": ["deployable branch"],
-          "depends_on": ["marketing-003", "apply-004", "legal-002"]
-        },
-        {
-          "id": "integration-002",
-          "agent": "security",
-          "description": "Audit secrets, injection, auth, DPDP/RBI alignment",
-          "status": "pending",
-          "branch": "factory/navdhan-redesign/integration/security",
-          "inputs": ["deployable branch"],
-          "outputs": ["security-report.md"],
-          "depends_on": ["integration-001"]
-        },
-        {
-          "id": "integration-003",
-          "agent": "qa",
-          "description": "Run edge-case and integration tests, verify links/buttons functional",
-          "status": "pending",
-          "branch": "factory/navdhan-redesign/integration/qa",
-          "inputs": ["deployable branch"],
-          "outputs": ["qa-report.md"],
-          "depends_on": ["integration-002"]
-        },
-        {
-          "id": "integration-004",
-          "agent": "reviewer",
-          "description": "Final convention and coverage review",
-          "status": "pending",
-          "branch": "factory/navdhan-redesign/integration/review",
-          "inputs": ["deployable branch"],
-          "outputs": ["review-report.md"],
-          "depends_on": ["integration-003"]
-        },
-        {
-          "id": "integration-005",
-          "agent": "e2e-tester",
-          "description": "Visual verification on deployed Vercel URL with browser-harness",
-          "status": "pending",
-          "branch": "factory/navdhan-redesign/integration/e2e",
-          "inputs": ["deployed URL"],
-          "outputs": ["visual-verification-report.md"],
-          "depends_on": ["integration-004"]
-        }
-      ]
-    }
-  ],
   "stashes": [],
   "notes": [
     "Cloned reference repos to /tmp/navdhan-site and /tmp/kubar-web for read-only analysis.",
@@ -299,5 +18,411 @@
     "project_name": "NavDhan Redesign 2026",
     "team_key": null,
     "issues": []
-  }
+  },
+  "project_dir": "/home/yash/opencode-workspace/navdhan-redesign-2026",
+  "tasks": [
+    {
+      "id": "creative-001",
+      "agent": "design-agency (Creative Director + team)",
+      "description": "Run intake, synthesize taste, write approved Creative Brief and Design.md",
+      "status": "completed",
+      "branch": "factory/navdhan-redesign/creative/brief",
+      "inputs": [
+        "user interview",
+        "existing site clone",
+        "assets",
+        "gbrain context"
+      ],
+      "outputs": [
+        "design/Design.md",
+        "design/animation-system.md",
+        "design/content-audit.md"
+      ],
+      "depends_on": []
+    },
+    {
+      "id": "marketing-001",
+      "agent": "architect",
+      "description": "Design marketing site architecture, component contract, route schema, animation spec",
+      "status": "completed",
+      "branch": "factory/navdhan-redesign/marketing/architect",
+      "inputs": [
+        "Design.md"
+      ],
+      "outputs": [
+        ".opencode/factory/marketing-contract.yaml"
+      ],
+      "depends_on": [
+        "creative-001"
+      ]
+    },
+    {
+      "id": "marketing-002",
+      "agent": "ui-designer (general fallback)",
+      "description": "Design component interfaces, sections, design tokens for marketing site",
+      "status": "completed",
+      "branch": "factory/navdhan-redesign/marketing/ui-design",
+      "inputs": [
+        "Design.md",
+        "marketing-contract.yaml"
+      ],
+      "outputs": [
+        "ui-component-registry.json"
+      ],
+      "depends_on": [
+        "marketing-001"
+      ]
+    },
+    {
+      "id": "marketing-003-cdd",
+      "agent": "frontend",
+      "description": "Draft CDD for marketing site implementation",
+      "status": "completed",
+      "branch": "factory/navdhan-redesign/marketing/frontend",
+      "inputs": [
+        "Design.md",
+        "marketing-contract.yaml",
+        "ui-component-registry.json"
+      ],
+      "outputs": [
+        "scratchpads/marketing-frontend-cdd.md"
+      ],
+      "depends_on": [
+        "marketing-002"
+      ]
+    },
+    {
+      "id": "marketing-003",
+      "agent": "frontend",
+      "description": "Implement marketing site pages, sections, animations, team page, footer/legal shell",
+      "status": "completed",
+      "branch": "factory/navdhan-redesign/integration",
+      "inputs": [
+        "Design.md",
+        "marketing-contract.yaml",
+        "ui-component-registry.json",
+        "scratchpads/marketing-frontend-cdd.md"
+      ],
+      "outputs": [
+        "app/(marketing)/**",
+        "components/sections/**"
+      ],
+      "depends_on": [
+        "cdd-review"
+      ]
+    },
+    {
+      "id": "apply-001",
+      "agent": "architect",
+      "description": "Design apply portal API contract, state machine, step schema, Perfios integration surface",
+      "status": "completed",
+      "branch": "factory/navdhan-redesign/apply/architect",
+      "inputs": [
+        "Design.md",
+        "existing public/apply/ portal"
+      ],
+      "outputs": [
+        ".opencode/factory/apply-contract.yaml"
+      ],
+      "depends_on": [
+        "creative-001"
+      ]
+    },
+    {
+      "id": "apply-002",
+      "agent": "test-engineer",
+      "description": "Write failing tests for apply API and form flow",
+      "status": "completed",
+      "branch": "factory/navdhan-redesign/apply/tests",
+      "inputs": [
+        "apply-contract.yaml"
+      ],
+      "outputs": [
+        "tests/apply/**"
+      ],
+      "depends_on": [
+        "apply-001"
+      ]
+    },
+    {
+      "id": "apply-003",
+      "agent": "ui-designer (general fallback)",
+      "description": "Design multi-step form UI, consent screens, progress, states",
+      "status": "completed",
+      "branch": "factory/navdhan-redesign/apply/ui-design",
+      "inputs": [
+        "Design.md",
+        "apply-contract.yaml"
+      ],
+      "outputs": [
+        "apply-ui-registry.json"
+      ],
+      "depends_on": [
+        "apply-001"
+      ]
+    },
+    {
+      "id": "apply-004-cdd",
+      "agent": "frontend",
+      "description": "Draft CDD for /apply frontend implementation",
+      "status": "completed",
+      "branch": "factory/navdhan-redesign/apply/frontend",
+      "inputs": [
+        "apply-contract.yaml",
+        "apply-ui-registry.json",
+        "tests/apply/**"
+      ],
+      "outputs": [
+        "scratchpads/apply-frontend-cdd.md"
+      ],
+      "depends_on": [
+        "apply-002",
+        "apply-003"
+      ]
+    },
+    {
+      "id": "apply-004",
+      "agent": "frontend",
+      "description": "Implement simplified /apply loan-intent form page (MVP; full wizard deferred)",
+      "status": "completed",
+      "branch": "factory/navdhan-redesign/integration",
+      "inputs": [
+        "apply-contract.yaml",
+        "apply-ui-registry.json",
+        "tests/apply/**",
+        "scratchpads/apply-frontend-cdd.md"
+      ],
+      "outputs": [
+        "app/apply/**"
+      ],
+      "depends_on": [
+        "cdd-review"
+      ]
+    },
+    {
+      "id": "apply-005-cdd",
+      "agent": "backend",
+      "description": "Draft CDD for /apply backend implementation",
+      "status": "completed",
+      "branch": "factory/navdhan-redesign/apply/backend",
+      "inputs": [
+        "apply-contract.yaml",
+        "db-schema.yaml"
+      ],
+      "outputs": [
+        "scratchpads/apply-backend-cdd.md"
+      ],
+      "depends_on": [
+        "apply-002"
+      ]
+    },
+    {
+      "id": "apply-005",
+      "agent": "backend",
+      "description": "Implement API routes for apply flow, Perfios adapters, document storage",
+      "status": "completed",
+      "branch": "factory/navdhan-redesign/apply/backend",
+      "inputs": [
+        "apply-contract.yaml",
+        "db-schema.yaml",
+        "scratchpads/apply-backend-cdd.md"
+      ],
+      "outputs": [
+        "app/api/apply/**"
+      ],
+      "depends_on": [
+        "cdd-review"
+      ],
+      "completed_at": "2026-06-19T05:06:47+05:30",
+      "started_at": "2026-06-19T04:55:54+05:30"
+    },
+    {
+      "id": "apply-006-cdd",
+      "agent": "database",
+      "description": "Draft CDD for apply portal data model and migration",
+      "status": "completed",
+      "branch": "factory/navdhan-redesign/apply/database",
+      "inputs": [
+        "apply-contract.yaml"
+      ],
+      "outputs": [
+        "scratchpads/apply-database-cdd.md"
+      ],
+      "depends_on": [
+        "apply-001"
+      ]
+    },
+    {
+      "id": "apply-006",
+      "agent": "database",
+      "description": "Implement application data model and migration",
+      "status": "completed",
+      "branch": "factory/navdhan-redesign/apply/database",
+      "inputs": [
+        "apply-contract.yaml",
+        "scratchpads/apply-database-cdd.md"
+      ],
+      "outputs": [
+        "app/db/**",
+        "migrations/**"
+      ],
+      "depends_on": [
+        "cdd-review"
+      ],
+      "completed_at": "2026-06-19T05:00:08+05:30",
+      "started_at": "2026-06-19T04:55:56+05:30"
+    },
+    {
+      "id": "legal-001",
+      "agent": "architect",
+      "description": "Define legal subpage structure and content schema",
+      "status": "completed",
+      "branch": "factory/navdhan-redesign/legal/architect",
+      "inputs": [
+        "Design.md"
+      ],
+      "outputs": [
+        ".opencode/factory/legal-contract.yaml"
+      ],
+      "depends_on": [
+        "creative-001"
+      ]
+    },
+    {
+      "id": "legal-002-cdd",
+      "agent": "frontend",
+      "description": "Draft CDD for legal pages implementation",
+      "status": "completed",
+      "branch": "factory/navdhan-redesign/legal/frontend",
+      "inputs": [
+        "legal-contract.yaml"
+      ],
+      "outputs": [
+        "scratchpads/legal-frontend-cdd.md"
+      ],
+      "depends_on": [
+        "legal-001"
+      ]
+    },
+    {
+      "id": "legal-002",
+      "agent": "frontend",
+      "description": "Implement legal pages: Privacy Policy, Terms, Fair Practices Code, Cookie Policy, Grievance, RBI-DLG, Consent Notice",
+      "status": "completed",
+      "branch": "factory/navdhan-redesign/integration",
+      "inputs": [
+        "legal-contract.yaml",
+        "scratchpads/legal-frontend-cdd.md"
+      ],
+      "outputs": [
+        "app/legal/**"
+      ],
+      "depends_on": [
+        "cdd-review"
+      ]
+    },
+    {
+      "id": "cdd-review",
+      "agent": "staff-engineer",
+      "description": "Review all CDDs against contracts and approve or request changes",
+      "status": "completed",
+      "branch": "factory/navdhan-redesign/cdd-review/main",
+      "inputs": [
+        "scratchpads/*-cdd.md",
+        "*.yaml"
+      ],
+      "outputs": [
+        "scratchpads/cdd-review-report.md"
+      ],
+      "depends_on": [
+        "marketing-003-cdd",
+        "apply-004-cdd",
+        "apply-005-cdd",
+        "apply-006-cdd",
+        "legal-002-cdd"
+      ]
+    },
+    {
+      "id": "integration-001",
+      "agent": "integrator",
+      "description": "Merge unit branches, wire layout, run integration tests",
+      "status": "completed",
+      "branch": "factory/navdhan-redesign/integration/merge",
+      "inputs": [
+        "all unit outputs"
+      ],
+      "outputs": [
+        "deployable branch"
+      ],
+      "depends_on": [
+        "marketing-003",
+        "apply-004",
+        "legal-002"
+      ]
+    },
+    {
+      "id": "integration-002",
+      "agent": "security",
+      "description": "Audit secrets, injection, auth, DPDP/RBI alignment",
+      "status": "pending",
+      "branch": "factory/navdhan-redesign/integration/security",
+      "inputs": [
+        "deployable branch"
+      ],
+      "outputs": [
+        "security-report.md"
+      ],
+      "depends_on": [
+        "integration-001"
+      ]
+    },
+    {
+      "id": "integration-003",
+      "agent": "qa",
+      "description": "Run edge-case and integration tests, verify links/buttons functional",
+      "status": "pending",
+      "branch": "factory/navdhan-redesign/integration/qa",
+      "inputs": [
+        "deployable branch"
+      ],
+      "outputs": [
+        "qa-report.md"
+      ],
+      "depends_on": [
+        "integration-002"
+      ]
+    },
+    {
+      "id": "integration-004",
+      "agent": "reviewer",
+      "description": "Final convention and coverage review",
+      "status": "pending",
+      "branch": "factory/navdhan-redesign/integration/review",
+      "inputs": [
+        "deployable branch"
+      ],
+      "outputs": [
+        "review-report.md"
+      ],
+      "depends_on": [
+        "integration-003"
+      ]
+    },
+    {
+      "id": "integration-005",
+      "agent": "deployment-verifier",
+      "description": "Visual verification on deployed Vercel URL with browser-harness",
+      "status": "pending",
+      "branch": "factory/navdhan-redesign/integration/e2e",
+      "inputs": [
+        "deployed URL"
+      ],
+      "outputs": [
+        "visual-verification-report.md"
+      ],
+      "depends_on": [
+        "integration-004"
+      ]
+    }
+  ]
 }
