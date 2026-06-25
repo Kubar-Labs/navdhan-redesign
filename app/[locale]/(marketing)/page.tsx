@@ -189,8 +189,8 @@ export default async function HomePage({ params }: HomePageProps) {
                         <div
                           className={
                             badge.name === "FinVision"
-                              ? "flex h-10 w-28 items-center justify-center rounded-lg bg-slate-950 px-3 py-1.5 shadow-sm border border-slate-800"
-                              : "flex h-10 w-28 items-center justify-start"
+                              ? "flex h-10 w-28 items-center justify-center overflow-hidden rounded-lg bg-slate-950 px-3 py-1.5 shadow-sm border border-slate-800"
+                              : "flex h-10 w-28 items-center justify-start overflow-hidden rounded-lg"
                           }
                         >
                           <Image
@@ -200,7 +200,7 @@ export default async function HomePage({ params }: HomePageProps) {
                             })}
                             width={112}
                             height={40}
-                            className="h-full w-auto object-contain"
+                            className="h-full w-auto object-contain rounded-lg"
                           />
                         </div>
                       ) : (

@@ -5,6 +5,7 @@ import { legalSlugs } from "@/src/lib/legal/loader";
 import { getTranslator } from "@/src/lib/i18n/translations";
 
 function legalLabel(slug: string): string {
+  if (slug === "rbi-dlg-disclosure") return "RBI DLG Disclosure";
   return slug
     .split("-")
     .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
@@ -34,6 +35,7 @@ export async function Footer({ locale }: FooterProps) {
             >
               <Logo variant="light" />
             </Link>
+            <div className="mt-4 text-base font-bold text-white">NavDhan</div>
             <p className="mt-4 max-w-xs text-sm leading-relaxed text-nt-slate-300">{tagline}</p>
             <p className="mt-6 text-xs text-nt-slate-400">{copyright}</p>
           </div>
@@ -140,7 +142,6 @@ export async function Footer({ locale }: FooterProps) {
         <div className="mt-12 border-t border-nt-slate-800 pt-8 text-xs leading-relaxed text-nt-slate-400">
           <p>{company}</p>
           <p className="mt-1">{address}</p>
-          <p className="mt-4 font-medium text-nt-slate-300">{t("global.footer.badges")}</p>
         </div>
       </Container>
     </footer>

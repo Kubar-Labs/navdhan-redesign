@@ -21,6 +21,7 @@
     "src/components/apply/ApplyWizard.tsx",
     "src/components/sections/EcosystemTicker.tsx",
     "src/components/sections/EmiCalculator.tsx",
+    "src/components/shells/Footer.tsx",
     "src/lib/data/siteData.ts",
     "src/lib/data/team.json",
     "src/lib/i18n/messages/en.json",

@@ -252,8 +252,8 @@
       "reasons": [
         {
           "id": "instant-sanction",
-          "titleKey": "Instant Sanction",
-          "bodyKey": "Get in-principle approval within minutes using our AI-driven assessment engine.",
+          "titleKey": "Fast Disbursal",
+          "bodyKey": "Disbursement takes around 24-72 hours depending on the lender's timeline.",
           "iconName": "Zap"
         },
         {
