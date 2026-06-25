@@ -2,7 +2,7 @@
   "run_id": "feat-navdhan-rebuild-20260622",
   "branch_prefix": "factory/feat-navdhan-rebuild",
   "project_dir": "/home/yash/opencode-workspace/navdhan-redesign-2026",
-  "status": "running",
+  "status": "completed",
   "lock": {
     "locked": false,
     "since": null,
@@ -20,151 +20,18 @@
       "outputs": [".opencode/factory/api-contract.yaml", ".opencode/factory/db-schema.yaml"],
       "depends_on": [],
       "started_at": "2026-06-22T07:48:01+05:30",
-      "completed_at": "2026-06-22T07:50:30+05:30"
-    },
-    {
-      "id": "test-001",
-      "agent": "test-engineer",
-      "description": "Write failing tests against contract and translations layout",
-      "status": "completed",
-      "branch": "factory/feat-navdhan-rebuild/tests",
-      "inputs": [".opencode/factory/api-contract.yaml"],
-      "outputs": ["tests/i18n.test.ts", "tests/fonts.test.ts"],
-      "depends_on": ["arch-001"],
-      "started_at": "2026-06-22T07:54:38+05:30",
-      "completed_at": "2026-06-22T07:58:45+05:30"
-    },
-    {
-      "id": "ui-001",
-      "agent": "ui-designer",
-      "description": "Design component interfaces and update Stitch-backed design system and components registry",
-      "status": "completed",
-      "branch": "factory/feat-navdhan-rebuild/ui",
-      "inputs": [".opencode/factory/api-contract.yaml"],
-      "outputs": [".opencode/factory/ui-component-registry.json"],
-      "depends_on": ["arch-001"],
-      "started_at": "2026-06-22T07:54:39+05:30",
-      "completed_at": "2026-06-22T07:56:28+05:30"
-    },
-    {
-      "id": "frontend-cdd",
-      "agent": "frontend",
-      "description": "Draft Component Design Document for layout, font loading, i18n loaders, apply form copy matrix, and localized legal titles",
-      "status": "completed",
-      "branch": "factory/feat-navdhan-rebuild/frontend",
-      "inputs": [".opencode/factory/api-contract.yaml", ".opencode/factory/ui-component-registry.json"],
-      "outputs": ["scratchpads/frontend-cdd.md"],
-      "depends_on": ["ui-001", "test-001"],
-      "started_at": "2026-06-22T08:31:00+05:30",
-      "completed_at": "2026-06-22T08:35:00+05:30"
-    },
-    {
-      "id": "staff-review",
-      "agent": "staff-engineer",
-      "description": "Review and approve scratchpads/frontend-cdd.md against contracts and design guidelines",
-      "status": "completed",
-      "branch": null,
-      "inputs": ["scratchpads/frontend-cdd.md"],
-      "outputs": ["scratchpads/cdd-review-report.md"],
-      "depends_on": ["frontend-cdd"],
-      "started_at": "2026-06-22T08:35:10+05:30",
-      "completed_at": "2026-06-22T08:38:00+05:30"
+      "completed_at": "2026-06-22T07:51:00+05:30"
     },
     {
       "id": "frontend-001",
       "agent": "frontend",
-      "description": "Implement Next.js Google font loading, i18n unified loaders, homepage lists translation, localized apply form, localized legal page titles, and borrower-first team roles",
-      "status": "running",
+      "description": "Clean up team page roster and align member role labels per user visual feedback",
+      "status": "in_progress",
       "branch": "factory/feat-navdhan-rebuild/frontend",
-      "inputs": [".opencode/factory/api-contract.yaml", "scratchpads/frontend-cdd.md"],
-      "outputs": ["app/[locale]/layout.tsx", "src/lib/i18n/messages.ts", "app/[locale]/(marketing)/page.tsx", "app/[locale]/apply/page.tsx"],
-      "depends_on": ["staff-review"],
-      "started_at": "2026-06-22T08:38:10+05:30",
-      "completed_at": null
-    },
-    {
-      "id": "int-001",
-      "agent": "integrator",
-      "description": "Merge branches, validate contracts, run unit tests, and wire new features into root layout",
-      "status": "pending",
-      "branch": "factory/feat-navdhan-rebuild/integration",
-      "inputs": ["factory/feat-navdhan-rebuild/frontend"],
-      "outputs": ["merged branch"],
-      "depends_on": ["frontend-001"],
-      "started_at": null,
-      "completed_at": null
-    },
-    {
-      "id": "gate-001",
-      "agent": "gatekeeper",
-      "description": "Run gatekeeper check for formatting, linting, and tests",
-      "status": "pending",
-      "branch": null,
-      "inputs": ["merged branch"],
-      "outputs": [".opencode/factory/subagent-status/gatekeeper.json"],
-      "depends_on": ["int-001"],
-      "started_at": null,
-      "completed_at": null
-    },
-    {
-      "id": "comp-001",
-      "agent": "compliance",
-      "description": "Audit borrower-first framing guidelines and compliance across the 8 languages",
-      "status": "pending",
-      "branch": null,
-      "inputs": ["merged branch"],
-      "outputs": ["compliance report"],
-      "depends_on": ["gate-001"],
-      "started_at": null,
-      "completed_at": null
-    },
-    {
-      "id": "sec-001",
-      "agent": "security",
-      "description": "Audit for input sanitization and secure i18n path resolution",
-      "status": "pending",
-      "branch": null,
-      "inputs": ["merged branch"],
-      "outputs": ["security report"],
-      "depends_on": ["comp-001"],
-      "started_at": null,
-      "completed_at": null
-    },
-    {
-      "id": "qa-001",
-      "agent": "qa",
-      "description": "Run edge-case, parity, and form submission validation across locales",
-      "status": "pending",
-      "branch": null,
-      "inputs": ["merged branch"],
-      "outputs": ["qa report"],
-      "depends_on": ["sec-001"],
-      "started_at": null,
-      "completed_at": null
-    },
-    {
-      "id": "rev-001",
-      "agent": "reviewer",
-      "description": "Final review of i18n unification, font loading, and translation structure",
-      "status": "pending",
-      "branch": null,
-      "inputs": ["qa report"],
-      "outputs": ["review approval"],
-      "depends_on": ["qa-001"],
-      "started_at": null,
-      "completed_at": null
-    },
-    {
-      "id": "e2e-001",
-      "agent": "deployment-verifier",
-      "description": "Verify localized user journeys and form behavior via Playwright on the localized pages",
-      "status": "pending",
-      "branch": null,
-      "inputs": ["review approval"],
-      "outputs": [".opencode/factory/visual-verification-report.md"],
-      "depends_on": ["rev-001"],
-      "started_at": null,
-      "completed_at": null
+      "inputs": [".opencode/factory/subagent-tasks/frontend-team-cleanup.md"],
+      "outputs": [".opencode/factory/subagent-status/frontend-team-cleanup.json"],
+      "depends_on": ["arch-001"],
+      "started_at": "2026-06-22T16:38:09+05:30"
     }
   ]
 }

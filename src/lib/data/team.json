@@ -15,18 +15,10 @@
     {
       "id": "agniva-ray",
       "name": "Agniva Ray",
-      "roleKey": "Co-Founder & COO",
+      "roleKey": "Operations",
       "bioKey": "People and Internal Systems | 7 YOE | Ex- Govt. Of Goa",
       "imageAsset": "/assets/team/agniva.png",
       "linkedIn": "https://www.linkedin.com/in/agnivaray/"
-    },
-    {
-      "id": "ayan-gangopadhyay",
-      "name": "Ayan Gangopadhyay",
-      "roleKey": "Data Science Lead",
-      "bioKey": "NLP & Deep Learning Expert | 6 YOE | CUDA and Triton",
-      "imageAsset": "/assets/team/ayan.png",
-      "linkedIn": "https://www.linkedin.com/in/ayan-gangopadhyay-426012157/"
     },
     {
       "id": "rayansh-srivastava",
@@ -39,7 +31,7 @@
     {
       "id": "manchit-sanan",
       "name": "Manchit Sanan",
-      "roleKey": "Product & Program Lead",
+      "roleKey": "Founding Engineer",
       "bioKey": "API & Automation Expert | 13 YOE | US Healthcare to Fintech",
       "imageAsset": "/assets/team/manchit.png",
       "linkedIn": "https://www.linkedin.com/in/manchit-sanan-6b9705158/"
@@ -63,7 +55,7 @@
     {
       "id": "debpriyo-ghosal",
       "name": "Debpriyo Ghosal",
-      "roleKey": "Engineer/Developer",
+      "roleKey": "Founding Engineer",
       "bioKey": "Full-Stack & AI Developer | Open-Source Contributor",
       "imageAsset": "/assets/team/debpriyo.png",
       "linkedIn": "https://www.linkedin.com/in/debpriyo-ghosal-0759a92a6/"
@@ -75,22 +67,6 @@
       "bioKey": "MS at HEC Paris | CUDA and Triton | Ex- RIL, CWC, Earlyseed",
       "imageAsset": "/assets/team/mridul.png",
       "linkedIn": "https://www.linkedin.com/in/mridulmalani/"
-    },
-    {
-      "id": "parth-ahuja",
-      "name": "Parth Ahuja",
-      "roleKey": "Junior Engineer/Developer",
-      "bioKey": "Ashoka University CS | Full-Stack & Systems Dev",
-      "imageAsset": "/assets/team/parth.png",
-      "linkedIn": "https://linkedin.com"
-    },
-    {
-      "id": "alok",
-      "name": "Alok",
-      "roleKey": "Technology Operations",
-      "bioKey": "Ensuring high availability, scale, and reliable digital systems for MSME credit.",
-      "imageAsset": "/assets/team/alok.png",
-      "linkedIn": "https://linkedin.com"
     }
   ],
   "advisors": [
@@ -100,14 +76,6 @@
       "domainKey": "Professor, CS - MIT, Ashoka University",
       "contributionKey": "Advises on research-led technology choices and academic partnerships.",
       "imageAsset": "/assets/advisors/debayan.png",
-      "linkedIn": "https://linkedin.com"
-    },
-    {
-      "id": "sandeep-juneja",
-      "name": "Sandeep Juneja",
-      "domainKey": "Director, Centre for Data - Ashoka University",
-      "contributionKey": "Expert in AI and financial mathematics guiding risk models.",
-      "imageAsset": "/assets/advisors/sandeep.png",
       "linkedIn": "https://linkedin.com"
     },
     {
