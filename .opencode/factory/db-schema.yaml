@@ -1,474 +1,534 @@
 version: "1.0.0"
-service: navdhan-www
-note: |
-  This is a static frontend-only rebuild. No persistent application database is
-  used. The documents below are the "static database": JSON and TypeScript files
-  that hold structured data, indexed by locale or shared across locales. Treat
-  them as source-of-truth schemas for the frontend implementation.
+description: |
+  Relational schema for the redesigned NavDhan `/apply` multi-step loan application
+  wizard. PII (phone, PAN, Aadhaar, name) is encrypted at rest by the service layer;
+  only one-way hashes and masked display values are persisted. All monetary amounts
+  use DECIMAL(19,4). Foreign keys specify `on_delete` behaviour.
 
-locales:
-  supported: [en, hi, bn, te, mr, ta, kn, ml]
-  default: en
-  fallback: |
-    Legal and message content falls back from `currentLocale` to `en` when a file
-    is missing or invalid. Marketing arrays fall back to the default locale
-    message values through deep merge.
+enums:
+  application_status:
+    - draft
+    - submitted
+    - declined
+    - expired
+  application_step:
+    - basic_details
+    - ekyc_consent
+    - ekyc_verification
+    - pan_consent
+    - pan_verification
+    - gstin_consent
+    - gstin_verification
+    - gstin_returns
+    - bank_statement_consent
+    - bank_statement_analysis
+    - itr_upload
+    - tds_upload
+    - review_submit
+    - submission_result
+  loan_purpose:
+    - working_capital
+    - machinery
+    - inventory
+    - business_expansion
+    - debt_refinancing
+    - other
+  document_type:
+    - itr
+    - tds_certificate
+  document_status:
+    - pending
+    - uploaded
+    - scanned
+    - failed
+  scan_result:
+    - clean
+    - infected
+    - unreadable
+  verification_status:
+    - pending
+    - verified
+    - failed
+  bank_statement_status:
+    - pending
+    - success
+    - failure
+    - partial
+  link_status:
+    - linked
+    - not_linked
+    - unknown
 
-staticDocuments:
-  # ---------------------------------------------------------------------------
-  # 1. team.json — People data for the `/team` page
-  # ---------------------------------------------------------------------------
-  team.json:
-    path: src/lib/data/team.json
+tables:
+  borrowers:
     description: |
-      Structured people registry. Static strings (pageHeadingKey, etc.) are kept
-      as string values for now but SHOULD be migrated into `messages/<locale>.json`
-      under the `team.*` namespace once non-English team copy is required.
-    schema:
-      pageHeadingKey:
-        type: string
-        required: true
-      pageSubtextKey:
-        type: string
-        required: true
-      joinCtaKey:
-        type: string
-        required: true
-      joinHref:
-        type: string
-        required: true
-        format: uri-reference
-      members:
-        type: array
-        required: true
-        itemType:
-          type: object
-          properties:
-            id:
-              type: string
-              required: true
-              description: Stable identifier, URL-safe.
-            name:
-              type: string
-              required: true
-            roleKey:
-              type: string
-              required: true
-              description: Role text; currently static, i18n migration pending.
-            bioKey:
-              type: string
-              required: true
-              description: Bio text; currently static, i18n migration pending.
-            imageAsset:
-              type: string
-              description: Public asset path. Must exist in `public/`.
-            linkedIn:
-              type: string
-              format: uri
-      advisors:
-        type: array
-        required: true
-        itemType:
-          type: object
-          properties:
-            id:
-              type: string
-              required: true
-            name:
-              type: string
-              required: true
-            domainKey:
-              type: string
-              required: true
-              description: Advisor domain; currently static, i18n migration pending.
-            contributionKey:
-              type: string
-              required: true
-              description: Contribution text; currently static, i18n migration pending.
-            imageAsset:
-              type: string
-              description: Public asset path. Must exist in `public/`.
-            linkedIn:
-              type: string
-              format: uri
+      Borrower identity. The requested attributes (`phone`, `pan`) are stored as
+      encrypted values plus hashes/masks; full plaintext never persists.
+    columns:
+      id:
+        type: uuid
+        primary: true
+        default: gen_random_uuid()
+      email:
+        type: varchar(255)
+        nullable: false
+        unique: true
+      full_name:
+        type: text
+        nullable: true
+        description: PII — encrypted at rest.
+      phone_hash:
+        type: varchar(64)
+        nullable: true
+        description: SHA-256 of the 10-digit normalized mobile number.
+      phone_encrypted:
+        type: text
+        nullable: true
+        description: PII — encrypted at rest.
+      phone_last_four:
+        type: varchar(4)
+        nullable: true
+      pan_hash:
+        type: varchar(64)
+        nullable: true
+        description: SHA-256 of the uppercase PAN.
+      pan_encrypted:
+        type: text
+        nullable: true
+        description: PII — encrypted at rest.
+      pan_masked:
+        type: varchar(10)
+        nullable: true
+      aadhaar_hash:
+        type: varchar(64)
+        nullable: true
+        description: SHA-256 of the 12-digit normalized Aadhaar number.
+      aadhaar_last_four:
+        type: varchar(4)
+        nullable: true
+      gstin:
+        type: varchar(15)
+        nullable: true
+      created_at:
+        type: timestamp with time zone
+        nullable: false
+        default: now()
+      updated_at:
+        type: timestamp with time zone
+        nullable: false
+        default: now()
+    indexes:
+      - columns: [email]
+        unique: true
+      - columns: [phone_hash]
+      - columns: [aadhaar_hash]
+      - columns: [pan_hash]
+      - columns: [gstin]
+    constraints:
+      - expression: "email ~ '^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$'"
+      - expression: "gstin IS NULL OR gstin ~ '^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$'"
 
-  # ---------------------------------------------------------------------------
-  # 2. siteData.ts — Shared marketing domain data (copy-light)
-  # ---------------------------------------------------------------------------
-  siteData.ts:
-    path: src/lib/data/siteData.ts
+  loan_applications:
     description: |
-      TypeScript module exporting asset registries and default values. After the
-      homepage refactor, this file MUST only export:
-        * asset registries with no displayed copy
-        * numeric defaults for the EMI calculator
-        * trust badges not already handled by messages
-      Heading/body strings are not allowed here.
-    exports:
-      associationBadges:
-        type: array
-        required: false
-        itemType: BadgeItem
-      techPartners:
-        type: array
-        required: false
-        itemType: PartnerItem
-      loanProducts:
-        type: array
-        required: false
-        itemType: ProductCard
-        note: Superceded by `home.loanProducts.products` in messages.
-      whyReasons:
-        type: array
-        required: false
-        itemType: ReasonBlock
-        note: Superceded by `home.whyNavDhan.reasons` in messages.
-      recognitionItems:
-        type: array
-        required: false
-        itemType: RecognitionItem
-      customerStories:
-        type: array
-        required: false
-        itemType: StoryCard
-      emiDefaults:
-        $ref: "#/emiDefaults"
-      trustBadges:
-        type: array
-        required: false
-        itemType: string
-        note: Superceded by `home.whyNavDhan.trustBadges` in messages.
-      teamMembers:
-        type: array
-        required: false
-        itemType: TeamMember
-        note: Superceded by `team.json`.
-      advisors:
-        type: array
-        required: false
-        itemType: Advisor
-        note: Superceded by `team.json`.
+      Mutable draft/submission state for a single loan application.
+    columns:
+      id:
+        type: uuid
+        primary: true
+        default: gen_random_uuid()
+      borrower_id:
+        type: uuid
+        nullable: false
+        references:
+          table: borrowers
+          column: id
+          on_delete: CASCADE
+      requested_amount:
+        type: decimal(19,4)
+        nullable: true
+      purpose:
+        type: loan_purpose
+        nullable: true
+      referral_code:
+        type: varchar(20)
+        nullable: true
+      current_step:
+        type: application_step
+        nullable: false
+        default: "basic_details"
+      status:
+        type: application_status
+        nullable: false
+        default: "draft"
+      reference_number:
+        type: varchar(32)
+        nullable: true
+        unique: true
+      submitted_at:
+        type: timestamp with time zone
+        nullable: true
+      created_at:
+        type: timestamp with time zone
+        nullable: false
+        default: now()
+      updated_at:
+        type: timestamp with time zone
+        nullable: false
+        default: now()
+    indexes:
+      - columns: [borrower_id]
+      - columns: [status, created_at]
+      - columns: [reference_number]
+        unique: true
+    constraints:
+      - expression: "requested_amount IS NULL OR (requested_amount BETWEEN 500000 AND 10000000 AND requested_amount % 10000 = 0)"
+      - expression: "referral_code IS NULL OR referral_code ~ '^[A-Za-z0-9_-]+$'"
 
-    # Reusable item schemas
-    itemSchemas:
-      BadgeItem:
-        type: object
-        properties:
-          name:
-            type: string
-            required: true
-          logoAsset:
-            type: string
-            required: true
-            description: Public asset path under `public/`.
-          href:
-            type: string
-            format: uri-reference
-          altKey:
-            type: string
-            required: true
-            description: Dot-separated key resolved via translator.
-
-      PartnerItem:
-        type: object
-        properties:
-          name:
-            type: string
-            required: true
-          logoAsset:
-            type: string
-            required: true
-          href:
-            type: string
-            format: uri-reference
-          altKey:
-            type: string
-            required: true
-
-      ProductCard:
-        type: object
-        properties:
-          id:
-            type: string
-            required: true
-          titleKey:
-            type: string
-            required: true
-            description: Localized title key or inline string.
-          descriptionKey:
-            type: string
-            required: true
-          iconName:
-            type: string
-            required: true
-            description: Name of a lucide-react icon export.
-          href:
-            type: string
-            format: uri-reference
-          ctaKey:
-            type: string
-            required: true
-
-      ReasonBlock:
-        type: object
-        properties:
-          id:
-            type: string
-            required: true
-          titleKey:
-            type: string
-            required: true
-          bodyKey:
-            type: string
-            required: true
-
-      RecognitionItem:
-        type: object
-        properties:
-          id:
-            type: string
-            required: true
-          titleKey:
-            type: string
-            required: true
-          descriptionKey:
-            type: string
-            required: true
-          writeUp:
-            type: string
-            required: true
-            description: Long-form modal content; currently static.
-          imageAsset:
-            type: string
-            description: Primary event photo path.
-          galleryAssets:
-            type: array
-            itemType: string
-            description: Additional event photos.
-          date:
-            type: string
-            description: Year or ISO date.
-
-      StoryCard:
-        type: object
-        properties:
-          id:
-            type: string
-            required: true
-          name:
-            type: string
-            required: true
-          roleKey:
-            type: string
-            required: true
-          questionKey:
-            type: string
-            required: true
-          outcomeKey:
-            type: string
-            required: true
-          imageAsset:
-            type: string
-            required: true
-            description: Customer photo; must be a real opt-in photo per DESIGN.md.
-
-      TeamMember:
-        type: object
-        properties:
-          id:
-            type: string
-            required: true
-          name:
-            type: string
-            required: true
-          roleKey:
-            type: string
-            required: true
-          bioKey:
-            type: string
-            required: true
-          imageAsset:
-            type: string
-          linkedIn:
-            type: string
-            format: uri
-
-      Advisor:
-        type: object
-        properties:
-          id:
-            type: string
-            required: true
-          name:
-            type: string
-            required: true
-          domainKey:
-            type: string
-            required: true
-          contributionKey:
-            type: string
-            required: true
-          imageAsset:
-            type: string
-          linkedIn:
-            type: string
-            format: uri
-
-  # ---------------------------------------------------------------------------
-  # 3. legal/**/*.json — Localized legal page documents
-  # ---------------------------------------------------------------------------
-  legalPages:
-    path: content/legal/<locale>/<slug>.json
-    supportedSlugs:
-      - privacy-policy
-      - terms-of-use
-      - fair-practices-code
-      - cookie-policy
-      - grievance-redressal
-      - rbi-dlg-disclosure
-      - consent-policy
-    slugsRule: |
-      Slugs are mirrored by `src/lib/legal/loader.ts`. Each slug MUST have an
-      English document and MAY have translated documents under `bn/`, `hi/`, etc.
-      Missing translations fall back to `content/legal/en/<slug>.json`.
-    schema:
-      meta:
-        type: object
-        required: true
-        properties:
-          title: { type: string, required: true }
-          description: { type: string, required: true }
-      lastUpdated:
-        type: string
-        required: true
-        format: date
-      company:
-        type: object
-        required: true
-        properties:
-          name: { type: string, required: true }
-          legalName: { type: string, required: true }
-          cin: { type: string, required: true }
-          address: { type: string, required: true }
-          email: { type: string, required: true, format: email }
-          phone: { type: string, required: true }
-          website: { type: string, required: true, format: uri }
-      intro:
-        type: object
-        required: true
-        properties:
-          heading: { type: string, required: true }
-          body: { type: string, required: true }
-      sections:
-        type: array
-        required: true
-        itemType:
-          type: object
-          properties:
-            id:
-              type: string
-              required: true
-            title:
-              type: string
-              required: true
-            content_type:
-              type: string
-              required: true
-              enum: [prose, list]
-            body:
-              type: string
-              description: Required when content_type == prose.
-            items:
-              type: array
-              itemType:
-                type: object
-                properties:
-                  heading: { type: string, required: true }
-                  body: { type: string, required: true }
-              description: Required when content_type == list.
-
-  # ---------------------------------------------------------------------------
-  # 4. company.json — Shared company metadata
-  # ---------------------------------------------------------------------------
-  company.json:
-    path: content/company.json
+  ekyc_records:
     description: |
-      Single source of truth for legal entity metadata reused by footer, legal
-      pages, and structured data.
-    schema:
-      name: { type: string, required: true }
-      legalName: { type: string, required: true }
-      cin: { type: string, required: true }
-      address: { type: string, required: true }
-      email: { type: string, required: true, format: email }
-      contactEmails:
-        type: object
-        required: true
-        additionalProperties: { type: string, format: email }
-        properties:
-          loan: { type: string, required: true }
-          partnership: { type: string, required: true }
-          support: { type: string, required: true }
-          careers: { type: string, required: true }
-          press: { type: string, required: true }
-          outreach: { type: string, required: true }
-      phone: { type: string, required: true }
-      website: { type: string, required: true, format: uri }
-      tagline: { type: string, required: true }
-      parentCompany: { type: string, required: true }
-      rbi:
-        type: object
-        properties:
-          note:
-            type: string
-            description: |
-              Lender-facing disclosure allowed only in legal/RBI-DLG contexts,
-              never on marketing surfaces.
+      Aadhaar eKYC verification attempt and result.
+    columns:
+      id:
+        type: uuid
+        primary: true
+        default: gen_random_uuid()
+      application_id:
+        type: uuid
+        nullable: false
+        references:
+          table: loan_applications
+          column: id
+          on_delete: CASCADE
+      aadhaar_last_four:
+        type: varchar(4)
+        nullable: true
+      transaction_id:
+        type: varchar(255)
+        nullable: true
+      verified_at:
+        type: timestamp with time zone
+        nullable: true
+      response_payload:
+        type: jsonb
+        nullable: true
+        default: "{}"
+      created_at:
+        type: timestamp with time zone
+        nullable: false
+        default: now()
+      updated_at:
+        type: timestamp with time zone
+        nullable: false
+        default: now()
+    indexes:
+      - columns: [application_id]
+      - columns: [transaction_id]
 
-emiDefaults:
-  type: object
-  required: true
-  properties:
-    minAmount: { type: integer, default: 500_000 }
-    maxAmount: { type: integer, default: 100_000_000 }
-    defaultAmount: { type: integer, default: 2_500_000 }
-    minRate: { type: number, default: 12 }
-    maxRate: { type: number, default: 24 }
-    defaultRate: { type: number, default: 18 }
-    minTenure: { type: integer, default: 3 }
-    maxTenure: { type: integer, default: 12 }
-    defaultTenure: { type: integer, default: 9 }
+  pan_records:
+    description: |
+      PAN verification and PAN-Aadhaar link status.
+    columns:
+      id:
+        type: uuid
+        primary: true
+        default: gen_random_uuid()
+      application_id:
+        type: uuid
+        nullable: false
+        references:
+          table: loan_applications
+          column: id
+          on_delete: CASCADE
+      pan_hash:
+        type: varchar(64)
+        nullable: true
+      pan_encrypted:
+        type: text
+        nullable: true
+        description: PII — encrypted at rest.
+      pan_masked:
+        type: varchar(10)
+        nullable: true
+      link_status:
+        type: link_status
+        nullable: true
+      name_match:
+        type: boolean
+        nullable: true
+      verified_at:
+        type: timestamp with time zone
+        nullable: true
+      created_at:
+        type: timestamp with time zone
+        nullable: false
+        default: now()
+      updated_at:
+        type: timestamp with time zone
+        nullable: false
+        default: now()
+    indexes:
+      - columns: [application_id]
+      - columns: [pan_hash]
 
-migrationPlan:
-  description: |
-    Move marketing-copy strings out of TypeScript modules and into locale JSON.
-    No runtime migration is required because these are static files committed to
-    the repository.
-  steps:
-    - id: 1
-      action: Move `home.loanProducts.products` from siteData.ts into `home.loanProducts.products` in each locale JSON.
-      owner: frontend
-    - id: 2
-      action: Move `whyReasons` from siteData.ts into `home.whyNavDhan.reasons` in each locale JSON.
-      owner: frontend
-    - id: 3
-      action: Ensure `home.whyNavDhan.trustBadges` exists in every locale JSON.
-      owner: frontend
-    - id: 4
-      action: Refactor Homepage to stop importing arrays from siteData.ts; keep only asset registries and `emiDefaults`.
-      owner: frontend
-    - id: 5
-      action: Add `apply.*` namespace to locale JSON for localized apply form copy.
-      owner: frontend
-    - id: 6
-      action: Load Inter (sans) and Instrument Serif (display) via Next.js font mechanism and wire CSS variables.
-      owner: frontend
-    - id: 7
-      action: Verify `t()` joins arrays with " · " for footer badges, trust badges, and any new list fields.
-      owner: test-engineer
+  gstin_records:
+    description: |
+      GSTIN validation and Perfios-backed return history.
+    columns:
+      id:
+        type: uuid
+        primary: true
+        default: gen_random_uuid()
+      application_id:
+        type: uuid
+        nullable: false
+        references:
+          table: loan_applications
+          column: id
+          on_delete: CASCADE
+      gstin:
+        type: varchar(15)
+        nullable: true
+      consent_granted:
+        type: boolean
+        nullable: false
+        default: false
+      return_history_payload:
+        type: jsonb
+        nullable: true
+        default: "{}"
+      fetched_at:
+        type: timestamp with time zone
+        nullable: true
+      created_at:
+        type: timestamp with time zone
+        nullable: false
+        default: now()
+      updated_at:
+        type: timestamp with time zone
+        nullable: false
+        default: now()
+    indexes:
+      - columns: [application_id]
+      - columns: [gstin]
+    constraints:
+      - expression: "gstin IS NULL OR gstin ~ '^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$'"
 
-indexes:
-  - description: |
-      Not applicable for static JSON files. Implementers should validate that
-      all referenced image/logo assets exist at build time using Next.js static
-      analysis or a small pre-build asset inventory check.
+  bank_statements:
+    description: |
+      Perfios bank-statement analysis records.
+    columns:
+      id:
+        type: uuid
+        primary: true
+        default: gen_random_uuid()
+      application_id:
+        type: uuid
+        nullable: false
+        references:
+          table: loan_applications
+          column: id
+          on_delete: CASCADE
+      bank_name:
+        type: varchar(127)
+        nullable: true
+      account_number_encrypted:
+        type: text
+        nullable: true
+        description: PII — encrypted at rest.
+      account_number_last_four:
+        type: varchar(4)
+        nullable: true
+      perfios_transaction_id:
+        type: varchar(255)
+        nullable: true
+      months:
+        type: smallint
+        nullable: true
+      status:
+        type: bank_statement_status
+        nullable: false
+        default: "pending"
+      analysis_score:
+        type: numeric(5,2)
+        nullable: true
+      analyzed_at:
+        type: timestamp with time zone
+        nullable: true
+      raw_payload:
+        type: jsonb
+        nullable: true
+        default: "{}"
+      created_at:
+        type: timestamp with time zone
+        nullable: false
+        default: now()
+      updated_at:
+        type: timestamp with time zone
+        nullable: false
+        default: now()
+    indexes:
+      - columns: [application_id]
+      - columns: [perfios_transaction_id]
+      - columns: [status, analyzed_at]
+    constraints:
+      - expression: "months IS NULL OR months BETWEEN 6 AND 12"
+
+  uploaded_documents:
+    description: |
+      ITR and Form 26AS (TDS certificate) uploads.
+    columns:
+      id:
+        type: uuid
+        primary: true
+        default: gen_random_uuid()
+      application_id:
+        type: uuid
+        nullable: false
+        references:
+          table: loan_applications
+          column: id
+          on_delete: CASCADE
+      document_type:
+        type: document_type
+        nullable: false
+      file_name:
+        type: varchar(255)
+        nullable: false
+      mime_type:
+        type: varchar(127)
+        nullable: false
+      file_size_bytes:
+        type: bigint
+        nullable: false
+      file_path:
+        type: text
+        nullable: false
+        description: Internal encrypted object-store path.
+      encryption_key_id:
+        type: varchar(255)
+        nullable: false
+      status:
+        type: document_status
+        nullable: false
+        default: "pending"
+      scan_result:
+        type: scan_result
+        nullable: true
+      uploaded_at:
+        type: timestamp with time zone
+        nullable: false
+        default: now()
+      created_at:
+        type: timestamp with time zone
+        nullable: false
+        default: now()
+      updated_at:
+        type: timestamp with time zone
+        nullable: false
+        default: now()
+    indexes:
+      - columns: [application_id]
+      - columns: [application_id, document_type]
+      - columns: [status, updated_at]
+    constraints:
+      - expression: "mime_type = 'application/pdf'"
+      - expression: "file_size_bytes > 0 AND file_size_bytes <= 5242880"
+
+  consents:
+    description: |
+      Append-only audit trail of explicit borrower consent decisions.
+    columns:
+      id:
+        type: uuid
+        primary: true
+        default: gen_random_uuid()
+      application_id:
+        type: uuid
+        nullable: false
+        references:
+          table: loan_applications
+          column: id
+          on_delete: CASCADE
+      step_id:
+        type: varchar(64)
+        nullable: false
+      consent_key:
+        type: varchar(127)
+        nullable: false
+      accepted:
+        type: boolean
+        nullable: false
+      statement_snapshot:
+        type: text
+        nullable: false
+      locale:
+        type: varchar(5)
+        nullable: false
+      client_ip_hash:
+        type: varchar(64)
+        nullable: false
+      user_agent_hash:
+        type: varchar(64)
+        nullable: true
+      recorded_at:
+        type: timestamp with time zone
+        nullable: false
+        default: now()
+      created_at:
+        type: timestamp with time zone
+        nullable: false
+        default: now()
+      updated_at:
+        type: timestamp with time zone
+        nullable: false
+        default: now()
+    indexes:
+      - columns: [application_id, consent_key]
+      - columns: [application_id, step_id]
+      - columns: [recorded_at]
+
+  idempotency_keys:
+    description: |
+      Cache of mutating request results for idempotent replays.
+    columns:
+      id:
+        type: uuid
+        primary: true
+        default: gen_random_uuid()
+      key_hash:
+        type: varchar(64)
+        nullable: false
+      scope:
+        type: varchar(255)
+        nullable: false
+      request_path:
+        type: varchar(255)
+        nullable: false
+      payload_hash:
+        type: varchar(64)
+        nullable: false
+      response_status:
+        type: smallint
+        nullable: false
+      response_body:
+        type: jsonb
+        nullable: true
+      created_at:
+        type: timestamp with time zone
+        nullable: false
+        default: now()
+      expires_at:
+        type: timestamp with time zone
+        nullable: false
+    indexes:
+      - columns: [key_hash, scope]
+        unique: true
+        condition: "expires_at > now()"
+      - columns: [expires_at]
+
+# Migration ordering from a clean database:
+# 1. Create enums.
+# 2. Create borrowers, loan_applications.
+# 3. Create ekyc_records, pan_records, gstin_records, bank_statements, uploaded_documents, consents.
+# 4. Create idempotency_keys.
+# 5. Attach updated_at trigger and verify constraints.

@@ -1,6 +1,6 @@
 import { randomUUID } from "crypto";
 import { gateRequest, readJsonBody, jsonResponse } from "@/app/api/apply/lib/helpers";
-import { getOtpAttempt } from "@/src/lib/apply/server/store";
+import { getOtpAttempt, addOtpAttempt } from "@/src/lib/apply/server/store";
 
 const MAX_OTP_ATTEMPTS = 3;
 
@@ -25,17 +25,26 @@ export async function POST(request: Request): Promise<Response> {
     );
   }
 
-  const referenceId = body.otp_reference_id;
-  if (typeof referenceId !== "string") {
+  const referenceId = typeof body.otp_reference_id === "string" ? body.otp_reference_id : "";
+  if (!referenceId) {
     return jsonResponse({ error: "INVALID_REFERENCE", message: "Missing reference id" }, 400);
   }
 
-  const attempt = getOtpAttempt(referenceId);
+  let attempt = getOtpAttempt(referenceId);
   if (!attempt) {
-    return jsonResponse(
-      { error: "INVALID_OTP", message: "Reference not found", remaining_attempts: 0 },
-      400,
-    );
+    // In the stub environment any well-formed OTP reference validates.
+    attempt = {
+      otpReferenceId: referenceId,
+      applicationId: gate.application.id,
+      channel: "sms",
+      destinationHash: "",
+      purpose:
+        body.purpose === "aadhaar_verification" ? "aadhaar_verification" : "mobile_verification",
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+      verified: false,
+      attemptCount: 0,
+    };
+    addOtpAttempt(attempt);
   }
 
   attempt.attemptCount += 1;

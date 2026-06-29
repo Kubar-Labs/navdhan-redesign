@@ -1,5 +1,3 @@
-"use client";
-
 export const PURPOSE_OPTIONS = [
   "working_capital",
   "machinery",

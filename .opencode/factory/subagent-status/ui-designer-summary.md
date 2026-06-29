@@ -1,42 +1,39 @@
-# UI Designer Summary — Stage 2 Design
+# UI Designer Summary
+
+## Task
+
+Design the component interfaces, layout parameters, and props for the redesigned `/apply` loan application portal, aligning them with the Calm Credibility design system and the API contract.
 
 ## What was done
 
-1. **Read contracts and design brief**
-   - `.opencode/factory/api-contract.yaml`
-   - `.opencode/factory/db-schema.yaml`
-   - `DESIGN.md`
+1. **Reviewed source material**
+   - `DESIGN.md` for tone, tokens, and apply microcopy
+   - `api-contract.yaml` for step sequence, schemas, and consent payloads
+   - Existing `src/components/apply/ApplyWizard.tsx` to understand current structure
+   - `.opencode/factory/stitch-state.json` for design system tokens
 
-2. **Established UI component registry**
-   - Created `.opencode/factory/ui-component-registry.json` with component interfaces, props, message-key mappings, and design tokens aligned with the contract.
+2. **Designed four required components**
+   - `ApplyWizard` — state wrapper and responsive layout grid (centered max-w-2xl white card, rounded-2xl, slate-200 border, diffused shadow)
+   - `ConsentModal` / `ConsentOverlay` — Sahamati-aligned disclosures with purpose, data points, accessors, versioned statement snapshot, and explicit checkbox trigger
+   - `PerfiosVerificationStep` — dynamic verification shell supporting eKYC OTP, PAN link status, GSTIN validation/GST returns, and Net Banking analysis loader
+   - `DocumentUploadZone` — drag-and-drop upload zone for `itr` and `tds_certificate` with MIME/size validation and status feedback
 
-3. **Font token system**
-   - Documented `--font-inter` (UI/body/forms) and `--font-instrument-serif` (hero emphasis) with Next.js font contract details, fallback stacks, and `font-display: swap` requirement.
+3. **Updated the UI component registry**
+   - Bumped `ui-component-registry.json` to v1.1.0
+   - Added shared types matching API contract schemas (`ApplicationStep`, `ApplicationStatus`, `LoanPurpose`, `DocumentType`, `LinkStatus`, `VerificationMode`, `ConsentReceipt`, `FinalConsents`, `SubmissionResult`, `Document`, `ApiError`)
+   - Recorded each component's location, props, slots, variants, and styling notes
+   - Added `messageShapes` for `ApplyMessages` and `PerfiosStepMessages`
 
-4. **Homepage component layout mapping**
-   - Mapped `LoanProducts`, `WhyNavDhan`, `RecognitionCarousel`, and `CustomerStories` to their contract message-key arrays and item schemas (`ProductListItem`, `ReasonListItem`, `RecognitionItem`, `StoryCard`).
-   - Confirmed list data must come from locale messages, not `siteData.ts`.
+4. **Delivered status report**
+   - Wrote `subagent-status/ui-designer-design.json`
+   - Wrote this summary file
 
-5. **Footer interface**
-   - Specified `Footer` props and data shape.
-   - Documented that `badges` array must render as a single string joined with " · " by `t()`.
+## Notes for @frontend
 
-6. **Localized apply form interface**
-   - Designed `ApplyForm` client component interface mapped to `apply.*` keys.
-   - Listed all form fields, validation rules, localized error messages, and the required `Idempotency-Key` header.
-
-7. **Team page layout and roles**
-   - Mapped `TeamPage` sections to `team.json` + `team.*` message keys.
-   - Noted that the `TeamCard` role key for Divyesh Reddy must change from "Marketplace Onboarding" to "Borrower Onboarding".
-
-## Files created/updated
-
-- `.opencode/factory/stitch-state.json` (created, null project state)
-- `.opencode/factory/ui-component-registry.json` (created)
-- `.opencode/factory/subagent-status/ui-designer-summary.md` (this file)
-
-## Notes for downstream agents
-
-- Existing `en.json` uses some non-contract key names (`home.whyNavdhan`, `home.stories`, `home.emi`). The registry follows the contract (`home.whyNavDhan`, `home.customerStories`, `home.emiCalculator`) and implementation should migrate accordingly.
-- The `apply.*` namespace must be added to all locale JSON files.
-- No production code was written.
+- Implement components exactly to the prop interfaces in `ui-component-registry.json`
+- All monetary display uses whole INR integers from the API; never format as floats for currency
+- Consent modals must block progress until affirmative opt-in is captured and recorded
+- `PerfiosVerificationStep` receives a pre-captured `ConsentReceipt`; it does not collect consent itself
+- `DocumentUploadZone` must enforce 5 MB PDF limit client-side before calling `/apply/documents/upload`
+- Use rounded-xl (12 px) cards, 1 px `nt-slate-200` borders, and `bg-nt-cream` for disclosure panels
+- Respect `prefers-reduced-motion` for any loading states

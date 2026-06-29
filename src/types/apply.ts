@@ -28,7 +28,7 @@ export type LoanPurpose =
   | "debt_refinancing"
   | "other";
 
-export type DocumentType = "itr" | "bank_statement" | "gst_return" | "other";
+export type DocumentType = "itr" | "tds_certificate" | "bank_statement" | "gst_return" | "other";
 export type DocumentStatus = "pending" | "uploaded" | "scanned" | "failed";
 export type ScanResult = "clean" | "infected" | "unreadable";
 export type PerfiosStatus = "pending" | "success" | "failure" | "partial";
@@ -40,16 +40,7 @@ export type ConsentStep =
   | "bank_statements"
   | "review_submit";
 
-export const SUPPORTED_LOCALES = [
-  "en",
-  "hi",
-  "bn",
-  "te",
-  "mr",
-  "ta",
-  "kn",
-  "ml",
-] as const;
+export const SUPPORTED_LOCALES = ["en", "hi", "bn", "te", "mr", "ta", "kn", "ml"] as const;
 
 export type SupportedLocale = (typeof SUPPORTED_LOCALES)[number];
 

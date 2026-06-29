@@ -1,0 +1,7 @@
+{
+  "status": "running",
+  "role": "backend",
+  "stdout": "/home/yash/opencode-workspace/navdhan-redesign-2026/.opencode/factory/subagent-status/backend-cdd.out.log",
+  "stderr": "/home/yash/opencode-workspace/navdhan-redesign-2026/.opencode/factory/subagent-status/backend-cdd-err.log",
+  "started_at": "2026-06-26T15:15:00+05:30"
+}

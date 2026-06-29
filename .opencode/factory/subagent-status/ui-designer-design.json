@@ -1,0 +1,20 @@
+{
+  "status": "completed",
+  "role": "ui-designer",
+  "stdout": "/home/yash/opencode-workspace/navdhan-redesign-2026/.opencode/factory/subagent-status/ui-designer-design.out.log",
+  "stderr": "/home/yash/opencode-workspace/navdhan-redesign-2026/.opencode/factory/subagent-status/ui-designer-design.err.log",
+  "started_at": "2026-06-26T03:47:14+05:30",
+  "completed_at": "2026-06-26T03:52:00+05:30",
+  "deliverables": [
+    "/home/yash/opencode-workspace/navdhan-redesign-2026/.opencode/factory/ui-component-registry.json"
+  ],
+  "summary": [
+    "Reviewed DESIGN.md, api-contract.yaml, and existing apply components",
+    "Designed ApplyWizard as state wrapper with centered max-w-2xl card layout",
+    "Designed ConsentModal and ConsentOverlay for Sahamati explicit consent capture",
+    "Designed PerfiosVerificationStep with dynamic ekyc/pan/gstin/gstin_returns/bank_statement modes",
+    "Designed DocumentUploadZone for itr and tds_certificate file drops with validation",
+    "Updated shared types to match API contract schemas",
+    "Recorded all component schemas, props, slots, variants, and styling notes in ui-component-registry.json"
+  ]
+}

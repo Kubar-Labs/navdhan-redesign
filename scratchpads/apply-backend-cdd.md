@@ -1,60 +1,74 @@
 # Apply Portal — Backend Component Design Document
 
-> **Scope:** Unit 3 (`/apply`) backend route handlers for the NavDhan loan-application wizard.  
+> **Scope:** Unit 3 (`/apply`) backend Route Handlers for the redesigned NavDhan loan-application wizard.  
 > **Branch:** `factory/navdhan-redesign/apply/backend`  
-> **Source of truth:** `.opencode/factory/apply-contract.yaml` (v1.1.0) and `.opencode/factory/db-schema.yaml` (v1.1.0).  
+> **Sources of truth:** `.opencode/factory/api-contract.yaml` (v1.0.0) and `.opencode/factory/db-schema.yaml` (v1.0.0).  
 > **Output type:** Design doc only — no production code is committed in this step.
 
 ---
 
 ## 1. Goals & constraints
 
-- Implement the public REST surface described in `apply-contract.yaml` as Next.js 15 App Router Route Handlers.
-- Enforce the `ApplicationWizard` state machine: linear step progression, no skipping, idempotent step upserts.
+- Implement the public REST surface described in `api-contract.yaml` as Next.js 15 App Router Route Handlers.
+- Enforce the `ApplicationWizard` state machine: linear step progression, no skipping, idempotent step transitions.
 - Keep all business logic out of route handlers; route files are thin adapters that delegate to services/repositories.
-- Satisfy the fintech-compliance rules from the factory global rules: idempotency for mutations, explicit transactions/row locking, no `float` for money, PII masked in responses and logs.
-- Make the implementation testable with the existing Vitest suite (`tests/apply/apply-api.test.ts`, `tests/apply/apply-validation.test.ts`).
+- Satisfy the four Kubar fintech rules:
+  1. `Idempotency-Key` on every mutation.
+  2. Explicit database transactions with row-level locking (`SELECT ... FOR UPDATE`) for financial state changes.
+  3. `DECIMAL` / `NUMERIC` (never `float`) for currency.
+  4. PII masked in API responses, logs, traces, and error messages.
+- Make the implementation testable with a contract-aligned in-memory repository until the PostgreSQL/Drizzle stack is wired.
 
 ### Tech assumptions
 
 - Next.js 15 App Router + TypeScript strict mode.
 - Route handlers receive a Web-API `Request` and return a native `Response`.
-- Cookies are read from the `Cookie` header directly so tests can call handlers outside a real Next.js request context.
-- Server-side validation uses a shared `app/apply/lib/validation.ts` module (also imported by tests) plus per-route Zod schemas for shape validation.
-- Persistence is exposed behind a repository interface.  For the GREEN/TDD phase an in-memory repository is sufficient to make the existing tests pass; production plugs in a PostgreSQL repository that follows `db-schema.yaml`.
+- Mutating handlers run in the **Node.js runtime** so Drizzle/PostgreSQL transactions and `SELECT ... FOR UPDATE` work. Set `export const runtime = "nodejs"` in every mutation route.
+- Drizzle ORM + `pg` for production persistence; an in-memory repository mirrors `db-schema.yaml` tables for the RED/TDD phase.
+- `zod` for request-body/schema validation; shared normalization helpers live in `src/lib/apply/validation.ts`.
+
+### Alignment notes
+
+- The current Vitest suite (`tests/apply/apply-api.test.ts`) targets an older route layout and step enum (`loan_intent`, `personal_contact`, etc.). Per the test-engineer summary, those tests must be refactored to the contract v1.0.0 routes and step names before GREEN-phase implementation. This CDD follows the contract, not the legacy tests.
+- `db-schema.yaml` v1.0.0 does not define a session-to-application mapping table. The backend needs one to satisfy the `__Host-nd_session` contract security scheme. This CDD treats an `apply_sessions` (or `loan_applications.session_id_hash`) bridge as a required implementation detail and flags it for database-team ratification.
 
 ---
 
 ## 2. File layout
 
 ```text
-app/api/apply/state/route.ts                 # GET /api/apply/state, POST /api/apply/state
-app/api/apply/otp/send/route.ts              # POST /api/apply/otp/send
-app/api/apply/otp/verify/route.ts            # POST /api/apply/otp/verify
-app/api/apply/documents/upload-url/route.ts  # POST /api/apply/documents/upload-url
-app/api/apply/documents/upload/route.ts      # POST /api/apply/documents/upload
-app/api/apply/perfios/initiate/route.ts      # POST /api/apply/perfios/initiate
-app/api/apply/perfios/callback/route.ts      # POST /api/apply/perfios/callback
-app/api/apply/perfios/status/route.ts        # GET /api/apply/perfios/status
-app/api/apply/submit/route.ts                # POST /api/apply/submit
-app/api/apply/offers/route.ts                # GET /api/apply/offers
-app/api/apply/consent/route.ts               # POST /api/apply/consent
+app/api/apply/initialize/route.ts
+app/api/apply/state/route.ts
+app/api/apply/ekyc/send-otp/route.ts
+app/api/apply/ekyc/verify/route.ts
+app/api/apply/pan/verify/route.ts
+app/api/apply/gstin/verify/route.ts
+app/api/apply/gstin/fetch-returns/route.ts
+app/api/apply/bank-statement/analyze/route.ts
+app/api/apply/bank-statement/callback/route.ts        # Perfios webhook (not in public contract)
+app/api/apply/bank-statement/status/route.ts          # Optional polling helper
+app/api/apply/documents/upload/route.ts
+app/api/apply/submit/route.ts
+app/api/apply/consent/route.ts
 
-app/apply/lib/
-  validation.ts           # Shared field validators used by routes and UI tests
-  session.ts              # Cookie parsing, session-id extraction, expiry checks
-  csrf.ts                 # CSRF custom header enforcement
-  rate-limit.ts           # Lightweight token-bucket rate-limit stubs
+src/lib/apply/server/
+  session.ts              # Cookie parsing, session-id extraction
+  csrf.ts                 # x-navdhan-requested-with enforcement
+  errors.ts               # Standard JSON error builders
   pii.ts                  # Masking, hashing, encryption helpers
-  repository.ts           # Application / applicant / document / consent / offer store
-  idempotency.ts          # Idempotency-key cache / deterministic-key helper
-  errors.ts               # Common error response builder
+  idempotency.ts          # Idempotency cache check/store
+  rate-limit.ts           # In-memory token-bucket stubs
+  validation.ts           # Shared field validators
+  repository.ts           # Repository interface + factory
+  repository-memory.ts    # In-memory implementation of db-schema.yaml tables
+  repository-pg.ts        # Drizzle/PostgreSQL implementation
+  transactions.ts         # Unit-of-work runner with row locking
 
-app/apply/services/
-  otp-service.ts          # OTP stub provider
-  perfios-service.ts      # Perfios stub provider
-  document-service.ts     # Presigned URL + base64 upload + scan stub
-  submission-service.ts   # Final validation, reference generation, lender matching stub
+src/lib/apply/services/
+  otp-service.ts          # Aadhaar OTP stub adapter
+  perfios-service.ts      # Perfios eKYC, PAN, GST, bank-statement adapter
+  document-service.ts     # PDF validation, scan stub, object-store path builder
+  submission-service.ts   # Final checks, reference generation, lender-matching stub
 ```
 
 ---
@@ -64,335 +78,425 @@ app/apply/services/
 ### 3.1 Session cookie
 
 - **Name:** `__Host-nd_session`
-- **Attributes:** `HttpOnly; Secure; SameSite=Lax; Path=/`
-- **Value:** Opaque session token (UUID).  Sent on every request via the `Cookie` header.
-- **Expiry:** 30 minutes of inactivity, refreshed on every successful request.
-- **Lookup:** `applications.session_id` stores a SHA-256 hash of the cookie value; the cookie value itself is never persisted.
-- **Missing cookie handling:**
-  - `GET /api/apply/state` returns **`401 SESSION_INVALID`** when the cookie is absent (per `apply-api.test.ts`).
-  - All mutating routes return **`401 SESSION_INVALID`** when the cookie is absent.
+- **Attributes:** `HttpOnly; Secure; SameSite=Lax; Path=/; Max-Age=1800`
+- **Value:** Cryptographically random UUID generated by `/api/apply/initialize` or a landing-page middleware.
+- **Lifetime:** 30 minutes of inactivity, refreshed on every successful request.
+- **Lookup:** The cookie value is hashed with SHA-256 and stored in an `apply_sessions` table (`session_hash` -> `application_id`, `borrower_id`, `expires_at`). The raw cookie value is never persisted.
+- **Missing/invalid cookie:** All `/api/apply/*` routes except the landing-page middleware return **`401 SESSION_INVALID`** with `message_i18n_key: apply.errors.sessionExpired`.
 
-> **Note:** The contract says `GET /api/apply/state` creates a draft if none exists.  The test suite requires a session cookie to be present before any portal request.  The implementation therefore treats the cookie as a mandatory prerequisite; the route creates a draft only when a valid cookie is present but no application exists.
+**Schema bridge note:** `db-schema.yaml` v1.0.0 does not define a session table. Until it is added, implement the lookup with a small `apply_sessions` table or a `session_id_hash` column on `loan_applications` that is created by the migration that deploys the new routes. The contract expects the cookie to be authoritative.
 
 ### 3.2 CSRF enforcement
 
 - **Header:** `x-navdhan-requested-with: apply`
-- **Applies to:** `POST`, `PUT`, `PATCH` on `/api/apply/*`.
-- **Missing/invalid header:** return **`403 FORBIDDEN`** with body `{ "error": "CSRF_INVALID" }`.
+- **Applies to:** All `POST`, `PUT`, `PATCH` on `/api/apply/*`.
+- **Missing/invalid header:** return **`403 CSRF_INVALID`**.
 - `GET` routes are read-only and do not require the header.
 
 ### 3.3 Rate limiting (lightweight stubs)
 
-Stored in process memory (`Map`).  Production must be replaced by Redis.
+Stored in process memory for the MVP; production replaces with Redis.
 
-| Scope | Target | Limit | Window | Key |
-|---|---|---|---|---|
-| `global` | all `/api/apply/*` | 100 | 60 s | path (or global counter) |
-| `per_ip` | `POST /api/apply/otp/send` | 10 | 60 s | hash(client IP) |
-| `per_session` | `POST /api/apply/otp/verify` | 5 | 300 s | session hash |
+| Scope         | Route                       | Limit | Window | Key                                |
+| ------------- | --------------------------- | ----- | ------ | ---------------------------------- |
+| `global`      | all `/api/apply/*`          | 200   | 60 s   | global counter (test env disables) |
+| `per_session` | `POST /apply/ekyc/send-otp` | 5     | 300 s  | SHA-256(session id)                |
+| `per_session` | `POST /apply/ekyc/verify`   | 10    | 300 s  | SHA-256(session id)                |
+| `per_session` | `POST /apply/submit`        | 5     | 60 s   | SHA-256(session id)                |
+| `per_ip`      | all mutations               | 60    | 60 s   | SHA-256(client IP)                 |
 
 - On breach return **`429 RATE_LIMITED`** with `retry_after_seconds`.
-- For the test suite the limits are high enough that normal test runs never exhaust them.
+- For the test harness the limits are set high enough that normal test runs never exhaust them.
 
 ### 3.4 Validation & sanitization
 
 All string fields are:
 
 1. Trimmed of leading/trailing whitespace.
-2. Stripped of HTML, control characters, zero-width joiners.
+2. Stripped of control characters and zero-width joiners.
+3. Bound-checked against contract max lengths.
 
 Specific normalizations:
 
-| Field | Rule |
-|---|---|
-| `mobile_number` | strip non-digits, reject country prefix, must be 10 digits starting with 6–9 |
-| `pan_number` | uppercase-on-normalize; validate `[A-Z]{5}[0-9]{4}[A-Z]` |
-| `gstin` | uppercase; validate 15-char GSTIN regex |
-| `aadhaar_number` | 12 digits only; never returned full |
-| `aadhaar_otp` | 6 digits |
-| `email` | lower-case; max 255; RFC-ish regex |
+| Field            | Rule                                                                         |
+| ---------------- | ---------------------------------------------------------------------------- |
+| `phone`          | strip non-digits, reject country prefix, must be 10 digits starting with 6–9 |
+| `pan_number`     | uppercase-on-normalize; validate `[A-Z]{5}[0-9]{4}[A-Z]`                     |
+| `gstin`          | uppercase; validate 15-char GSTIN regex                                      |
+| `aadhaar_number` | strip non-digits, must be 12 digits; full value is never persisted           |
+| `otp`            | exactly 6 digits                                                             |
+| `email`          | lower-case; max 255; RFC-5322-ish regex                                      |
+| `full_name`      | 2–150 chars; allow letters, spaces, apostrophes, hyphens, dots               |
 
-Validation helpers live in `app/apply/lib/validation.ts` so `apply-validation.test.ts` passes and routes reuse them.
+Validation helpers live in `src/lib/apply/validation.ts`. Route handlers compose them into `zod` schemas so that **shape** and **business** validations share one error response format.
 
 ### 3.5 PII handling
 
-| Field | At-rest storage | Returned to client |
-|---|---|---|
-| `full_name` | encrypted (`applicants.full_name`) | not in MVP state summary |
-| `mobile_number` | SHA-256 hash + encrypted ciphertext + last 4 | masked `91-XXXXXX{last4}` |
-| `email` | SHA-256 hash + encrypted ciphertext | not returned full (future: masked prefix) |
-| `aadhaar_number` | SHA-256 hash + last 4 only; full never persisted | masked `XXXX XXXX {last4}` |
-| `pan_number` | SHA-256 hash + encrypted ciphertext + masked form | masked `ABCXX***X` |
-| `gstin` | plain text (regulatory required) | plain text |
-| Documents | encrypted object-store path + KMS key id | `document_id`, `file_name`, `status` only |
+| Field               | At-rest storage                                                                            | Returned to client                                                        |
+| ------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------- |
+| `full_name`         | encrypted (`borrowers.full_name`)                                                          | not in state summary; `EkycVerifyResponse.masked_name` only               |
+| `phone`             | SHA-256 hash + encrypted ciphertext + last 4 (`borrowers.phone_*`)                         | masked `91-XXXXXX{last4}` when needed                                     |
+| `email`             | SHA-256 hash + encrypted ciphertext (`borrowers.email_*`)                                  | not returned full                                                         |
+| `aadhaar_number`    | SHA-256 hash + last 4 only (`borrowers.aadhaar_hash`, `aadhaar_last_four`)                 | masked `XXXX XXXX {last4}`                                                |
+| `pan_number`        | SHA-256 hash + encrypted ciphertext + masked form (`borrowers.pan_*`, `pan_records.pan_*`) | masked `ABCXX***X`                                                        |
+| `gstin`             | plain text in `borrowers.gstin` and `gstin_records.gstin` (regulatory)                     | plain text                                                                |
+| bank account number | encrypted + last 4 (`bank_statements.account_number_*`)                                    | never returned                                                            |
+| documents           | encrypted object-store path + DEK id (`uploaded_documents.file_path`, `encryption_key_id`) | `document_id`, `document_type`, `file_name`, `status`, `uploaded_at` only |
 
-- All logs and error traces replace full PII with masked values or `[REDACTED]`.
-- Encryption is behind a `PiiVault` interface.  In the MVP stub it may use AES-256-GCM with a key derived from `APPLY_ENCRYPTION_KEY` (base64) or a deterministic placeholder in tests.
+- **Never log full PII.** Replace full values with masked values or `[REDACTED]` in application logs, traces, and exception messages.
+- Encryption is behind a `PiiVault` interface. In the MVP/test phase it uses AES-256-GCM with a key derived from `APPLY_ENCRYPTION_KEY` (base64) or a deterministic placeholder in tests.
 
 ### 3.6 Idempotency
 
 Factory fintech rules require an `Idempotency-Key` header for all mutating routes.
-For contract v1.1.0 it is **mandatory**.
 
-1. Header: `Idempotency-Key: <uuid-v4>` (lowercase, 36 chars).
-2. Server computes `key_hash = SHA-256(scope + ":" + raw_key)`. Scope is the hashed session id for session-bound routes, or webhook sender id for `perfios_callback`.
-3. `request_path` and `payload_hash` are recorded together with the HTTP response status/body in the `idempotency_keys` table.
-4. Replays with the same key + scope return the cached response for **10 minutes**  (`IDEMPOTENCY_TTL_SECONDS`).
-5. If the same key is reused with a different payload, return `409 IDEMPOTENCY_KEY_CONFLICT`.
-6. Missing header returns `400 IDEMPOTENCY_KEY_REQUIRED`.
-7. Distinct keys executing the same mutation still use row-level locking / per-application mutexes to avoid races.
+1. **Header:** `Idempotency-Key: <uuid-v4>`.
+2. **Missing header:** return **`400 IDEMPOTENCY_KEY_REQUIRED`**.
+3. **Scope:** `SHA-256("apply-session:" + raw_session_id)` for session-bound routes; `perfios-webhook` for the bank-statement callback.
+4. **Key/hash composition:**
+   ```text
+   key_hash   = SHA-256(scope + ":" + raw_idempotency_key)
+   payload_hash = SHA-256(canonical_json(body))
+   ```
+5. **Cache lookup:** Query `idempotency_keys` by `(key_hash, scope) WHERE expires_at > now()`.
+   - Same key + same payload → replay cached `(response_status, response_body)`.
+   - Same key + different payload → **`409 IDEMPOTENCY_KEY_CONFLICT`**.
+6. **TTL:** `IDEMPOTENCY_TTL_SECONDS = 600` (10 minutes). Store `expires_at = now() + TTL`.
+7. **Storage:** Idempotency cache rows are written inside the same database transaction as the application mutation so the cache and state commit atomically.
+8. The cache must be written **after** acquiring the row lock and applying the mutation, never before.
 
-### 3.7 Transactions & row locking
+### 3.7 Transactions & row-level locking
 
-All mutations that change `applications`, `applicants`, `documents`, `consents`, or `lender_offers` are wrapped in an explicit unit of work.
+Every mutation that changes `borrowers`, `loan_applications`, `ekyc_records`, `pan_records`, `gstin_records`, `bank_statements`, `uploaded_documents`, or `consents` runs in an explicit unit of work.
 
-Repository interface:
+Repository interface (simplified):
 
 ```ts
+interface ApplyRepository {
+  transaction<T>(fn: (tx: ApplyTransaction) => Promise<T>): Promise<T>;
+}
+
 interface ApplyTransaction {
-  lockApplication(id: string): Promise<ApplicationRow | null>;
-  lockApplicant(applicationId: string): Promise<ApplicantRow | null>;
+  lockApplication(id: string): Promise<LoanApplicationRow | null>;
+  lockBorrower(id: string): Promise<BorrowerRow | null>;
+  lockBankStatementByTxn(perfiosTransactionId: string): Promise<BankStatementRow | null>;
+  insertConsent(...): Promise<ConsentRow>;
   updateApplication(...): Promise<void>;
-  insertConsent(...): Promise<void>;
-  commit(): Promise<void>;
-  rollback(): Promise<void>;
+  insertEkycRecord(...): Promise<void>;
+  insertPanRecord(...): Promise<void>;
+  insertGstinRecord(...): Promise<void>;
+  insertBankStatement(...): Promise<void>;
+  insertDocument(...): Promise<void>;
+  insertIdempotencyKey(...): Promise<void>;
 }
 ```
 
-- Postgres implementation: `BEGIN; SELECT ... FOR UPDATE` on `applications` and `applicants` before updates.
-- In-memory implementation: a per-application `Mutex`/`Promise` queue to serialize concurrent mutations for the same application during tests.
+- Postgres implementation: `BEGIN; SELECT ... FROM loan_applications WHERE id = $1 FOR UPDATE;` before updating.
+- In-memory implementation: a per-application `AsyncMutex` to serialize concurrent mutations for the same application during tests.
+- **Never hold a transaction open across external I/O** (SMS gateway, Perfios, object-store uploads). External calls happen before the transaction begins or after it commits.
 
-### 3.8 Test harness / in-memory repository
+### 3.8 Currency / DECIMAL handling
 
-To make `tests/apply/*.test.ts` pass without a real database, the repository is
-exposed as a TypeScript interface and instantiated via an environment-driven
-factory.  In test mode the factory returns an **in-memory store** backed by
-plain Maps/arrays; in production it returns a **Drizzle/PostgreSQL** implementation.
+- `loan_applications.requested_amount` is stored as `DECIMAL(19,4)` per `db-schema.yaml`.
+- The API accepts and returns whole INR integers (e.g. `500000`).
+- Conversion: store `${requestedAmount}.0000` in the DB; read integer truncation of the decimal string back to the client.
+- Use `decimal.js` (or an equivalent arbitrary-precision library) for any offer/fee/EMI arithmetic. Do **not** use `number` for currency.
+- `bank_statements.analysis_score` is a model score (`numeric(5,2)`) and is not currency.
 
-- `app/apply/lib/repository.ts` — interface + factory function.
-- `app/apply/lib/repository-memory.ts` — in-memory implementation that mirrors
-  `db-schema.yaml` tables (applications, applicants, documents, consents,
-  lender_offers, application_events, otp_attempts, idempotency_keys).
-- `app/apply/lib/repository-pg.ts` — production Drizzle implementation
-  (will be stubbed enough in the backend implementation to satisfy tests).
-- Route handlers import the factory, not a concrete store.  Tests can also
-  import `createMemoryRepository()` and reset it between test cases.
+### 3.9 Test harness / in-memory repository
 
-All route handler unit tests construct a `Request` with the required cookies
-and headers, call the exported `POST`/`GET` handlers, and assert on the returned
-`Response`.  No Next.js server or real Postgres is required for the initial
-TDD cycle.
+To support the RED-phase tests without a live database, the repository is exposed as an interface and instantiated via an environment-driven factory:
+
+- `src/lib/apply/server/repository.ts` — interface + factory function.
+- `src/lib/apply/server/repository-memory.ts` — Map-backed implementation mirroring `db-schema.yaml` tables, resettable between tests.
+- `src/lib/apply/server/repository-pg.ts` — Drizzle/PostgreSQL implementation (stubbed enough for tests).
+
+Route handlers import the factory, not a concrete store. Tests construct a `Request` with the required cookie and headers, call `POST`/`GET`, and assert on the returned `Response`.
 
 ---
 
 ## 4. Route handler design
 
-All routes return JSON with `Content-Type: application/json`.  Errors always include `detail` (factory rule) and, where contract specifies, a machine-readable `error` code.
+All routes return JSON with `Content-Type: application/json`. Errors always include a machine-readable `error` code and a safe `detail` string.
 
-### 4.1 `GET /api/apply/state`
+### 4.1 `POST /api/apply/initialize`
 
-**Headers:** session cookie required.  
-**Query:** `locale?: en|hi|bn|te|mr|ta|kn|ml` (default `en`).
+**Headers:** `Idempotency-Key`, `x-navdhan-requested-with`, optional `Accept-Language`.
+
+**Body:**
+
+```ts
+{
+  full_name: string;       // 2-150 chars
+  email: string;           // max 255
+  phone: string;           // ^[6-9]\d{9}$
+  requested_amount: number; // 500000-10000000, multiple of 10000
+  purpose: LoanPurpose;
+  referral_code?: string | null;
+}
+```
+
+**Logic:**
+
+1. Validate CSRF marker and `Idempotency-Key` format (UUID).
+2. Validate body with the route-level Zod schema; on failure return **`400 VALIDATION_ERROR`** with `field_errors`.
+3. Normalize `phone` (digits only), `email` (lowercase), `pan` (N/A here).
+4. Generate a new session token (`__Host-nd_session`) and its SHA-256 hash.
+5. Start a transaction.
+   - If the idempotency cache already has this key+scope, return the cached `ApplicationState` (skip creation).
+   - Insert a `borrowers` row: `full_name` encrypted, `email_hash` + encrypted, `phone_hash` + encrypted + `phone_last_four`.
+   - Insert a `loan_applications` row: `borrower_id`, `requested_amount` as DECIMAL, `purpose`, `referral_code`, `current_step = "basic_details"`, `status = "draft"`, `expires_at = now() + 30min`.
+   - Insert an `apply_sessions` row linking `session_hash` -> `application_id`/`borrower_id`.
+   - Insert an `idempotency_keys` row with the `ApplicationState` response body.
+6. Commit and set the `__Host-nd_session` cookie on the response.
+
+**Step advancement:** Initialize creates the application with `current_step = "basic_details"` and immediately advances it to `"ekyc_consent"` because the contract describes `basic_details` as captured in this call.
+
+**Response 200:** `ApplicationState` with `current_step = "ekyc_consent"`.
+
+**Response 400:** `VALIDATION_ERROR`.  
+**Response 403:** `CSRF_INVALID`.  
+**Response 409:** `IDEMPOTENCY_KEY_CONFLICT`.  
+**Response 429:** `RATE_LIMITED`.  
+**Response 500:** `SERVER_ERROR`.
+
+### 4.2 `GET /api/apply/state`
+
+**Headers:** session cookie required; optional `Accept-Language`.
 
 **Logic:**
 
 1. Parse and validate session cookie.
-2. Look up `applications` by hashed session id.
-3. If no application, create a new draft (`status=draft`, `current_step=loan_intent`) and a corresponding empty `applicants` row inside a transaction.
-4. Refresh `last_activity_at` and cookie `expires_at`.
-5. Build `ApplicationState` response with masked PII and document metadata.
+2. Look up the application via `apply_sessions` by `session_hash`.
+3. If no active session/application, return **`401 SESSION_INVALID`**.
+4. Refresh `last_activity_at` and `expires_at`.
+5. Build `ApplicationState` from `loan_applications` + masked PII from `borrowers`.
 
-**Response 200:** `ApplicationState` schema.
+**Response 200:** `ApplicationState`.
 
-**Response 401:** `{ "error": "SESSION_INVALID", "message_i18n_key": "apply.errors.sessionExpired" }`.
+**Response 401:** `SESSION_INVALID`.  
+**Response 404:** `APPLICATION_NOT_FOUND`.  
+**Response 429:** `RATE_LIMITED`.
 
-**Response 429:** `{ "error": "RATE_LIMITED", "retry_after_seconds": n }`.
+### 4.3 `POST /api/apply/ekyc/send-otp`
 
-### 4.2 `POST /api/apply/state`
-
-**Headers:** session cookie + CSRF header + required `Idempotency-Key`.  
-**Body:**
-
-```ts
-{
-  application_id?: string;      // UUID
-  current_step: ApplicationStep; // one of the 8 editable steps
-  payload: StepPayload;
-  locale?: SupportedLocale;     // default en
-}
-```
-
-**Step payload shapes:**
-
-| `current_step` | Required payload fields |
-|---|---|
-| `loan_intent` | `loan_amount`, `tenure_months`, `purpose`, `referral_code?` |
-| `personal_contact` | `full_name`, `mobile_number`, `email`, `business_pin_code` |
-| `aadhaar_verification` | `aadhaar_number`, `aadhaar_otp` |
-| `pan_verification` | `pan_number` |
-| `gst_verification` | `gstin?`, `gstin_skipped: boolean` |
-| `itr_upload` | `itr_document_id` |
-| `bank_statements` | `perfios_transaction_id`, `statement_months` |
-| `review_submit` | `consent_marketing`, `consent_terms`, `consent_privacy`, `consent_credit_bureau` |
-
-**Logic:**
-
-1. CSRF + session checks.
-2. Resolve application (by `application_id` or by session hash); create new draft if none exists.
-3. **Transition check:** `current_step` must equal the stored `current_step` OR be a re-submission of the same step.  Otherwise return **`409 INVALID_TRANSITION`** with `current_step` and `expected_step`.
-4. Validate payload using shared validators + Zod schema.
-5. On validation failure return **`400 VALIDATION_ERROR`** with `field_errors` array.
-6. Apply step-specific side effects:
-   - `aadhaar_verification`: record `aadhaar_hash`, last 4, verified flag.
-   - `pan_verification`: record PAN hash, encrypted value, masked form, verified flag.
-   - `gst_verification`: record `gstin` or `gstin_skipped=true`.
-   - `itr_upload`: verify `documents` row exists for `itr_document_id`.
-   - `bank_statements`: verify Perfios transaction exists and is `success`/`partial`.
-   - `review_submit`: record final consent flags (but does not submit yet).
-7. Compute `next_step` from state-machine config and update `applications.current_step`.
-8. Append an `application_events` audit row: `step_transition` with `{ from, to }`.
-9. Commit transaction; return `ApplicationState`.
-
-**Idempotency:** repeating the same request while the application is still on the same step returns the same `ApplicationState` without a validation error.
-
-### 4.3 `POST /api/apply/otp/send`
+**Headers:** `Idempotency-Key`, `x-navdhan-requested-with`.
 
 **Body:**
 
 ```ts
 {
-  channel: "sms" | "aadhaar";
-  destination: string;  // 10-digit mobile for sms, 12-digit Aadhaar for aadhaar
-  purpose: "aadhaar_verification" | "mobile_verification";
+  application_id: string; // UUID
+  aadhaar_number: string; // 12 digits
+  consent: ConsentReceipt; // accepted must be true
 }
 ```
 
 **Logic:**
 
-1. CSRF + session + per-destination rate limit.
-2. Validate `destination` format by `channel`.
-3. Resolve application from session.
-4. Create `otp_attempts` row:
-   - `otp_reference_id`: UUIDv4
-   - `destination_hash`: SHA-256(normalized destination)
-   - `expires_at`: now + 5 min
-   - `attempt_count`: 0
-5. Stub adapter logs a masked destination (no real SMS/Aadhaar gateway call).
+1. CSRF + session + idempotency checks.
+2. Validate `application_id`, `aadhaar_number`; validate `consent.accepted === true` and `statement_snapshot` non-empty.
+3. Start transaction, lock `loan_applications` row.
+4. Reject if `current_step !== "ekyc_consent"` → **`409 INVALID_TRANSITION`**.
+5. Update `borrowers` with `aadhaar_hash` and `aadhaar_last_four` (full Aadhaar is not persisted).
+6. Record a `consents` row for `step_id = "ekyc_consent"` from the `consent` receipt.
+7. Generate `otp_reference_id` (UUIDv4) and `expires_at = now() + 10 min`.
+8. Insert/update `ekyc_records` with `transaction_id = otp_reference_id`, `aadhaar_last_four`, `response_payload = { expires_at, cooldown_seconds }`.
+9. Advance `current_step` to `"ekyc_verification"`.
+10. Store idempotency cache and commit.
 
 **Response 200:** `{ otp_reference_id, expires_at, cooldown_seconds: 60 }`.
 
-**Response 400:** `{ error: "INVALID_DESTINATION", field_errors: [...] }`.
+**Response 400:** `VALIDATION_ERROR`.  
+**Response 401:** `SESSION_INVALID`.  
+**Response 403:** `CSRF_INVALID`.  
+**Response 409:** `INVALID_TRANSITION` or `IDEMPOTENCY_KEY_CONFLICT`.  
+**Response 410:** `OTP_EXPIRED` (if replay after expiry).  
+**Response 429:** `RATE_LIMITED`.  
+**Response 500:** `SERVER_ERROR`.
 
-**Response 429:** `{ error: "RATE_LIMITED", retry_after_seconds: n }`.
+### 4.4 `POST /api/apply/ekyc/verify`
 
-### 4.4 `POST /api/apply/otp/verify`
+**Headers:** `Idempotency-Key`, `x-navdhan-requested-with`.
 
 **Body:**
 
 ```ts
 {
+  application_id: string;
   otp_reference_id: string;
-  otp: string;          // ^\d{6}$
-  purpose: "aadhaar_verification" | "mobile_verification";
+  otp: string; // 6 digits
 }
 ```
 
 **Logic:**
 
-1. CSRF + session + per-session rate limit.
-2. Look up `otp_attempts` by `otp_reference_id` for this application.
-3. If expired return **`410 OTP_EXPIRED`**.
-4. Increment `attempt_count`; if it exceeds 3 return **`400 INVALID_OTP`** with `remaining_attempts: 0`.
-5. Stub provider accepts any 6-digit `otp` as valid.
-6. On success mark row verified and return a short-lived `verification_token` (UUID, 10 min TTL in-memory).
+1. CSRF + session + idempotency checks.
+2. Start transaction, lock `loan_applications` row.
+3. Reject if `current_step !== "ekyc_verification"` → **`409 INVALID_TRANSITION`**.
+4. Look up `ekyc_records` by `transaction_id = otp_reference_id` and `application_id`.
+5. If not found → **`400 INVALID_OTP`**.
+6. If `expires_at < now()` → **`410 OTP_EXPIRED`**.
+7. Track attempts in `response_payload.attempt_count`; if attempts exceed 3 → **`410 OTP_EXPIRED`**.
+8. Call OTP adapter (MVP stub accepts any 6-digit OTP).
+9. On mismatch → **`400 INVALID_OTP`** with `remaining_attempts`.
+10. On success:
+    - set `ekyc_records.verified_at = now()`.
+    - advance `current_step` to `"pan_consent"`.
+11. Store idempotency cache and commit.
 
-**Response 200:** `{ verified: true, verification_token }`.
+**Response 200:** `EkycVerifyResponse`:
 
-**Response 400:** `{ error: "INVALID_OTP", remaining_attempts, message_i18n_key: "apply.errors.invalidOtp" }`.
+```ts
+{
+  application_id: string,
+  verified: true,
+  masked_name: string | null, // e.g. "Amit ***"
+  current_step: "pan_consent",
+  status: "draft"
+}
+```
 
-**Response 410:** `{ error: "OTP_EXPIRED" }`.
+### 4.5 `POST /api/apply/pan/verify`
 
-### 4.5 `POST /api/apply/documents/upload-url`
+**Headers:** `Idempotency-Key`, `x-navdhan-requested-with`.
 
 **Body:**
 
 ```ts
 {
-  document_type: "itr" | "bank_statement" | "gst_return" | "other";
-  file_name: string;          // max 255 chars
-  file_size_bytes: number;    // max 5_242_880
-  mime_type: "application/pdf";
-  financial_year?: string;     // e.g. "2024-25", required for itr/gst_return
+  application_id: string;
+  pan_number: string; // 10 chars
+  consent: ConsentReceipt; // accepted must be true
 }
 ```
 
 **Logic:**
 
-1. CSRF + session.
-2. Validate `mime_type` and `file_size_bytes`.
-3. If `file_size_bytes > 5_242_880` return **`413 FILE_TOO_LARGE`** with `max_size_bytes: 5242880`.
-4. If `document_type` in `itr` / `gst_return` and no `financial_year`, return `400 VALIDATION_ERROR`.
-5. Create `documents` row with `status=pending`, encrypted `storage_path` placeholder.
-6. Generate a stub presigned URL (signed with `APPLY_UPLOAD_SECRET`) pointing at `PUT /api/apply/documents/upload/{document_id}?token={signed_token}`.
+1. CSRF + session + idempotency checks.
+2. Normalize `pan_number` to uppercase; validate regex.
+3. Start transaction, lock `loan_applications` + `borrowers`.
+4. Reject if `current_step !== "pan_consent"` → **`409 INVALID_TRANSITION`**.
+5. Update `borrowers` with `pan_hash`, `pan_encrypted`, and `pan_masked`.
+6. Record `consents` row for `step_id = "pan_consent"`.
+7. Call PAN/Perfios adapter to fetch PAN-Aadhaar link status and name match.
+   - In the stub, any well-formed PAN returns `link_status: "linked"`, `name_match: true`.
+8. Upsert `pan_records` with `pan_hash`, `pan_encrypted`, `pan_masked`, `link_status`, `name_match`, `verified_at = now()`.
+9. Advance `current_step` to `"gstin_consent"`.
+10. Store idempotency cache and commit.
 
-**Response 200:** `{ document_id, upload_url, upload_method: "PUT", expires_at, public_url_after_upload: null }`.
+**Response 200:** `PanVerifyResponse` with `pan_masked`.
 
-### 4.6 `POST /api/apply/documents/upload`
+### 4.6 `POST /api/apply/gstin/verify`
+
+**Headers:** `Idempotency-Key`, `x-navdhan-requested-with`.
 
 **Body:**
 
 ```ts
 {
-  document_type: "itr" | "bank_statement" | "gst_return" | "other";
-  file_name: string;
-  mime_type: "application/pdf";
-  base64_content: string;
-  financial_year?: string;
+  application_id: string;
+  gstin: string; // 15 chars
+  consent: ConsentReceipt; // accepted must be true
 }
 ```
 
 **Logic:**
 
-1. CSRF + session.
-2. If `mime_type !== "application/pdf"` return **`415 UNSUPPORTED_MEDIA_TYPE`**.
-3. Decode `base64_content`; fail gracefully on bad base64 → `400 VALIDATION_ERROR`.
-4. Validate PDF magic bytes (`%PDF-`).
-5. Check decoded size ≤ 5 MB; reject with `413 FILE_TOO_LARGE` if exceeded.
-6. Run scan stub (always `clean` in MVP; configurable failure trigger for future tests).
-7. Insert `documents` row with `status=scanned`, `scan_result=clean`, encrypted storage path.
+1. CSRF + session + idempotency checks.
+2. Normalize `gstin` to uppercase; validate regex.
+3. Start transaction.
+4. Reject if `current_step !== "gstin_consent"` → **`409 INVALID_TRANSITION`**.
+5. Update `borrowers.gstin`.
+6. Record `consents` row for `step_id = "gstin_consent"`.
+7. Call the GST validation adapter (stub returns `valid: true` + optional `legal_name`).
+8. Upsert `gstin_records` with `gstin`, `consent_granted = true`.
+9. Advance `current_step` to `"gstin_verification"`.
+10. Store idempotency cache and commit.
 
-**Response 201:** `Document` schema.
+**Response 200:** `GstinVerifyResponse`.
 
-### 4.7 `POST /api/apply/perfios/initiate`
+### 4.7 `POST /api/apply/gstin/fetch-returns`
+
+**Headers:** `Idempotency-Key`, `x-navdhan-requested-with`.
 
 **Body:**
 
 ```ts
 {
-  months_requested: number;      // 6–12
-  preferred_bank?: string;       // max 100 chars
-  consent_accepted: boolean;     // must be true
+  application_id: string;
+  gstin: string;
+  consent: ConsentReceipt;
 }
 ```
 
 **Logic:**
 
-1. CSRF + session.
-2. Validate `months_requested` and `consent_accepted === true`.
-3. Resolve application; record consent snapshot for bank-statement purpose.
-4. Generate `perfios_transaction_id` (e.g. `perfios-<uuid>`).
-5. Build stub redirect URL: `/apply/perfios/callback?txn={id}&token={signature}`.
-6. Store transaction with `status=pending`, `expires_at` now + 30 min.
+1. CSRF + session + idempotency checks.
+2. Start transaction, lock application.
+3. Reject if `current_step !== "gstin_verification"` → **`409 INVALID_TRANSITION`**.
+4. Record `consents` row for `step_id = "gstin_returns"` with the provided receipt.
+5. Call the Perfios/GST adapter to fetch return history.
+   - If the upstream service is unavailable → **`424 GST_SERVICE_UNAVAILABLE`**.
+6. Store the payload in `gstin_records.return_history_payload` and set `fetched_at = now()`.
+7. Map the adapter payload to the `GstReturnPeriod[]` contract shape (whole INR integers).
+8. Advance `current_step` to `"gstin_returns"`.
+9. Store idempotency cache and commit.
 
-**Response 200:** `{ perfios_transaction_id, redirect_url, widget_token: null, expires_at }`.
+**Response 200:** `GstinReturnsResponse`.
 
-**Response 400:** `{ error: "VALIDATION_ERROR", field_errors: [...] }`.
+### 4.8 `POST /api/apply/bank-statement/analyze`
 
-**Response 424:** `{ error: "PERFIOS_UNAVAILABLE" }` (triggered by a synthetic failure flag).
+**Headers:** `Idempotency-Key`, `x-navdhan-requested-with`.
 
-### 4.8 `POST /api/apply/perfios/callback`
+**Body:**
 
-**Headers:** optional HMAC signature stub check.  
+```ts
+{
+  application_id: string;
+  bank_name?: string | null;
+  months: number;          // 6-12
+  method?: "netbanking" | "upload" | null;
+  consent: ConsentReceipt; // accepted must be true
+}
+```
+
+**Logic:**
+
+1. CSRF + session + idempotency checks.
+2. Validate `months` is 6–12 and `consent.accepted === true`.
+3. Start transaction, lock application.
+4. Reject if `current_step !== "bank_statement_consent"` → **`409 INVALID_TRANSITION`**.
+5. Record `consents` row for `step_id = "bank_statement_consent"`.
+6. Generate `perfios_transaction_id` (UUID).
+7. Call the Perfios adapter to initiate the session.
+   - If Perfios is unavailable → **`424 PERFIOS_UNAVAILABLE`**.
+8. Insert a `bank_statements` row with `status = "pending"`, `months`, `bank_name`, `perfios_transaction_id`, and `expires_at = now() + 30min`.
+9. Advance `current_step` to `"bank_statement_analysis"`.
+10. Store idempotency cache and commit.
+
+**Response 200:** `BankStatementAnalyzeResponse`:
+
+```ts
+{
+  application_id: string,
+  perfios_transaction_id: string,
+  status: "pending" | "success" | "failure" | "partial",
+  redirect_url: string | null,
+  current_step: "bank_statement_analysis"
+}
+```
+
+The `redirect_url` is the Perfios widget/net-banking URL when `method === "netbanking"`.
+
+### 4.9 Bank-statement callback / status (supporting routes)
+
+These endpoints are not listed in the public `api-contract.yaml` but are required to receive the Perfios result and advance the wizard.
+
+#### `POST /api/apply/bank-statement/callback`
+
+**Headers:** optional HMAC signature stub check.
+
 **Body:**
 
 ```ts
@@ -402,34 +506,107 @@ All routes return JSON with `Content-Type: application/json`.  Errors always inc
   statement_count?: number;
   month_count?: number;
   failure_reason?: string;
-  metadata?: object;
+  metadata?: {
+    accountNumber?: string;       // encrypted before storage
+    accountNumberLastFour?: string;
+    analysisScore?: number;       // 0-100
+  };
 }
 ```
 
 **Logic:**
 
 1. Validate HMAC signature if configured; in stub allow a test signature.
-2. Update Perfios transaction store.
-3. Update `applications.perfios_transaction_id` / statement status.
-4. Append `perfios_callback_received` event.
+2. Start transaction, lock the `bank_statements` row by `perfios_transaction_id`.
+3. Update `status`, `analysis_score`, `account_number_encrypted`, `account_number_last_four`, `raw_payload`, `analyzed_at`.
+4. If status is `success` or `partial`, lock and advance `loan_applications.current_step` from `"bank_statement_analysis"` to `"itr_upload"`.
+5. Append a `perfios_callback_received` event if an events table exists (optional audit log).
 
-**Response 204:** empty body.
+**Response 204:** empty body.  
+**Response 400:** `INVALID_CALLBACK`.  
+**Response 401:** `INVALID_SIGNATURE`.
 
-**Response 400:** `{ error: "INVALID_CALLBACK" }`.  
-**Response 401:** `{ error: "INVALID_SIGNATURE" }`.
-
-### 4.9 `GET /api/apply/perfios/status`
+#### `GET /api/apply/bank-statement/status`
 
 **Query:** `perfios_transaction_id` (required).
 
 **Logic:**
 
 1. Session check.
-2. Return stored transaction status.
+2. Return stored `bank_statements` status (without sensitive payload).
 
-**Response 200:** `{ perfios_transaction_id, status, statement_count, month_count }`.
+**Response 200:** `{ perfios_transaction_id, status, statement_count, month_count, current_step }`.
 
-### 4.10 `POST /api/apply/submit`
+### 4.10 `POST /api/apply/documents/upload`
+
+**Headers:** `Idempotency-Key`, `x-navdhan-requested-with`, `Content-Type: multipart/form-data`.
+
+**Body (multipart):**
+
+```ts
+{
+  application_id: string;
+  document_type: "itr" | "tds_certificate";
+  file: File; // PDF, max 5 MB
+}
+```
+
+**Logic:**
+
+1. CSRF + session + idempotency checks.
+2. Parse multipart form data (use ` formidable` or a small streaming parser). For the MVP/test harness, accept a base64 field fallback only if the route is being unit-tested without a real multipart parser; production uses multipart.
+3. Validate `document_type` enum and `application_id`.
+4. Start transaction, lock application.
+5. Reject if current step is wrong:
+   - `itr` requires `current_step === "itr_upload"`.
+   - `tds_certificate` requires `current_step === "tds_upload"`.
+     → otherwise **`409 INVALID_TRANSITION`**.
+6. If `file.mimetype !== "application/pdf"` → **`415 UNSUPPORTED_MEDIA_TYPE`**.
+7. If `file.size > 5_242_880` → **`413 FILE_TOO_LARGE`** with `max_size_bytes: 5242880`.
+8. Validate PDF magic bytes (`%PDF-`).
+9. Run the document scan stub (always `clean` in MVP).
+10. Generate an encrypted object-store path and DEK id.
+11. Insert an `uploaded_documents` row with `status = "scanned"`, `scan_result = "clean"`.
+12. Advance `current_step`:
+    - `itr` → `"tds_upload"`.
+    - `tds_certificate` → `"review_submit"`.
+13. Store idempotency cache and commit.
+
+**Response 201:** `Document` schema (no `file_path`).
+
+### 4.11 `POST /api/apply/consent`
+
+**Headers:** `Idempotency-Key`, `x-navdhan-requested-with`.
+
+**Body:**
+
+```ts
+{
+  application_id: string;
+  step_id: "ekyc_consent" | "pan_consent" | "gstin_consent" | "bank_statement_consent" | "review_submit";
+  consent_key: string;
+  accepted: boolean;
+  statement_snapshot: string; // max 2000 chars
+  locale?: SupportedLocale;   // default en
+}
+```
+
+**Logic:**
+
+1. CSRF + session + idempotency checks.
+2. Validate `statement_snapshot` presence and max length.
+3. Start transaction, lock application.
+4. Insert a `consents` row with `client_ip_hash = SHA-256(ip)`, `user_agent_hash = SHA-256(ua)`.
+5. For consent-only transitions, if `accepted === true` and the current step is the immediate predecessor of `step_id`, advance `current_step`:
+   - `gstin_returns` + `step_id = "bank_statement_consent"` → advance to `"bank_statement_consent"`.
+   - `tds_upload` + `step_id = "review_submit"` → record final consents, do **not** advance (submit advances).
+6. For the action-driven consent steps (`ekyc_consent`, `pan_consent`, `gstin_consent`), this endpoint records consent without advancing; the corresponding action endpoint validates consent and advances.
+
+**Response 201:** `ConsentRecord`.
+
+### 4.12 `POST /api/apply/submit`
+
+**Headers:** `Idempotency-Key`, `x-navdhan-requested-with`.
 
 **Body:**
 
@@ -441,79 +618,54 @@ All routes return JSON with `Content-Type: application/json`.  Errors always inc
     privacy: boolean;
     credit_bureau: boolean;
     marketing: boolean;
-  };
-  locale?: SupportedLocale;
+  }
 }
 ```
 
 **Logic:**
 
-1. CSRF + session.
-2. Lock application row and applicant row.
-3. Validate required consents: **`terms`**, **`privacy`**, and **`credit_bureau` must be `true`**.  `marketing` is recorded but optional.
-4. If any required consent is missing return **`400 VALIDATION_ERROR`** with `missing_consents: ["terms", ...]`.
-5. Check all mandatory steps are complete; if not return **`422 INCOMPLETE_APPLICATION`** with `missing_steps`.
-6. Generate `reference_number`: `NDH-{YYYYMMDD}-{6 alphanum}`.
-7. Call lender-matching stub:
-   - Success path: insert stub `lender_offers`, mark `submitted_success`.
-   - Failure path: return **`500 SUBMISSION_FAILED`** with `support_reference` and `support_path` (one of `email`, `phone`, `chat_stub`).
-8. Append `application_submitted` or `submission_failed` event.
-9. Commit transaction.
+1. CSRF + session + idempotency checks.
+2. Start transaction, lock `loan_applications` and `borrowers`.
+3. Reject if `current_step !== "review_submit"` → **`409 INVALID_TRANSITION`**.
+4. Validate required consents: `terms`, `privacy`, and `credit_bureau` must be `true`. `marketing` is recorded but optional.
+   - If any required consent is missing → **`400 VALIDATION_ERROR`** with `missing_consents: ["terms", ...]`.
+5. Record a `consents` row for `step_id = "review_submit"`.
+6. Check mandatory steps are complete:
+   - eKYC verified (`ekyc_records.verified_at` present).
+   - PAN verified (`pan_records.verified_at` present).
+   - GSTIN either verified or skipped (implement skip later if needed).
+   - Bank statement status is `success` or `partial`.
+   - ITR and TDS documents uploaded.
+   - If not → **`422 INCOMPLETE_APPLICATION`** with `missing_steps`.
+7. Generate `reference_number`: `NDH-{YYYYMMDD}-{6 alphanum}`. Retry on collision inside the transaction.
+8. Call the lender-matching/submission service stub:
+   - Success path: insert stub `lender_offers`, set `status = "submitted"`, `submitted_at = now()`, `reference_number`.
+   - Failure path: return **`500 SUBMISSION_FAILED`** with `support_reference` and `support_path` (`email`, `phone`, or `chat_stub`).
+9. Advance `current_step` to `"submission_result"`.
+10. Store idempotency cache and commit.
 
-**Response 200 (success):** `SubmissionResult` with `outcome: "submitted_success"` and `next_step: "offers"`.
-
-### 4.11 `GET /api/apply/offers`
-
-**Query:** `application_id` (required).
-
-**Logic:**
-
-1. Session check.
-2. Verify application exists and `status === submitted`.
-3. Return cached `lender_offers` rows.
-
-**Response 200:** `{ offers: LenderOffer[] }`.
-
-**Response 404:** `{ error: "APPLICATION_NOT_FOUND" }`.
-
-### 4.12 `POST /api/apply/consent`
-
-**Body:**
-
-```ts
-{
-  application_id: string;
-  step_id: ConsentStep;            // aadhaar_verification | itr_upload | bank_statements | review_submit
-  consent_key: string;             // stable i18n key
-  accepted: boolean;
-  locale?: SupportedLocale;
-  statement_snapshot: string;      // max 2000 chars
-}
-```
-
-**Logic:**
-
-1. CSRF + session.
-2. Validate `statement_snapshot` presence and length.
-3. Append row to `consents` with `client_ip_hash = SHA-256(ip)`, `user_agent_hash = SHA-256(ua)`.
-
-**Response 201:** `ConsentRecord`.
+**Response 200:** `SubmissionResult` with `outcome: "submitted_success"` and `next_step: "offers"`.
 
 ---
 
 ## 5. State machine implementation
 
-The wizard is a linear sequence with one explicit skip (`gst_verification`).
+The wizard is a strictly linear sequence:
 
 ```ts
 const STEP_ORDER: ApplicationStep[] = [
-  "loan_intent",
-  "personal_contact",
-  "aadhaar_verification",
+  "basic_details",
+  "ekyc_consent",
+  "ekyc_verification",
+  "pan_consent",
   "pan_verification",
-  "gst_verification",
+  "gstin_consent",
+  "gstin_verification",
+  "gstin_returns",
+  "bank_statement_consent",
+  "bank_statement_analysis",
   "itr_upload",
-  "bank_statements",
+  "tds_upload",
   "review_submit",
   "submission_result",
 ];
@@ -521,138 +673,200 @@ const STEP_ORDER: ApplicationStep[] = [
 
 ### Transition rules
 
-- A `POST /api/apply/state` is accepted only when `request.current_step === stored.current_step`.
-- Re-submission of the current step is allowed (idempotent upsert).
-- Attempting to update a future step returns `409 INVALID_TRANSITION`.
-- The server advances `current_step` to `next(step)` after successful validation.
-- `gst_verification` may advance to `itr_upload` either by valid `gstin` or by `gstin_skipped=true`.
-- `review_submit` advances to `submission_result` only after `/api/apply/submit` succeeds.
+| Current step              | Endpoint/action                                  | Next step                                    |
+| ------------------------- | ------------------------------------------------ | -------------------------------------------- |
+| (new)                     | `initialize`                                     | `basic_details` → immediately `ekyc_consent` |
+| `ekyc_consent`            | `POST /apply/ekyc/send-otp`                      | `ekyc_verification`                          |
+| `ekyc_verification`       | `POST /apply/ekyc/verify`                        | `pan_consent`                                |
+| `pan_consent`             | `POST /apply/pan/verify`                         | `gstin_consent`                              |
+| `gstin_consent`           | `POST /apply/gstin/verify`                       | `gstin_verification`                         |
+| `gstin_verification`      | `POST /apply/gstin/fetch-returns`                | `gstin_returns`                              |
+| `gstin_returns`           | `POST /apply/consent` (bank_statement_consent)   | `bank_statement_consent`                     |
+| `bank_statement_consent`  | `POST /apply/bank-statement/analyze`             | `bank_statement_analysis`                    |
+| `bank_statement_analysis` | Perfios callback success/partial                 | `itr_upload`                                 |
+| `itr_upload`              | `POST /apply/documents/upload` (itr)             | `tds_upload`                                 |
+| `tds_upload`              | `POST /apply/documents/upload` (tds_certificate) | `review_submit`                              |
+| `review_submit`           | `POST /apply/submit` (success)                   | `submission_result`                          |
 
-### Data model mapping
+- A specialized action endpoint rejects the request with **`409 INVALID_TRANSITION`** unless `current_step` matches its expected pre-step.
+- Re-submission of the same step with the same `Idempotency-Key` returns the cached response.
+- The standalone `/apply/consent` endpoint records consent and advances only across the consent-only gaps (`gstin_returns` → `bank_statement_consent` and `tds_upload` → `review_submit`).
 
-Each step stores its data across `applications` and `applicants` as per `db-schema.yaml`:
+### Data model mapping per step
 
-| Step | DB columns |
-|---|---|
-| `loan_intent` | `applications.loan_amount`, `tenure_months`, `purpose`, `referral_code` |
-| `personal_contact` | `applicants.full_name`, `mobile_*`, `email_*`, `business_pin_code` |
-| `aadhaar_verification` | `applicants.aadhaar_hash`, `aadhaar_last_four`, `aadhaar_verified`, `aadhaar_verified_at` |
-| `pan_verification` | `applicants.pan_hash`, `pan_encrypted`, `pan_masked`, `pan_verified`, `pan_verified_at` |
-| `gst_verification` | `applications.gstin_skipped`; `applicants.gstin` |
-| `itr_upload` | `documents` row of type `itr` |
-| `bank_statements` | `applications.perfios_transaction_id` + Perfios result store |
-| `review_submit` | `consents` rows for `terms`, `privacy`, `credit_bureau`, `marketing` |
+| Contract step                                            | Primary persistence                                                           |
+| -------------------------------------------------------- | ----------------------------------------------------------------------------- |
+| `basic_details`                                          | `borrowers` (name/email/phone), `loan_applications` (amount/purpose/referral) |
+| `ekyc_consent` / `ekyc_verification`                     | `consents`, `ekyc_records`, `borrowers.aadhaar_*`                             |
+| `pan_consent` / `pan_verification`                       | `consents`, `pan_records`, `borrowers.pan_*`                                  |
+| `gstin_consent` / `gstin_verification` / `gstin_returns` | `consents`, `gstin_records`, `borrowers.gstin`                                |
+| `bank_statement_consent` / `bank_statement_analysis`     | `consents`, `bank_statements`                                                 |
+| `itr_upload` / `tds_upload`                              | `uploaded_documents`                                                          |
+| `review_submit` / `submission_result`                    | `consents`, `loan_applications` (status/reference)                            |
 
 ---
 
 ## 6. External adapters (stubs)
 
-### OTP provider stub (`otp-service.ts`)
+### OTP adapter (`otp-service.ts`)
 
 ```ts
-interface OtpProvider {
-  send(destination: string, channel: OtpChannel, purpose: OtpPurpose): Promise<OtpReference>;
-  verify(reference: OtpReference, otp: string): Promise<OtpVerifyResult>;
+interface OtpAdapter {
+  sendOtp(aadhaarNumber: string): Promise<{ otpReferenceId: string; expiresAt: string }>;
+  verifyOtp(otpReferenceId: string, otp: string): Promise<{ valid: boolean }>;
 }
 ```
 
-- `send` only generates metadata; no network call.
-- `verify` accepts any 6-digit code and tracks attempts.
+- `sendOtp` records metadata only; no network call to a real Aadhaar gateway in the MVP.
+- `verifyOtp` accepts any 6-digit code and tracks attempts.
 
-### Perfios stub (`perfios-service.ts`)
+### Perfios adapter (`perfios-service.ts`)
 
 ```ts
-interface PerfiosProvider {
-  initiate(applicationId: string, months: number, consent: boolean): Promise<PerfiosSession>;
-  acceptCallback(payload: PerfiosCallback): Promise<void>;
-  getStatus(txId: string): Promise<PerfiosStatus>;
+interface PerfiosAdapter {
+  // Aadhaar eKYC is handled by the OTP adapter above.
+  verifyPan(
+    pan: string,
+    name: string | null,
+  ): Promise<{ linkStatus: LinkStatus; nameMatch: boolean | null }>;
+  validateGstin(gstin: string): Promise<{ valid: boolean; legalName: string | null }>;
+  fetchGstinReturns(gstin: string): Promise<{ periods: GstReturnPeriod[] }>;
+  initiateBankStatement(
+    applicationId: string,
+    months: number,
+    bankName?: string,
+  ): Promise<{
+    perfiosTransactionId: string;
+    redirectUrl: string | null;
+    status: BankStatementStatus;
+  }>;
 }
 ```
 
-- `initiate` returns a fake redirect URL.
-- Sensitive Perfios payload (account numbers, full statements) is stored in the encrypted documents store, never returned to the frontend.
+- Stubs return deterministic, masked results for known test IDs.
+- Sensitive Perfios payload (account numbers, raw statements) is encrypted before storage; only masked/account-last-four values and scores are returned to the frontend.
 
-### Document scan stub (`document-service.ts`)
+### Document scanner (`document-service.ts`)
 
 ```ts
 interface DocumentScanner {
-  scan(buffer: Buffer): Promise<ScanResult>;  // always clean unless triggered
+  scan(buffer: Buffer): Promise<ScanResult>; // clean unless triggered
 }
 ```
 
-### Lender matching stub (`submission-service.ts`)
+### Submission/lender-matching service (`submission-service.ts`)
+
+```ts
+interface SubmissionService {
+  submit(
+    applicationId: string,
+  ): Promise<
+    | { outcome: "submitted_success"; offers: LenderOffer[] }
+    | { outcome: "submission_failed"; supportReference: string; supportPath: SupportPath }
+  >;
+}
+```
 
 - For known test IDs (`11111111-...`) return success with one or more stub offers.
 - For `deadbeef-dead-dead-dead-deadbeefdead` return a synthetic failure.
-- For incomplete data return `INCOMPLETE_APPLICATION` (handled before stub call).
+- For incomplete data the handler returns `INCOMPLETE_APPLICATION` before calling this service.
 
 ---
 
-## 7. Idempotency & transactions
+## 7. Fintech & compliance checklist
 
-- Every mutating route **requires** the `Idempotency-Key` header (contract v1.1.0). Missing header returns `400 IDEMPOTENCY_KEY_REQUIRED`.
-- The server computes `key_hash = SHA-256(scope + ":" + raw_key)` where scope is the hashed session id (or webhook sender id for `perfios_callback`). Replays with the same key + scope return the cached `(status_code, response_body)` for `IDEMPOTENCY_TTL_SECONDS` (10 minutes).
-- If the same key is reused with a different payload, return `409 IDEMPOTENCY_KEY_CONFLICT`.
-- Idempotency records are persisted in the `idempotency_keys` table (see `db-schema.yaml` v1.1.0) or an equivalent in-memory store during tests.
-- For non-replayed mutations, the route starts a transaction, locks `applications` and `applicants`, applies the mutation, writes the idempotency cache, and commits.
-- If the transaction fails, rollback and return a structured error with `support_reference` where appropriate.
+For every endpoint that touches PII, loans, or money:
 
----
-
-## 8. Test alignment
-
-| Test file | Test case | Expected handler behavior |
-|---|---|---|
-| `apply-api.test.ts` | `GET /api/apply/state` with cookie | Return 200 `ApplicationState` with `current_step=loan_intent` and `expires_at` |
-| `apply-api.test.ts` | `GET /api/apply/state` without cookie | Return 401 `SESSION_INVALID` |
-| `apply-api.test.ts` | `POST /api/apply/state` valid `loan_intent` | Advance to `personal_contact` |
-| `apply-api.test.ts` | `POST /api/apply/state` invalid values | Return 400 `VALIDATION_ERROR` with `field_errors` containing the bad fields |
-| `apply-api.test.ts` | `POST /api/apply/state` skip to `aadhaar_verification` | Return 409 `INVALID_TRANSITION` with `current_step`/`expected_step` |
-| `apply-api.test.ts` | `POST /api/apply/state` missing CSRF | Return 403 |
-| `apply-api.test.ts` | `POST /otp/send` valid mobile | Return `otp_reference_id`, `expires_at`, `cooldown_seconds` |
-| `apply-api.test.ts` | `POST /otp/send` invalid destination | Return 400 `INVALID_DESTINATION` + `field_errors` |
-| `apply-api.test.ts` | `POST /otp/send` missing CSRF | Return 403 |
-| `apply-api.test.ts` | `POST /otp/verify` valid OTP | Return `verified: true` + `verification_token` |
-| `apply-api.test.ts` | `POST /otp/verify` short OTP | Return 400 `INVALID_OTP` + `remaining_attempts` |
-| `apply-api.test.ts` | `POST /documents/upload-url` valid | Return `document_id`, `upload_url`, `upload_method`, `expires_at` |
-| `apply-api.test.ts` | `POST /documents/upload-url` too large | Return 413 `FILE_TOO_LARGE` + `max_size_bytes` |
-| `apply-api.test.ts` | `POST /documents/upload-url` bad mime | Return 400 |
-| `apply-api.test.ts` | `POST /documents/upload` base64 PDF | Return 201 `Document` |
-| `apply-api.test.ts` | `POST /documents/upload` image | Return 415 `UNSUPPORTED_MEDIA_TYPE` |
-| `apply-api.test.ts` | `POST /perfios/initiate` with consent | Return transaction id, redirect URL, expiry |
-| `apply-api.test.ts` | `POST /perfios/initiate` no consent | Return 400 `VALIDATION_ERROR` |
-| `apply-api.test.ts` | `POST /perfios/callback` | Return 204 empty |
-| `apply-api.test.ts` | `GET /perfios/status` | Return status JSON |
-| `apply-api.test.ts` | `POST /submit` success | Return 200 `SubmissionResult` with `outcome=submitted_success`, `reference_number` matching `NDH-YYYYMMDD-XXXXXX`, `next_step=offers` |
-| `apply-api.test.ts` | `POST /submit` missing consents | Return 400 `VALIDATION_ERROR` + `missing_consents` |
-| `apply-api.test.ts` | `POST /submit` incomplete app | Return 422 `INCOMPLETE_APPLICATION` |
-| `apply-api.test.ts` | `POST /submit` failure trigger | Return 500 `SUBMISSION_FAILED` + `support_reference` + `support_path` |
-| `apply-api.test.ts` | `GET /offers` submitted app | Return 200 `{ offers: [...] }` |
-| `apply-api.test.ts` | `GET /offers` missing/unsubmitted | Return 404 `APPLICATION_NOT_FOUND` |
-| `apply-api.test.ts` | `POST /consent` valid | Return 201 `ConsentRecord` |
-| `apply-api.test.ts` | `POST /consent` missing snapshot | Return 400 `VALIDATION_ERROR` with `statement_snapshot` in `field_errors` |
-| `apply-validation.test.ts` | All field validators | Exported from `app/apply/lib/validation.ts`; used by routes |
-| `apply-wizard.test.tsx` | Masked PII display | State response must expose masked mobile, Aadhaar, PAN |
+| Rule              | How it is enforced                                                                                                              |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| Idempotency       | `Idempotency-Key` required; cache stored in `idempotency_keys`; replays return cached response, payload mismatch returns `409`. |
+| Row-level locking | Every state mutation `SELECT ... FROM loan_applications WHERE id = $1 FOR UPDATE` (and borrowers/statement rows when needed).   |
+| DECIMAL currency  | `requested_amount` stored as `DECIMAL(19,4)`; arithmetic uses `decimal.js`.                                                     |
+| PII masking       | Phone, PAN, Aadhaar masked in responses and logs; full values encrypted at rest; Aadhaar full value never persisted.            |
 
 ---
 
-## 9. Blockers & ambiguities
+## 8. Idempotency & transactions detailed flow
 
-1. ~~Missing creative brief~~ **Resolved.** `Design.md` and all v1.1.0 contracts have been copied into `navdhan-redesign-2026/.opencode/factory/`.
-2. **Missing factory meta files:** No `manifest.md` or `lessons-learned.md` were found, so cross-agent handoff constraints are assumed standard.
-3. **Session cookie vs. contract:** `apply-contract.yaml` says `GET /api/apply/state` creates a draft when none exists.  The API test expects `401 SESSION_INVALID` when the cookie is missing.  This CDD resolves the conflict by requiring a cookie for all portal interactions.
-4. ~~Idempotency-Key not in contract/tests~~ **Resolved in apply-contract.yaml v1.1.0.** Header is now mandatory; tests must send a valid `Idempotency-Key`.
-5. **Final consents mismatch:** The contract declares all four final consents, but the success test sends `marketing: false`.  Implementation treats `terms`, `privacy`, `credit_bureau` as mandatory and `marketing` as recorded-but-optional.
-6. **File type mismatch:** The contract restricts uploads to `application/pdf`; the UI registry also allows `image/jpeg` and `image/png` for ITR.  Backend will enforce the contract (PDF only) and reject non-PDF uploads with `415`.
-7. **Purpose enum mismatch:** The UI registry uses `business_growth` / `debt_refinance` while the contract and validation tests use `business_expansion` / `debt_refinancing`.  Backend follows the contract/tests.
-8. **Stateless environment vs. in-memory stubs:** Next.js route handlers run in a serverless runtime, so module-scoped in-memory stores reset on cold starts.  The MVP/test implementation accepts this limitation; production must switch to Redis + PostgreSQL.
-9. **No real encryption/HSM in stub:** PII encryption is interface-driven but the stub key is environment-derived.  A security review is required before any production deployment.
+Every mutating route follows this pattern:
+
+```ts
+export async function POST(request: Request): Promise<Response> {
+  // 1. Pre-checks that do not need DB locking.
+  const csrf = assertCsrf(request);
+  const sessionId = assertSessionCookie(request);
+  const idempotencyKey = assertIdempotencyKey(request);
+
+  // 2. Parse + validate body.
+  const body = await parseJsonBody(request);
+  const input = routeSchema.parse(body); // may return 400
+
+  // 3. External I/O first (Perfios, OTP stub, scanner) — no DB lock held.
+  const externalResult = await callExternalAdapter(input);
+
+  // 4. Transaction + row locking.
+  return await repository.transaction(async (tx) => {
+    // 4a. Lock application.
+    const app = await tx.lockApplication(input.application_id);
+    if (!app) return notFound();
+
+    // 4b. Idempotency replay inside the lock is safe against races.
+    const cached = await tx.getIdempotencyResponse(idempotencyKey, sessionId);
+    if (cached) return replay(cached);
+
+    // 4c. State-machine guard.
+    if (app.current_step !== expectedStep) return invalidTransition();
+
+    // 4d. Apply mutation, persist consent, advance step, store cache.
+    await applyMutation(tx, app, externalResult);
+    await tx.insertIdempotencyKey(...);
+
+    return response;
+  });
+}
+```
+
+- If the transaction fails, rollback and return a structured error.
+- If the external adapter fails (e.g., Perfios unavailable), return the appropriate 4xx/5xx response **before** starting the transaction so no partial DB state is written.
 
 ---
 
-## 10. Open questions for `@staff-engineer` review
+## 9. Test alignment
 
-- `Idempotency-Key` is enforced strictly for contract v1.1.0. Tests should be updated to include it.
-- Should `GET /api/apply/state` create the session cookie itself when missing, or is the cookie planted by a landing-page middleware?
-- Which ORM/driver should the production repository use?  (Drizzle, Prisma, node-postgres with raw SQL?)  This CDD keeps the repository interface ORM-agnostic.
-- Is the lender-matching failure trigger test ID (`deadbeef-dead-dead-dead-deadbeefdead`) acceptable as a permanent test hook, or should it be environment-flag driven?
+The CDD is aligned with `api-contract.yaml` v1.0.0. The legacy Vitest files must be rewritten to match these expectations:
+
+| Test target                          | Expected behavior                                                                                                                                                |
+| ------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `POST /apply/initialize`             | Creates session cookie and returns `ApplicationState` with `current_step = "ekyc_consent"`.                                                                      |
+| `GET /apply/state`                   | Returns current `ApplicationState`; 401 if cookie missing.                                                                                                       |
+| `POST /apply/ekyc/send-otp`          | Returns `otp_reference_id`, `expires_at`, `cooldown_seconds` when `current_step = "ekyc_consent"`.                                                               |
+| `POST /apply/ekyc/verify`            | Returns `verified: true` and advances to `pan_consent`.                                                                                                          |
+| `POST /apply/pan/verify`             | Returns `pan_masked`, `link_status`, `name_match`; advances to `gstin_consent`.                                                                                  |
+| `POST /apply/gstin/verify`           | Returns `valid: true`, `legal_name`; advances to `gstin_verification`.                                                                                           |
+| `POST /apply/gstin/fetch-returns`    | Returns `return_history` with integer INR periods; advances to `gstin_returns`.                                                                                  |
+| `POST /apply/bank-statement/analyze` | Returns `perfios_transaction_id`, `redirect_url`; advances to `bank_statement_analysis`.                                                                         |
+| `POST /apply/documents/upload`       | Returns 201 `Document` for PDF; 413 / 415 for size/type violations.                                                                                              |
+| `POST /apply/consent`                | Returns 201 `ConsentRecord`; validates `statement_snapshot`.                                                                                                     |
+| `POST /apply/submit`                 | Returns `submitted_success` + reference number matching `NDH-YYYYMMDD-XXXXXX`; missing consents return 400 with `missing_consents`; incomplete data returns 422. |
+
+All mutation tests must include `Idempotency-Key` and `x-navdhan-requested-with` headers.
+
+---
+
+## 10. Blockers & ambiguities
+
+1. **`db-schema.yaml` v1.0.0 has no session table.** The contract requires an HTTP-only session cookie. The CDD adds an `apply_sessions` bridge (or `loan_applications.session_id_hash`) as an implementation detail; ratify with the database team.
+2. **Legacy test drift resolved.** The existing `tests/apply/apply-api.test.ts` uses old routes/steps and must be refactored per the test-engineer summary.
+3. **Old `src/db/schema.ts` uses legacy table names** (`applications`, `applicants`, old step enums). The backend implementation must target the new schema from `db-schema.yaml` / `apply-database-cdd.md`.
+4. **Bank-statement callback/status routes are not in `api-contract.yaml`.** They are required to complete Perfios statement parsing; document them as out-of-band supporting routes.
+5. **No real encryption/HSM in the MVP stub.** PII encryption is interface-driven; a security review is required before production deployment.
+6. **GSTIN skip behavior is not specified.** The initial implementation treats GSTIN as required; add a skip flag later if product requires it.
+
+---
+
+## 11. Open questions for @staff-engineer review
+
+- Should `apply_sessions` be added to `db-schema.yaml`, or should the cookie value be the `loan_applications.id` and looked up directly?
+- Should the standalone `/apply/consent` endpoint also advance through `ekyc_consent`, `pan_consent`, and `gstin_consent`, or should those remain action-endpoint-only transitions?
+- For the bank-statement callback, should a failure status allow the user to retry from `bank_statement_consent`, or remain in `bank_statement_analysis` with a retry button?
+- Which decimal library should the production backend adopt (`decimal.js`, `big.js`, or Drizzle string arithmetic)?

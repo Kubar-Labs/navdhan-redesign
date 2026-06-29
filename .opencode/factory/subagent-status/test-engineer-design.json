@@ -1,0 +1,88 @@
+{
+  "agent": "test-engineer",
+  "run_phase": "RED",
+  "task": "Verify failing /apply loan application test suites align with Stage 1 contracts",
+  "completed_at": "2026-06-26T00:00:00Z",
+  "contracts_reviewed": [
+    "/home/yash/opencode-workspace/navdhan-redesign-2026/.opencode/factory/api-contract.yaml",
+    "/home/yash/opencode-workspace/navdhan-redesign-2026/.opencode/factory/db-schema.yaml"
+  ],
+  "tests_reviewed": [
+    "tests/apply/apply-api.test.ts",
+    "tests/apply/apply-validation.test.ts",
+    "tests/apply/apply-wizard.test.tsx"
+  ],
+  "execution": {
+    "status": "blocked",
+    "command_attempted": "npm run test:apply",
+    "reason": "No shell execution tool available in the current runtime and node_modules/dependencies are not installed. The project has no source/stub files under src/app/api/apply or src/app/apply/_components, so the test imports would fail regardless."
+  },
+  "summary": {
+    "total_test_files": 3,
+    "total_test_cases": 48,
+    "expected_failure_mode": "Import/module resolution failure and route/function-not-implemented failure",
+    "contract_alignment": "needs_correction",
+    "blockers": [
+      "Runtime shell access unavailable; `npm run test:apply` could not be invoked",
+      "node_modules not present; Vitest and testing-library are not installed",
+      "Architect stubs for route handlers and WizardShell are missing, so imports cannot resolve"
+    ]
+  },
+  "alignment_findings": [
+    {
+      "severity": "critical",
+      "file": "tests/apply/apply-api.test.ts",
+      "topic": "route_imports_and_paths",
+      "detail": "Test imports routes that do not exist in api-contract.yaml: POST /api/apply/state, /api/apply/otp/send, /api/apply/otp/verify, /api/apply/documents/upload-url, /api/apply/perfios/*, /api/apply/offers. Contract routes are /apply/initialize, /apply/ekyc/send-otp, /apply/ekyc/verify, /apply/pan/verify, /apply/gstin/verify, /apply/gstin/fetch-returns, /apply/bank-statement/analyze, /apply/documents/upload (multipart), /apply/submit, /apply/consent."
+    },
+    {
+      "severity": "critical",
+      "file": "tests/apply/apply-api.test.ts",
+      "topic": "wizard_step_names",
+      "detail": "Tests use step IDs loan_intent, personal_contact, aadhaar_verification, gst_verification, bank_statements. Contract ApplicationStep enum requires: basic_details, ekyc_consent, ekyc_verification, pan_consent, pan_verification, gstin_consent, gstin_verification, gstin_returns, bank_statement_consent, bank_statement_analysis, itr_upload, tds_upload, review_submit, submission_result."
+    },
+    {
+      "severity": "high",
+      "file": "tests/apply/apply-api.test.ts",
+      "topic": "document_upload_format",
+      "detail": "Document upload tests send JSON with base64_content. Contract specifies multipart/form-data with file binary and requires application/pdf."
+    },
+    {
+      "severity": "high",
+      "file": "tests/apply/apply-api.test.ts",
+      "topic": "otp_schema",
+      "detail": "OTP tests send channel/destination/purpose. Contract /apply/ekyc/send-otp requires application_id, aadhaar_number and a ConsentReceipt; /apply/ekyc/verify requires application_id, otp_reference_id, otp."
+    },
+    {
+      "severity": "high",
+      "file": "tests/apply/apply-wizard.test.tsx",
+      "topic": "wizard_step_names",
+      "detail": "Wizard step IDs and the WizardShell API are driven by the older step naming convention (loan_intent, personal_contact, etc.) and do not match the contract ApplicationStep enum."
+    },
+    {
+      "severity": "medium",
+      "file": "tests/apply/apply-validation.test.ts",
+      "topic": "validation_surface",
+      "detail": "Validation functions cover loan_amount, tenure_months, purpose, referral_code, full_name, mobile, email, business_pin_code, aadhaar, aadhaar_otp, pan, gstin. Loan amount, purpose, referral-code, mobile, email, aadhaar, aadhaar_otp, pan, gstin are consistent with contract patterns. tenure_months and business_pin_code are not defined in the active API contract."
+    },
+    {
+      "severity": "medium",
+      "file": "tests/apply/apply-api.test.ts",
+      "topic": "idempotency_and_csrf_headers",
+      "detail": "Mutation tests include x-navdhan-requested-with header but do not include Idempotency-Key, which is required by the contract for all POST/PUT/PATCH endpoints."
+    },
+    {
+      "severity": "low",
+      "file": "tests/apply/apply-api.test.ts",
+      "topic": "offers_endpoint",
+      "detail": "GET /api/apply/offers is not present in api-contract.yaml."
+    }
+  ],
+  "recommendations": [
+    "Install dependencies (`npm install`) and run `npm run test:apply` once shell access is available",
+    "Regenerate or update apply-api.test.ts to import from the exact contract routes and assert contract request/response shapes",
+    "Update apply-wizard.test.tsx to use contract ApplicationStep enum values",
+    "Add Idempotency-Key header to all mutation tests",
+    "Provide architect stubs under src/app/api/apply/* and src/app/apply/_components so imports resolve in the RED phase"
+  ]
+}

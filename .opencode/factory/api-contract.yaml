@@ -1,670 +1,1086 @@
-version: "1.0.0"
-service: navdhan-www
-localeScope:
-  supportedLocales: [en, hi, bn, te, mr, ta, kn, ml]
-  defaultLocale: en
-  fallbackPolicy: >-
-    Each non-default locale JSON is deep-merged over the default locale JSON.
-    Missing keys fall back to the default locale value. Unknown locales return
-    the Next.js not-found boundary.
-
-description: |
-  Contract for the `navdhan-redesign-2026` static, borrower-facing marketing and
-  application site. This spec is the single source of truth for:
-    * locale JSON schema (`messages/*.json`)
-    * custom Google font loading and CSS font variables
-    * `getTranslator` / `t()` contract
-    * homepage data-to-layout mapping replacing direct `siteData.ts` imports
-    * dynamic API contract for the localized `/apply` lead form
-
-schemas:
-  Locale:
-    type: string
-    enum: [en, hi, bn, te, mr, ta, kn, ml]
-    description: Active public locales.
-
-  # ---------------------------------------------------------------------------
-  # 1. Locale message schema
-  # ---------------------------------------------------------------------------
-  Messages:
-    description: |
-      Root namespace shared by all `src/lib/i18n/messages/<locale>.json`
-      documents. Values may be strings, numbers, or nested objects. Arrays MUST
-      only be used within the approved list schemas below; the generic
-      translator treats arrays as lists that are joined with " · ".
-    namespaces:
-      meta.title:
-        type: string
-        required: true
-        description: HTML `<title>` for the current page.
-      meta.description:
-        type: string
-        required: true
-        description: HTML meta description.
-
-      global:
-        type: object
-        required: true
-        properties:
-          announcement:
-            type: object
-            properties:
-              message: { type: string, required: true }
-              ctaLabel: { type: string, required: true }
-              href: { type: string, required: true, format: uri-relative }
-          alt: { type: object, additionalProperties: { type: string } }
-          nav:
-            type: object
-            properties:
-              loanProducts: { type: string, required: true }
-              whyNavDhan: { type: string, required: true }
-              emiCalculator: { type: string, required: true }
-              customerStories: { type: string, required: true }
-              team: { type: string, required: true }
-          cta:
-            type: object
-            properties:
-              apply:
-                type: object
-                properties:
-                  label: { type: string, required: true }
-                  href: { type: string, required: true, format: uri-relative }
-                  variant: { type: string, enum: [primary, secondary, outline] }
-              backToHome: { type: string, required: true }
-          localeSelector:
-            type: object
-            properties:
-              label: { type: string, required: true }
-              current: { type: string, required: true }
-          mobileMenu:
-            type: object
-            properties:
-              open: { type: string, required: true }
-              close: { type: string, required: true }
-              ariaLabel: { type: string, required: true }
-          contact:
-            type: object
-            properties:
-              loan: { type: string, required: true, format: email }
-              partnership: { type: string, required: true, format: email }
-              support: { type: string, required: true, format: email }
-              careers: { type: string, required: true, format: email }
-              press: { type: string, required: true, format: email }
-              outreach: { type: string, required: true, format: email }
-          footer:
-            type: object
-            required: true
-            properties:
-              tagline: { type: string, required: true }
-              company: { type: string, required: true }
-              address: { type: string, required: true }
-              copyright: { type: string, required: true }
-              contactHeading: { type: string, required: true }
-              companyHeading: { type: string, required: true }
-              legalHeading: { type: string, required: true }
-              badges:
-                type: array
-                itemType: string
-                required: true
-                description: Footer trust badges rendered inline.
-              contactLinks:
-                $ref: '#/schemas/LabelHrefList'
-              companyLinks:
-                $ref: '#/schemas/LabelHrefList'
-              legalLinks:
-                $ref: '#/schemas/LabelHrefList'
-
-      home:
-        type: object
-        required: true
-        properties:
-          hero:
-            type: object
-            required: true
-            properties:
-              eyebrow: { type: string, required: true }
-              headline: { type: string, required: true }
-              body: { type: string, required: true }
-              primaryCta: { type: string, required: true }
-              secondaryCta: { type: string, required: true }
-              stats:
-                type: array
-                itemType: object
-                required: true
-                items:
-                  properties:
-                    value: { type: string, required: true }
-                    label: { type: string, required: true }
-          associationBadges:
-            type: object
-            required: true
-            properties:
-              eyebrow: { type: string, required: true }
-          ecosystemTicker:
-            type: object
-            required: true
-            properties:
-              eyebrow: { type: string, required: true }
-          loanProducts:
-            type: object
-            required: true
-            properties:
-              eyebrow: { type: string, required: true }
-              heading: { type: string, required: true }
-              body: { type: string, required: true }
-              cta: { type: string, required: true }
-              productCta: { type: string, required: true }
-              products:
-                type: array
-                required: true
-                itemType: '#/schemas/ProductListItem'
-          whyNavDhan:
-            type: object
-            required: true
-            properties:
-              eyebrow: { type: string, required: true }
-              heading: { type: string, required: true }
-              body: { type: string, required: true }
-              cta: { type: string, required: true }
-              trustBadges:
-                type: array
-                itemType: string
-                required: true
-                description: Trust badges rendered after reason blocks.
-              reasons:
-                type: array
-                required: true
-                itemType: '#/schemas/ReasonListItem'
-          recognition:
-            type: object
-            required: true
-            properties:
-              eyebrow: { type: string, required: true }
-              heading: { type: string, required: true }
-          customerStories:
-            type: object
-            required: true
-            properties:
-              eyebrow: { type: string, required: true }
-              heading: { type: string, required: true }
-              cta: { type: string, required: true }
-          emiCalculator:
-            type: object
-            required: true
-            properties:
-              eyebrow: { type: string, required: true }
-              heading: { type: string, required: true }
-              intro: { type: string, required: true }
-              amount: { type: string, required: true }
-              rate: { type: string, required: true }
-              tenure: { type: string, required: true }
-              monthly: { type: string, required: true }
-              principal: { type: string, required: true }
-              totalInterest: { type: string, required: true }
-              totalPayable: { type: string, required: true }
-              cta: { type: string, required: true }
-          finalCta:
-            type: object
-            required: true
-            properties:
-              heading: { type: string, required: true }
-              subtext: { type: string, required: true }
-              primaryCta: { type: string, required: true }
-              secondaryCta: { type: string, required: true }
-
-      team:
-        type: object
-        required: true
-        properties:
-          meta:
-            type: object
-            required: true
-            properties:
-              title: { type: string, required: true }
-              description: { type: string, required: true }
-          hero:
-            type: object
-            required: true
-            properties:
-              heading: { type: string, required: true }
-              subtext: { type: string, required: true }
-          members:
-            type: object
-            required: true
-            properties:
-              heading: { type: string, required: true }
-              eyebrow: { type: string, required: true }
-          advisors:
-            type: object
-            required: true
-            properties:
-              heading: { type: string, required: true }
-              eyebrow: { type: string, required: true }
-          join:
-            type: object
-            required: true
-            properties:
-              heading: { type: string, required: true }
-              subtext: { type: string, required: true }
-              cta: { type: string, required: true }
-
-      apply:
-        type: object
-        required: true
-        properties:
-          meta:
-            type: object
-            required: true
-            properties:
-              title: { type: string, required: true }
-              description: { type: string, required: true }
-          eyebrow: { type: string, required: true }
-          heading: { type: string, required: true }
-          description: { type: string, required: true }
-          loanDetailsTitle: { type: string, required: true }
-          amountLabel: { type: string, required: true }
-          tenureLabel: { type: string, required: true }
-          purposeLabel: { type: string, required: true }
-          purposes:
-            type: object
-            required: true
-            description: Map of `LoanPurpose` enum value to localized label.
-            additionalProperties: { type: string }
-          aboutYouTitle: { type: string, required: true }
-          fullNameLabel: { type: string, required: true }
-          mobileLabel: { type: string, required: true }
-          mobilePlaceholder: { type: string, required: true }
-          emailLabel: { type: string, required: true }
-          pinCodeLabel: { type: string, required: true }
-          pinCodePlaceholder: { type: string, required: true }
-          emiLabel: { type: string, required: true }
-          emiNoteTemplate: { type: string, required: true }
-          consentDataPrefix: { type: string, required: true }
-          consentAnd: { type: string, required: true }
-          consentPolicy: { type: string, required: true }
-          privacyPolicy: { type: string, required: true }
-          consentLender: { type: string, required: true }
-          submit: { type: string, required: true }
-          submitting: { type: string, required: true }
-          successHeading: { type: string, required: true }
-          successBody: { type: string, required: true }
-          successCta: { type: string, required: true }
-          errorHeading: { type: string, required: true }
-          errorBody: { type: string, required: true }
-          fieldRequired: { type: string, required: true }
-          validation:
-            type: object
-            properties:
-              mobileInvalid: { type: string, required: true }
-              emailInvalid: { type: string, required: true }
-              pinCodeInvalid: { type: string, required: true }
-              nameInvalid: { type: string, required: true }
-              consentRequired: { type: string, required: true }
-
-      legal:
-        type: object
-        required: true
-        properties:
-          lastUpdated: { type: string, required: true }
-          contactCard:
-            type: object
-            required: true
-            properties:
-              role: { type: string, required: true }
-              emailLabel: { type: string, required: true }
-              addressLabel: { type: string, required: true }
-
-      errors:
-        type: object
-        required: true
-        properties:
-          notFound:
-            type: object
-            required: true
-            properties:
-              title: { type: string, required: true }
-              message: { type: string, required: true }
-              cta: { type: string, required: true }
-          boundary:
-            type: object
-            required: true
-            properties:
-              title: { type: string, required: true }
-              message: { type: string, required: true }
-              cta: { type: string, required: true }
-
-  LabelHrefList:
-    description: Ordered list of labelled links used in footer and nav.
-    type: array
-    itemType: object
-    items:
-      properties:
-        labelKey:
-          type: string
-          required: true
-          description: Localized label text.
-        href:
-          type: string
-          required: true
-          format: uri-reference
-
-  ProductListItem:
-    description: Localized loan product card rendered by `home.loanProducts.products`.
-    type: object
-    properties:
-      id:
-        type: string
-        required: true
-        enum: [collateral-free, working-capital, machinery, growth]
-      titleKey:
-        type: string
-        required: true
-      descriptionKey:
-        type: string
-        required: true
-      iconName:
-        type: string
-        required: true
-        description: Name of an exported icon component from `lucide-react`.
-      ctaKey:
-        type: string
-        required: true
-
-  ReasonListItem:
-    description: Localized reason block rendered by `home.whyNavDhan.reasons`.
-    type: object
-    properties:
-      id:
-        type: string
-        required: true
-      titleKey:
-        type: string
-        required: true
-      bodyKey:
-        type: string
-        required: true
-
-  # ---------------------------------------------------------------------------
-  # 2. Font contract
-  # ---------------------------------------------------------------------------
-  FontContract:
-    description: |
-      Google/next/font contract for `app/layout.tsx` and `app/globals.css`.
-      Custom font variables are injected into the root `<html>` element and
-      consumed by the Tailwind theme.
-    variables:
-      --font-inter:
-        source: next/font/google Inter
-        subsets: [latin, latin-ext]
-        weights: [400, 500, 600, 700]
-        display: swap
-        fallback: ["Noto Sans Devanagari", system-ui, sans-serif]
-        usage: body, UI, buttons, forms
-      --font-instrument-serif:
-        source: custom Google Font import or next/local
-        weights: [400]
-        style: italic
-        display: swap
-        fallback: [Georgia, serif]
-        usage: hero display emphasis only (optional, use sparingly)
-    rules:
-      - Only these two font families are permitted on public marketing surfaces.
-      - No external CSS font imports that bypass Next.js font optimization.
-      - The `font-display: swap` strategy is required.
-      - Devanagari fallback `Noto Sans Devanagari` must remain for Hindi content.
-      - The `<html lang={locale}>` attribute must match the active route locale.
-
-  # ---------------------------------------------------------------------------
-  # 3. Translator contract
-  # ---------------------------------------------------------------------------
-  Translator:
-    description: |
-      `getTranslator(locale, namespace?)` returns a synchronous closure `t()`
-      that resolves a dotted key against the deep-merged locale messages.
-    signatures:
-      getTranslator:
-        type: function
-        async: true
-        params:
-          - name: locale
-            type: Locale
-          - name: namespace
-            type: string
-            required: false
-            description: Dot-separated prefix for every key lookup.
-        returns: Translator
-
-      t:
-        type: function
-        params:
-          - name: key
-            type: string
-            description: Dotted key relative to namespace or root.
-          - name: variables
-            type: object
-            required: false
-            description: Plain object of string | number replacements.
-        returns: string
-    behavior:
-      - Resolves dotted paths such as `home.hero.headline`.
-      - If a `namespace` is provided, `t('headline')` resolves `namespace.headline`
-        AND still accepts absolute keys like `home.hero.headline`.
-      - Interpolates `{varName}` placeholders with `variables[varName]`.
-      - Leaves unmatched `{varName}` tokens unchanged.
-      - Falls back to the requested key string when a translation is missing.
-      - Arrays are joined with " · " (U+00B7 middle dot) when encountered at a
-        leaf path, e.g. `t('home.finalCta.subtext')` becomes a single string.
-      - Pure string leaves are returned unchanged (no automatic list join).
-      - Empty or null values fall back to the key string.
-      - Must be server-safe and sync after initial construction.
-    implementationNote: |
-      The existing `src/lib/i18n/translations.ts` already implements this
-      behavior. Implementers must preserve the array join with " · " and the
-      namespace fallback rules.
-
-  # ---------------------------------------------------------------------------
-  # 4. Homepage layout mapping contract
-  # ---------------------------------------------------------------------------
-  HomePageMapping:
-    description: |
-      The Homepage (`app/[locale]/(marketing)/page.tsx`) MUST stop importing
-      content arrays directly from `siteData.ts`. All rendering data lives in
-      locale messages except four asset registries that contain no copy.
-    rules:
-      - All heading/body/cta copy must be resolved via `t()` or `getTranslator`.
-      - The following domain data remains in static JSON/TS to avoid inflating
-        message files with non-copy metadata:
-          * associationBadges: asset registry (logo, altKey, href)
-          * techPartners: asset registry (logo, altKey)
-          * recognitionItems: rich content registry (`src/lib/data/recognition.json`)
-          * team.json: structured people data used by the `/team` page
-      - The following lists copy MUST move into `home.*` message arrays:
-          * hero.stats
-          * home.loanProducts.products
-          * home.whyNavDhan.reasons
-          * home.whyNavDhan.trustBadges
-          * home.customerStories stubs (or drop fabricated photos per DESIGN.md)
-    interfaces:
-      HomePageDataLoader:
-        type: function
-        async: true
-        params:
-          - name: locale
-            type: Locale
-        returns:
-          type: object
-          properties:
-            t: { type: Translator, required: true }
-            associationBadges: { $ref: '#/schemas/AssetRegistry' }
-            techPartners: { $ref: '#/schemas/AssetRegistry' }
-            recognitionItems: { type: array, itemType: RecognitionItem }
-            emiDefaults: { $ref: '#/schemas/EmiDefaults' }
-
-      AssetRegistry:
-        description: Read-only static asset metadata with no displayed copy.
-        type: array
-        itemType: object
-        items:
-          properties:
-            name:
-              type: string
-              required: true
-            logoAsset:
-              type: string
-              required: true
-              description: Public asset path.
-            href:
-              type: string
-              format: uri-reference
-            altKey:
-              type: string
-              required: true
-              description: Dotted key to a message string in `global.alt`.
-
-      RecognitionItem:
-        type: object
-        properties:
-          id: { type: string, required: true }
-          titleKey: { type: string, required: true }
-          descriptionKey: { type: string, required: true }
-          writeUp: { type: string, required: true }
-          imageAsset: { type: string }
-          galleryAssets:
-            type: array
-            itemType: string
-          date: { type: string }
-
-      EmiDefaults:
-        type: object
-        required: true
-        properties:
-          minAmount: { type: integer }
-          maxAmount: { type: integer }
-          defaultAmount: { type: integer }
-          minRate: { type: number }
-          maxRate: { type: number }
-          defaultRate: { type: number }
-          minTenure: { type: integer }
-          maxTenure: { type: integer }
-          defaultTenure: { type: integer }
-
-  # ---------------------------------------------------------------------------
-  # 5. Apply form API contract
-  # ---------------------------------------------------------------------------
-  LoanPurpose:
-    type: string
-    enum:
-      - working_capital
-      - machinery
-      - inventory
-      - business_expansion
-      - debt_refinancing
-      - other
-
-  ApplyLeadRequest:
-    description: POST body sent to `/api/apply/lead`.
-    type: object
-    required:
-      - amount
-      - tenure
-      - purpose
-      - fullName
-      - mobile
-      - email
-      - pinCode
-      - consentData
-      - consentLender
-    properties:
-      amount:
-        type: integer
-        minimum: 500_000
-        maximum: 10_000_000
-        description: Loan amount in INR.
-      tenure:
-        type: integer
-        minimum: 3
-        maximum: 12
-        description: Tenure in months.
-      purpose:
-        $ref: '#/schemas/LoanPurpose'
-      fullName:
-        type: string
-        minLength: 2
-        maxLength: 150
-        pattern: "^[A-Za-z\\s'.-]+$"
-      mobile:
-        type: string
-        pattern: "^[6-9]\\d{9}$"
-        description: 10-digit Indian mobile without country code.
-      email:
-        type: string
-        format: email
-        maxLength: 255
-      pinCode:
-        type: string
-        pattern: "^[1-9]\\d{5}$"
-      consentData:
-        type: boolean
-        enum: [true]
-      consentLender:
-        type: boolean
-        enum: [true]
-    headers:
-      Idempotency-Key:
-        type: string
-        required: true
-        pattern: "^[0-9a-fA-F-]{36}$|^[0-9]{13}-[A-Za-z0-9]+$"
-        description: UUID or fallback timestamp token generated by the client.
-
-  ApplyLeadResponse:
-    description: |
-      Response from `/api/apply/lead`. On success, `received_at` is an ISO 8601
-      timestamp. On failure, `errors` follows the field-level validation format.
-    oneOf:
-      - type: object
-        status: 200
-        properties:
-          success: { type: boolean, enum: [true] }
-          received_at: { type: string, format: date-time }
-      - type: object
-        status: 400
-        properties:
-          error: { type: string, enum: [BAD_REQUEST] }
-          message: { type: string }
-      - type: object
-        status: 422
-        properties:
-          error: { type: string, enum: [VALIDATION_ERROR] }
-          errors:
-            type: array
-            itemType: object
-            items:
-              properties:
-                field: { type: string, required: true }
-                message: { type: string, required: true }
-      - type: object
-        status: 429
-        properties:
-          error: { type: string, enum: [RATE_LIMITED] }
-          message: { type: string }
-
-customListSchema:
+openapi: 3.0.3
+info:
+  title: NavDhan Apply API
   description: |
-    All ordered lists inside messages MUST be arrays. When the `t()` function
-    reaches an array it MUST return a single string joined by " · " (middle
-    dot). This applies to trust badges, stats, footer badges, and any future
-    list fields. Objects inside arrays MUST have deterministic `id` keys.
-  formatting:
-    separator: " · "
-    unicode: "U+00B7"
-    edgeCase: Empty array returns "".
+    Consent-based multi-step loan application wizard for the redesigned NavDhan platform.
+    All monetary amounts are expressed as whole Indian Rupees (INR) integers to avoid
+    floating-point representation. Every mutation requires an `Idempotency-Key` header
+    and a CSRF marker header.
+  version: "1.0.0"
+  contact:
+    name: Kubar Labs Engineering
+servers:
+  - url: /api
+    description: NavDhan production API
 
-brandAlignment:
-  rules:
-    - No lender-first terms on public surfaces (lender, platform, partner only
-      where legally required in RBI-DLG copy).
-    - Borrower onboarding language: "Check Eligibility", "Apply Online",
-      "Talk to Us", "matched offers", "zero platform fee".
-    - Product name is NavDhan (capital N and D in body).
-    - Legal entity: Kubar Protocol Private Limited, CIN U70200WB2024PTC274850.
-    - Registered address in Karnataka must be present in footer/company JSON.
+tags:
+  - name: Apply
+    description: Loan application wizard lifecycle
+  - name: Consent
+    description: Explicit consent capture and audit
+  - name: Documents
+    description: ITR and TDS certificate upload
+
+components:
+  parameters:
+    IdempotencyKeyHeader:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: UUID v4 used to deduplicate mutating requests for 10 minutes.
+      schema:
+        type: string
+        format: uuid
+        example: "11111111-1111-1111-1111-111111111111"
+    CsrfHeader:
+      name: x-navdhan-requested-with
+      in: header
+      required: true
+      description: CSRF marker required on all mutating requests.
+      schema:
+        type: string
+        enum: [apply]
+        example: apply
+    LocaleHeader:
+      name: Accept-Language
+      in: header
+      required: false
+      description: BCP-47 locale for user-facing copy.
+      schema:
+        type: string
+        enum: [en, hi, bn, te, mr, ta, kn, ml]
+        default: en
+        example: en
+
+  schemas:
+    ApplicationStep:
+      type: string
+      enum:
+        - basic_details
+        - ekyc_consent
+        - ekyc_verification
+        - pan_consent
+        - pan_verification
+        - gstin_consent
+        - gstin_verification
+        - gstin_returns
+        - bank_statement_consent
+        - bank_statement_analysis
+        - itr_upload
+        - tds_upload
+        - review_submit
+        - submission_result
+      example: ekyc_consent
+
+    ApplicationStatus:
+      type: string
+      enum: [draft, submitted, declined, expired]
+      example: draft
+
+    LoanPurpose:
+      type: string
+      enum:
+        - working_capital
+        - machinery
+        - inventory
+        - business_expansion
+        - debt_refinancing
+        - other
+      example: working_capital
+
+    DocumentType:
+      type: string
+      enum: [itr, tds_certificate]
+      example: itr
+
+    LinkStatus:
+      type: string
+      enum: [linked, not_linked, unknown]
+      example: linked
+
+    ConsentReceipt:
+      type: object
+      required: [accepted, statement_snapshot, version, locale]
+      properties:
+        accepted:
+          type: boolean
+          description: Affirmative opt-in from the borrower.
+        statement_snapshot:
+          type: string
+          maxLength: 2000
+          description: Exact user-facing consent text shown at the time of acceptance.
+        version:
+          type: string
+          description: Stable consent statement version.
+        locale:
+          type: string
+          enum: [en, hi, bn, te, mr, ta, kn, ml]
+          description: Locale in which the consent statement was presented.
+        data_points:
+          type: array
+          items:
+            type: string
+          description: Human-readable list of data items being collected.
+        purpose:
+          type: string
+          description: Human-readable purpose of data collection.
+        accessors:
+          type: array
+          items:
+            type: string
+          description: Human-readable list of parties who will access the data.
+
+    FinalConsents:
+      type: object
+      required: [terms, privacy, credit_bureau]
+      properties:
+        terms:
+          type: boolean
+        privacy:
+          type: boolean
+        credit_bureau:
+          type: boolean
+        marketing:
+          type: boolean
+
+    ApplicationState:
+      type: object
+      required: [application_id, borrower_id, current_step, status]
+      properties:
+        application_id:
+          type: string
+          format: uuid
+        borrower_id:
+          type: string
+          format: uuid
+        current_step:
+          $ref: "#/components/schemas/ApplicationStep"
+        status:
+          $ref: "#/components/schemas/ApplicationStatus"
+        requested_amount:
+          type: integer
+          description: Requested amount in whole INR.
+        purpose:
+          $ref: "#/components/schemas/LoanPurpose"
+        referral_code:
+          type: string
+          nullable: true
+        expires_at:
+          type: string
+          format: date-time
+          description: Draft expiry timestamp.
+
+    OtpReference:
+      type: object
+      required: [otp_reference_id, expires_at, cooldown_seconds]
+      properties:
+        otp_reference_id:
+          type: string
+          format: uuid
+        expires_at:
+          type: string
+          format: date-time
+        cooldown_seconds:
+          type: integer
+          minimum: 0
+
+    EkycVerifyResponse:
+      type: object
+      required: [application_id, verified, current_step, status]
+      properties:
+        application_id:
+          type: string
+          format: uuid
+        verified:
+          type: boolean
+        masked_name:
+          type: string
+          nullable: true
+        current_step:
+          $ref: "#/components/schemas/ApplicationStep"
+        status:
+          $ref: "#/components/schemas/ApplicationStatus"
+
+    PanVerifyResponse:
+      type: object
+      required: [application_id, verified, link_status, current_step, status]
+      properties:
+        application_id:
+          type: string
+          format: uuid
+        verified:
+          type: boolean
+        link_status:
+          $ref: "#/components/schemas/LinkStatus"
+        name_match:
+          type: boolean
+          nullable: true
+        pan_masked:
+          type: string
+          example: "ABCXX***X"
+        current_step:
+          $ref: "#/components/schemas/ApplicationStep"
+        status:
+          $ref: "#/components/schemas/ApplicationStatus"
+
+    GstReturnPeriod:
+      type: object
+      required: [period, filing_status]
+      properties:
+        period:
+          type: string
+          example: "2024-Q1"
+        filing_status:
+          type: string
+          enum: [filed, pending, not_applicable]
+        taxable_value:
+          type: integer
+          nullable: true
+          description: Taxable value in whole INR.
+        tax_paid:
+          type: integer
+          nullable: true
+          description: Tax paid in whole INR.
+
+    GstinVerifyResponse:
+      type: object
+      required: [application_id, valid, current_step, status]
+      properties:
+        application_id:
+          type: string
+          format: uuid
+        valid:
+          type: boolean
+        legal_name:
+          type: string
+          nullable: true
+        current_step:
+          $ref: "#/components/schemas/ApplicationStep"
+        status:
+          $ref: "#/components/schemas/ApplicationStatus"
+
+    GstinReturnsResponse:
+      type: object
+      required: [application_id, gstin, return_history, current_step, status]
+      properties:
+        application_id:
+          type: string
+          format: uuid
+        gstin:
+          type: string
+        return_history:
+          type: array
+          items:
+            $ref: "#/components/schemas/GstReturnPeriod"
+        current_step:
+          $ref: "#/components/schemas/ApplicationStep"
+        status:
+          $ref: "#/components/schemas/ApplicationStatus"
+
+    BankStatementAnalyzeResponse:
+      type: object
+      required: [application_id, perfios_transaction_id, status, current_step]
+      properties:
+        application_id:
+          type: string
+          format: uuid
+        perfios_transaction_id:
+          type: string
+        redirect_url:
+          type: string
+          format: uri
+          nullable: true
+          description: Perfios widget/net-banking redirect URL when net-banking flow is used.
+        status:
+          type: string
+          enum: [pending, success, failure, partial]
+        analysis_score:
+          type: number
+          nullable: true
+          description: Normalized 0-100 bank-statement analysis score.
+        current_step:
+          $ref: "#/components/schemas/ApplicationStep"
+
+    Document:
+      type: object
+      required: [document_id, document_type, file_name, status, uploaded_at]
+      properties:
+        document_id:
+          type: string
+          format: uuid
+        document_type:
+          $ref: "#/components/schemas/DocumentType"
+        file_name:
+          type: string
+        mime_type:
+          type: string
+          example: application/pdf
+        file_size_bytes:
+          type: integer
+        status:
+          type: string
+          enum: [pending, uploaded, scanned, failed]
+        uploaded_at:
+          type: string
+          format: date-time
+
+    SubmissionResult:
+      type: object
+      required: [application_id, outcome, status]
+      properties:
+        application_id:
+          type: string
+          format: uuid
+        outcome:
+          type: string
+          enum: [submitted_success, submission_failed]
+        reference_number:
+          type: string
+          nullable: true
+          example: "NDH-YYYYMMDD-XXXXXX"
+        next_step:
+          type: string
+          nullable: true
+          example: offers
+        support_reference:
+          type: string
+          nullable: true
+        support_path:
+          type: string
+          enum: [email, phone, chat_stub]
+          nullable: true
+        status:
+          $ref: "#/components/schemas/ApplicationStatus"
+
+    ConsentRecord:
+      type: object
+      required: [consent_id, application_id, step_id, consent_key, accepted, recorded_at]
+      properties:
+        consent_id:
+          type: string
+          format: uuid
+        application_id:
+          type: string
+          format: uuid
+        step_id:
+          type: string
+        consent_key:
+          type: string
+        accepted:
+          type: boolean
+        statement_snapshot:
+          type: string
+        recorded_at:
+          type: string
+          format: date-time
+
+    FieldError:
+      type: object
+      required: [field, message]
+      properties:
+        field:
+          type: string
+        message:
+          type: string
+
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+          description: Machine-readable error code.
+        detail:
+          type: string
+          nullable: true
+          description: Human-readable detail, safe for display.
+        message_i18n_key:
+          type: string
+          nullable: true
+        field_errors:
+          type: array
+          items:
+            $ref: "#/components/schemas/FieldError"
+          nullable: true
+        retry_after_seconds:
+          type: integer
+          nullable: true
+        missing_consents:
+          type: array
+          items:
+            type: string
+          nullable: true
+
+  responses:
+    ValidationError:
+      description: Request validation failed.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error: VALIDATION_ERROR
+            detail: One or more fields are invalid.
+            field_errors:
+              - field: requested_amount
+                message: Must be between INR 500000 and INR 10000000.
+    UnauthorizedError:
+      description: Session cookie missing or invalid.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error: SESSION_INVALID
+            message_i18n_key: apply.errors.sessionExpired
+    ForbiddenError:
+      description: CSRF header missing or invalid.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error: CSRF_INVALID
+    NotFoundError:
+      description: Application or resource not found.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error: APPLICATION_NOT_FOUND
+    ConflictError:
+      description: Invalid state transition or idempotency key conflict.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          examples:
+            InvalidTransition:
+              value:
+                error: INVALID_TRANSITION
+                current_step: ekyc_consent
+                expected_step: basic_details
+            IdempotencyConflict:
+              value:
+                error: IDEMPOTENCY_KEY_CONFLICT
+                detail: Idempotency key reused with a different payload.
+    RateLimitError:
+      description: Rate limit exceeded.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error: RATE_LIMITED
+            retry_after_seconds: 60
+    FileTooLargeError:
+      description: Uploaded file exceeds the 5 MB limit.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error: FILE_TOO_LARGE
+            max_size_bytes: 5242880
+    UnsupportedMediaError:
+      description: Uploaded file type is not supported.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error: UNSUPPORTED_MEDIA_TYPE
+    IncompleteApplicationError:
+      description: Application data is incomplete for final submission.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error: INCOMPLETE_APPLICATION
+            missing_steps: [pan_verification]
+    ServerError:
+      description: Internal server error or submission failure.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/ErrorResponse"
+          example:
+            error: SUBMISSION_FAILED
+            support_reference: REQ-12345
+            support_path: email
+
+  securitySchemes:
+    SessionCookie:
+      type: apiKey
+      in: cookie
+      name: __Host-nd_session
+      description: HTTP-only session cookie.
+
+security:
+  - SessionCookie: []
+
+paths:
+  /apply/initialize:
+    post:
+      operationId: initializeApplication
+      summary: Create a new loan application session.
+      tags: [Apply]
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CsrfHeader"
+        - $ref: "#/components/parameters/LocaleHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [full_name, email, phone, requested_amount, purpose]
+              properties:
+                full_name:
+                  type: string
+                  minLength: 2
+                  maxLength: 150
+                email:
+                  type: string
+                  format: email
+                  maxLength: 255
+                phone:
+                  type: string
+                  pattern: "^[6-9]\\d{9}$"
+                  description: 10-digit Indian mobile number.
+                requested_amount:
+                  type: integer
+                  minimum: 500000
+                  maximum: 10000000
+                  multipleOf: 10000
+                  description: Requested loan amount in whole INR.
+                purpose:
+                  $ref: "#/components/schemas/LoanPurpose"
+                referral_code:
+                  type: string
+                  maxLength: 20
+                  pattern: "^[A-Za-z0-9_-]+$"
+                  nullable: true
+      responses:
+        "200":
+          description: Application initialized and advanced to the first consent step.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicationState"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "409":
+          $ref: "#/components/responses/ConflictError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /apply/state:
+    get:
+      operationId: getApplicationState
+      summary: Retrieve the current application state and step.
+      tags: [Apply]
+      parameters:
+        - $ref: "#/components/parameters/LocaleHeader"
+      responses:
+        "200":
+          description: Current application state.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplicationState"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /apply/ekyc/send-otp:
+    post:
+      operationId: sendEkycOtp
+      summary: Request an OTP for Aadhaar eKYC after explicit consent.
+      tags: [Apply]
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CsrfHeader"
+        - $ref: "#/components/parameters/LocaleHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [application_id, aadhaar_number, consent]
+              properties:
+                application_id:
+                  type: string
+                  format: uuid
+                aadhaar_number:
+                  type: string
+                  pattern: "^\\d{12}$"
+                  description: 12-digit Aadhaar number.
+                consent:
+                  $ref: "#/components/schemas/ConsentReceipt"
+      responses:
+        "200":
+          description: OTP reference returned.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OtpReference"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "409":
+          $ref: "#/components/responses/ConflictError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /apply/ekyc/verify:
+    post:
+      operationId: verifyEkycOtp
+      summary: Verify the Aadhaar eKYC OTP.
+      tags: [Apply]
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CsrfHeader"
+        - $ref: "#/components/parameters/LocaleHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [application_id, otp_reference_id, otp]
+              properties:
+                application_id:
+                  type: string
+                  format: uuid
+                otp_reference_id:
+                  type: string
+                  format: uuid
+                otp:
+                  type: string
+                  pattern: "^\\d{6}$"
+      responses:
+        "200":
+          description: OTP verification result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EkycVerifyResponse"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "410":
+          description: OTP has expired.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error: OTP_EXPIRED
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /apply/pan/verify:
+    post:
+      operationId: verifyPan
+      summary: Verify PAN and PAN-Aadhaar link status after explicit consent.
+      tags: [Apply]
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CsrfHeader"
+        - $ref: "#/components/parameters/LocaleHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [application_id, pan_number, consent]
+              properties:
+                application_id:
+                  type: string
+                  format: uuid
+                pan_number:
+                  type: string
+                  pattern: "^[A-Z]{5}[0-9]{4}[A-Z]$"
+                  description: 10-character PAN.
+                consent:
+                  $ref: "#/components/schemas/ConsentReceipt"
+      responses:
+        "200":
+          description: PAN verification result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PanVerifyResponse"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "409":
+          $ref: "#/components/responses/ConflictError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /apply/gstin/verify:
+    post:
+      operationId: verifyGstin
+      summary: Validate GSTIN after explicit consent.
+      tags: [Apply]
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CsrfHeader"
+        - $ref: "#/components/parameters/LocaleHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [application_id, gstin, consent]
+              properties:
+                application_id:
+                  type: string
+                  format: uuid
+                gstin:
+                  type: string
+                  pattern: "^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z][1-9A-Z]Z[0-9A-Z]$"
+                  description: 15-character GSTIN.
+                consent:
+                  $ref: "#/components/schemas/ConsentReceipt"
+      responses:
+        "200":
+          description: GSTIN verification result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GstinVerifyResponse"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "409":
+          $ref: "#/components/responses/ConflictError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /apply/gstin/fetch-returns:
+    post:
+      operationId: fetchGstinReturns
+      summary: Fetch GST return history after explicit consent.
+      tags: [Apply]
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CsrfHeader"
+        - $ref: "#/components/parameters/LocaleHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [application_id, gstin, consent]
+              properties:
+                application_id:
+                  type: string
+                  format: uuid
+                gstin:
+                  type: string
+                consent:
+                  $ref: "#/components/schemas/ConsentReceipt"
+      responses:
+        "200":
+          description: GST return history retrieved.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GstinReturnsResponse"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "409":
+          $ref: "#/components/responses/ConflictError"
+        "424":
+          description: Third-party GST service unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error: GST_SERVICE_UNAVAILABLE
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /apply/bank-statement/analyze:
+    post:
+      operationId: analyzeBankStatement
+      summary: Initiate Perfios bank statement analysis after explicit consent.
+      tags: [Apply]
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CsrfHeader"
+        - $ref: "#/components/parameters/LocaleHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [application_id, months, consent]
+              properties:
+                application_id:
+                  type: string
+                  format: uuid
+                bank_name:
+                  type: string
+                  maxLength: 100
+                  nullable: true
+                months:
+                  type: integer
+                  minimum: 6
+                  maximum: 12
+                method:
+                  type: string
+                  enum: [netbanking, upload]
+                  nullable: true
+                consent:
+                  $ref: "#/components/schemas/ConsentReceipt"
+      responses:
+        "200":
+          description: Bank statement analysis initiated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BankStatementAnalyzeResponse"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "409":
+          $ref: "#/components/responses/ConflictError"
+        "424":
+          description: Perfios service unavailable.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+              example:
+                error: PERFIOS_UNAVAILABLE
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /apply/documents/upload:
+    post:
+      operationId: uploadDocument
+      summary: Upload ITR or Form 26AS (TDS certificate).
+      tags: [Documents]
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CsrfHeader"
+        - $ref: "#/components/parameters/LocaleHeader"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [application_id, document_type, file]
+              properties:
+                application_id:
+                  type: string
+                  format: uuid
+                document_type:
+                  $ref: "#/components/schemas/DocumentType"
+                file:
+                  type: string
+                  format: binary
+                  description: PDF up to 5 MB.
+            encoding:
+              file:
+                contentType: application/pdf
+      responses:
+        "201":
+          description: Document uploaded successfully.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "409":
+          $ref: "#/components/responses/ConflictError"
+        "413":
+          $ref: "#/components/responses/FileTooLargeError"
+        "415":
+          $ref: "#/components/responses/UnsupportedMediaError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /apply/submit:
+    post:
+      operationId: submitApplication
+      summary: Final submission and complete data verification.
+      tags: [Apply]
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CsrfHeader"
+        - $ref: "#/components/parameters/LocaleHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [application_id, final_consents]
+              properties:
+                application_id:
+                  type: string
+                  format: uuid
+                final_consents:
+                  $ref: "#/components/schemas/FinalConsents"
+      responses:
+        "200":
+          description: Submission result.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubmissionResult"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "409":
+          $ref: "#/components/responses/ConflictError"
+        "422":
+          $ref: "#/components/responses/IncompleteApplicationError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /apply/consent:
+    post:
+      operationId: recordConsent
+      summary: Record an explicit consent decision for audit.
+      tags: [Consent]
+      parameters:
+        - $ref: "#/components/parameters/IdempotencyKeyHeader"
+        - $ref: "#/components/parameters/CsrfHeader"
+        - $ref: "#/components/parameters/LocaleHeader"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [application_id, step_id, consent_key, accepted, statement_snapshot]
+              properties:
+                application_id:
+                  type: string
+                  format: uuid
+                step_id:
+                  type: string
+                  enum:
+                    - ekyc_consent
+                    - pan_consent
+                    - gstin_consent
+                    - bank_statement_consent
+                    - review_submit
+                consent_key:
+                  type: string
+                accepted:
+                  type: boolean
+                statement_snapshot:
+                  type: string
+                  maxLength: 2000
+                locale:
+                  type: string
+                  enum: [en, hi, bn, te, mr, ta, kn, ml]
+                  default: en
+      responses:
+        "201":
+          description: Consent recorded.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConsentRecord"
+        "400":
+          $ref: "#/components/responses/ValidationError"
+        "401":
+          $ref: "#/components/responses/UnauthorizedError"
+        "403":
+          $ref: "#/components/responses/ForbiddenError"
+        "404":
+          $ref: "#/components/responses/NotFoundError"
+        "409":
+          $ref: "#/components/responses/ConflictError"
+        "429":
+          $ref: "#/components/responses/RateLimitError"
+        "500":
+          $ref: "#/components/responses/ServerError"

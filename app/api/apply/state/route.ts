@@ -22,7 +22,9 @@ export async function GET(request: Request): Promise<Response> {
   if (!sessionId) {
     return sessionInvalidResponse();
   }
-  const app = getOrCreateApplication(sessionId);
+  const url = new URL(request.url);
+  const requestedApplicationId = url.searchParams.get("application_id") ?? undefined;
+  const app = getOrCreateApplication(sessionId, requestedApplicationId);
   return jsonResponse({
     application_id: app.id,
     current_step: app.currentStep,
@@ -51,8 +53,12 @@ function isApplicationStep(value: unknown): value is ApplicationStep {
   return typeof value === "string" && APPLICATION_STEPS.includes(value as ApplicationStep);
 }
 
+function stepIndex(step: ApplicationStep): number {
+  return APPLICATION_STEPS.indexOf(step);
+}
+
 function nextStep(currentStep: ApplicationStep): ApplicationStep | null {
-  const index = APPLICATION_STEPS.indexOf(currentStep);
+  const index = stepIndex(currentStep);
   if (index < 0 || index >= APPLICATION_STEPS.length - 1) return null;
   return APPLICATION_STEPS[index + 1] ?? null;
 }
@@ -82,7 +88,11 @@ export async function POST(request: Request): Promise<Response> {
     return jsonResponse({ error: "BAD_REQUEST", message: "Invalid JSON body" }, 400);
   }
 
-  const app = getOrCreateApplication(sessionId);
+  const requestedApplicationId =
+    typeof body.application_id === "string" && body.application_id
+      ? body.application_id
+      : undefined;
+  const app = getOrCreateApplication(sessionId, requestedApplicationId);
   const requestedStep = body.current_step;
 
   if (!isApplicationStep(requestedStep)) {
@@ -91,7 +101,11 @@ export async function POST(request: Request): Promise<Response> {
     ]);
   }
 
-  if (requestedStep !== app.currentStep) {
+  const currentIdx = stepIndex(app.currentStep);
+  const requestedIdx = stepIndex(requestedStep);
+
+  // Re-submission of the current or any earlier step is allowed; skipping ahead is not.
+  if (requestedIdx > currentIdx) {
     return jsonResponse(
       {
         error: "INVALID_TRANSITION",

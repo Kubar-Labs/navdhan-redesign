@@ -16,6 +16,7 @@ import {
   index,
   integer,
   jsonb,
+  numeric,
   pgEnum,
   pgTable,
   smallint,
@@ -71,6 +72,13 @@ export const documentStatusEnum = pgEnum("document_status", [
 export const scanResultEnum = pgEnum("scan_result", ["clean", "infected", "unreadable"]);
 
 export const perfiosStatusEnum = pgEnum("perfios_status", [
+  "pending",
+  "success",
+  "failure",
+  "partial",
+]);
+
+export const bankStatementStatusEnum = pgEnum("bank_statement_status", [
   "pending",
   "success",
   "failure",
@@ -377,5 +385,46 @@ export const idempotencyKeys = pgTable(
       .on(table.keyHash, table.scope)
       .where(sql`${table.expiresAt} > now()`),
     expiresIdx: index("idx_idempotency_keys_expires").on(table.expiresAt),
+  }),
+);
+
+/**
+ * Perfios bank-statement analysis records.
+ *
+ * Canonical name in db-schema.yaml / approved CDD is `bank_statements`
+ * (the previous working name was `perfios_sessions`).
+ */
+export const bankStatements = pgTable(
+  "bank_statements",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    applicationId: uuid("application_id")
+      .notNull()
+      .references(() => applications.id, { onDelete: "cascade" }),
+    bankName: varchar("bank_name", { length: 127 }),
+    accountNumberEncrypted: text("account_number_encrypted"), // PII — encrypted at rest.
+    accountNumberLastFour: varchar("account_number_last_four", { length: 4 }),
+    perfiosTransactionId: varchar("perfios_transaction_id", { length: 255 }),
+    months: smallint("months"),
+    status: bankStatementStatusEnum("status").notNull().default("pending"),
+    analysisScore: numeric("analysis_score", { precision: 5, scale: 2 }),
+    analyzedAt: timestamp("analyzed_at", { withTimezone: true }),
+    rawPayload: jsonb("raw_payload").default({}),
+    createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => ({
+    applicationIdx: index("idx_bank_statements_application_id").on(table.applicationId),
+    perfiosTxIdx: index("idx_bank_statements_perfios_transaction_id").on(
+      table.perfiosTransactionId,
+    ),
+    statusAnalyzedIdx: index("idx_bank_statements_status_analyzed").on(
+      table.status,
+      table.analyzedAt,
+    ),
+    chkMonths: check(
+      "chk_bank_statements_months",
+      sql.raw("months IS NULL OR months BETWEEN 6 AND 12"),
+    ),
   }),
 );
