@@ -1,0 +1,7 @@
+{
+  "status": "running",
+  "role": "frontend",
+  "stdout": "/home/yash/opencode-workspace/navdhan-redesign-2026/.opencode/factory/subagent-status/frontend-type-fix-2.out.log",
+  "stderr": "/home/yash/opencode-workspace/navdhan-redesign-2026/.opencode/factory/subagent-status/frontend-type-fix-2.err.log",
+  "started_at": "2026-06-29T22:04:24+05:30"
+}

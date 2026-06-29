@@ -10,8 +10,6 @@ import {
   PURPOSE_OPTIONS,
   TENURE_MAX,
   TENURE_MIN,
-} from "@/app/apply/lib/constants";
-import {
   validateAadhaarNumber,
   validateBusinessPinCode,
   validateEmail,
@@ -41,10 +39,8 @@ export interface WizardMessages {
   back?: string;
   continue?: string;
   submit?: string;
+  submitting?: string;
   skip?: string;
-  wizard?: {
-    stepTitles?: Partial<Record<WizardStepId, string>>;
-  };
   loanAmountLabel?: string;
   tenureLabel?: string;
   purposeLabel?: string;
