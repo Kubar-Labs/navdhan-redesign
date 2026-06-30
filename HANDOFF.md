@@ -174,9 +174,6 @@ Ensure the following values are configured in the Vercel project settings before
 | `PERFIOS_API_KEY`         | Perfios API key / secret                     |
 | `PERFIOS_RSA_PRIVATE_KEY` | RSA private key for Perfios payload signing  |
 | `PERFIOS_RSA_PUBLIC_KEY`  | Perfios public key for callback verification |
-| `AA_SAHAMATI_BASE_URL`    | Sahamati Account Aggregator base URL         |
-| `AA_CLIENT_ID`            | Sahamati AA client ID                        |
-| `AA_CLIENT_SECRET`        | Sahamati AA client secret                    |
 
 ### 4.2 Stub Swapping
 
@@ -193,14 +190,6 @@ Action plan:
 3. Validate response schemas with `zod` before persisting to `applications`, `perfios_sessions`, and `bank_statements`.
 4. Wrap all state mutations in explicit transactions with `SELECT ... FOR UPDATE` row-level locking where concurrent updates are possible.
 5. Delete the `.stub.ts` files once production controllers are wired and tests pass.
-
-### 4.3 Sahamati AA Flow
-
-1. On phase 7, redirect the user to the Sahamati AA consent screen with a signed, timestamped consent request.
-2. Store the `consent_handle` in `consent_logs` with a `PENDING` status.
-3. Implement `/api/apply/callbacks/sahamati/route.ts` to receive FI (Financial Information) notifications.
-4. On successful notification, fetch the FI payload, parse bank statement metadata, and create a `bank_statements` record.
-5. Mask account numbers and phone numbers in all logs.
 
 ---
 
@@ -242,7 +231,6 @@ New callback routes to add:
 ```text
 app/[locale]/api/webhooks/
 ├── perfios/route.ts
-├── sahamati/route.ts
 └── bureau/route.ts
 ```
 
@@ -293,19 +281,15 @@ navdhan-redesign-2026/
    - Promote `src/lib/apply/server/*.stub.ts` to production controllers.
    - Wire live Perfios fetch calls and add request/response signature handling.
 
-2. **Phase 3 — Sahamati AA**
-   - Implement the AA redirect and callback handler.
-   - Persist FI data to `bank_statements`.
-
-3. **Phase 4 — Decisioning**
+2. **Phase 4 — Decisioning**
    - Create additional Drizzle tables for credit scores, risk flags, decisions, and lender offers.
    - Build rule-based risk engine service.
 
-4. **Phase 4 — Dashboard & Webhooks**
+3. **Phase 4 — Dashboard & Webhooks**
    - Implement lender matcher dashboard routes and hooks.
-   - Add HMAC-secured webhook handlers for Perfios, Sahamati, and bureau callbacks.
+   - Add HMAC-secured webhook handlers for Perfios and bureau callbacks.
 
-5. **Tests**
+4. **Tests**
    - Extend `apply-api.test.ts` and `apply-wizard.test.tsx` to cover live integration paths.
    - Maintain the existing bar of **110+ passing assertions**.
 
