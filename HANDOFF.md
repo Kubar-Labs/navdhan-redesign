@@ -175,6 +175,18 @@ Ensure the following values are configured in the Vercel project settings before
 | `PERFIOS_RSA_PRIVATE_KEY` | RSA private key for Perfios payload signing  |
 | `PERFIOS_RSA_PUBLIC_KEY`  | Perfios public key for callback verification |
 
+**Perfios Sandbox Credentials**
+
+| Credential         | Value                 |
+| ------------------ | --------------------- |
+| `PERFIOS_USERNAME` | `agniva_ray_jtbg8thd` |
+| `PERFIOS_PASSWORD` | `KubarL_RTFT@042026`  |
+| `PERFIOS_ORG_ID`   | `Kubar_Labs_lIlSxV`   |
+
+**Database Configuration**
+
+- Host selected: **Vercel Postgres** (managed database integration on Vercel).
+
 ### 4.2 Stub Swapping
 
 Controllers currently live in:

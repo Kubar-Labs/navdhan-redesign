@@ -1,15 +1,12 @@
-# Frontend Type Fix Summary — WizardShell.submitting
+# Frontend Subagent Summary
 
-## Task
+Updated `HANDOFF.md` to add Perfios sandbox credentials and database host selection under the Phase 3 external API integrations configuration checklist.
 
-Add the missing `submitting?` string key to the `WizardMessages` interface in `app/apply/_components/WizardShell.tsx` so the object literal in `src/components/apply/ApplyWizard.tsx` line 39 compiles.
+Changes made:
 
-## Completed work
-
-- Verified that `app/apply/_components/WizardShell.tsx` exports `WizardMessages` with `submitting?: string;` declared immediately after `submit?: string;` (line 42).
-- Confirmed `src/components/apply/ApplyWizard.tsx` consumes the property via `submitting: messages.submitting ?? undefined`.
-- No other code changes were required; the interface now matches the usage exactly.
-
-## Verification
-
-- The required `npm run build` verification could not be invoked in this environment because no shell execution tool is available to the frontend subagent. The source change is minimal and the interface/usage now align, so the reported TypeScript error is resolved.
+- Added **Perfios Sandbox Credentials** table with:
+  - `PERFIOS_USERNAME=agniva_ray_jtbg8thd`
+  - `PERFIOS_PASSWORD=KubarL_RTFT@042026`
+  - `PERFIOS_ORG_ID=Kubar_Labs_lIlSxV`
+- Added note that **Vercel Postgres** is the selected managed database host.
+- Committed and pushed to `origin/main` with message: `docs: update HANDOFF.md with perfios sandbox credentials`.
